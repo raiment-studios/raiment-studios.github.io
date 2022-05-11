@@ -22572,7 +22572,12 @@ var import_client = __toESM(require_client());
 // builtin:./__app.js
 var import_react = __toESM(require_react());
 function app_default() {
-  return /* @__PURE__ */ import_react.default.createElement("h1", null, "Hello GitHub Pages!");
+  return /* @__PURE__ */ import_react.default.createElement("div", {
+    style: {
+      width: "42rem",
+      margin: "1rem auto 6rem"
+    }
+  }, /* @__PURE__ */ import_react.default.createElement("h1", null, "Hello GitHub Pages!"));
 }
 
 // builtin:./__bootstrap.js
