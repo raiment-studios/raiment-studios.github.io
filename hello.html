@@ -22572,13 +22572,20 @@ var import_client = __toESM(require_client());
 // builtin:./__app.js
 var import_react = __toESM(require_react());
 function app_default() {
-  return /* @__PURE__ */ import_react.default.createElement("h1", null, "Hello World!!");
+  return /* @__PURE__ */ import_react.default.createElement("h1", null, "Hello GitHub Pages!");
 }
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");
 var root = import_client.default.createRoot(container);
 root.render(/* @__PURE__ */ import_react2.default.createElement(app_default, null));
+/*!@sea:header
+
+    publish:
+        type: '@raiment/github-pages'
+        org: raiment-studios
+        path: hello.html
+ */
 /**
  * @license React
  * react-dom.development.js
