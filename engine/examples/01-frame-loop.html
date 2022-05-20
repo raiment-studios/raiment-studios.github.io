@@ -22534,6 +22534,37 @@ var require_react_dom = __commonJS({
   }
 });
 
+// ../../../../../tmp/sea-temp-0.3.2/node_modules/react-dom/client.js
+var require_client = __commonJS({
+  "../../../../../tmp/sea-temp-0.3.2/node_modules/react-dom/client.js"(exports) {
+    "use strict";
+    var m = require_react_dom();
+    if (false) {
+      exports.createRoot = m.createRoot;
+      exports.hydrateRoot = m.hydrateRoot;
+    } else {
+      i = m.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+      exports.createRoot = function(c, o) {
+        i.usingClientEntryPoint = true;
+        try {
+          return m.createRoot(c, o);
+        } finally {
+          i.usingClientEntryPoint = false;
+        }
+      };
+      exports.hydrateRoot = function(c, h, o) {
+        i.usingClientEntryPoint = true;
+        try {
+          return m.hydrateRoot(c, h, o);
+        } finally {
+          i.usingClientEntryPoint = false;
+        }
+      };
+    }
+    var i;
+  }
+});
+
 // ../../../../../tmp/sea-temp-0.3.2/node_modules/mersenne-twister/src/mersenne-twister.js
 var require_mersenne_twister = __commonJS({
   "../../../../../tmp/sea-temp-0.3.2/node_modules/mersenne-twister/src/mersenne-twister.js"(exports, module2) {
@@ -37672,7 +37703,7 @@ var require_getDisplayName = __commonJS({
 
 // builtin:./__bootstrap.js
 var import_react12 = __toESM(require_react());
-var import_client = __toESM(require_react_dom());
+var import_client = __toESM(require_client());
 
 // builtin:./__app.js
 var import_react11 = __toESM(require_react());
@@ -66126,62 +66157,9 @@ function LoopRunner() {
 }
 
 // builtin:./__bootstrap.js
-var ErrorBoundary = class extends import_react12.default.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: null
-    };
-  }
-  static getDerivedStateFromError(error) {
-    return { error };
-  }
-  componentDidCatch(error, errorInfo) {
-    console.error(error, errorInfo);
-  }
-  render() {
-    const { error } = this.state;
-    if (error) {
-      return /* @__PURE__ */ import_react12.default.createElement("div", {
-        style: {
-          margin: 20,
-          padding: 20,
-          border: "solid 2px red",
-          borderRadius: 6
-        }
-      }, /* @__PURE__ */ import_react12.default.createElement("h2", null, /* @__PURE__ */ import_react12.default.createElement("code", null, `${error}`)), /* @__PURE__ */ import_react12.default.createElement("h3", null, "See console for details"), /* @__PURE__ */ import_react12.default.createElement("div", null, error.stack.split("\n").map((s) => /* @__PURE__ */ import_react12.default.createElement("pre", {
-        style: { margin: "2px 0" }
-      }, /* @__PURE__ */ import_react12.default.createElement("code", null, s.replace(window.location, ""))))));
-    }
-    return this.props.children;
-  }
-};
-function ContentPoll({ url, onChange }) {
-  import_react12.default.useEffect(() => {
-    let value2 = {
-      last: null
-    };
-    let timer = setInterval(async () => {
-      const resp = await fetch(url);
-      const text = await resp.text();
-      if (value2.last === null) {
-        value2.last = text;
-      } else if (value2.last !== text) {
-        onChange();
-      }
-    }, 3e3);
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-  return null;
-}
 var container = document.getElementById("client");
 var root2 = import_client.default.createRoot(container);
-root2.render(/* @__PURE__ */ import_react12.default.createElement(import_react12.default.Fragment, null, /* @__PURE__ */ import_react12.default.createElement(ContentPoll, {
-  url: "/cache-id",
-  onChange: () => window.location.reload()
-}), /* @__PURE__ */ import_react12.default.createElement(ErrorBoundary, null, /* @__PURE__ */ import_react12.default.createElement(app_default, null))));
+root2.render(/* @__PURE__ */ import_react12.default.createElement(app_default, null));
 /*
 object-assign
 (c) Sindre Sorhus
