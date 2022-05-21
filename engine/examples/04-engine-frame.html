@@ -38156,6 +38156,33 @@ var RingBuffer = class {
 var World = class {
 };
 
+// relative:/workspaces/monorepo/source/lib/engine/src/state_machine.js
+var StateMachine = class {
+  constructor(states) {
+    this._self = states._bind;
+    this._states = states;
+    this._activeState = states._start.call(this._self);
+    this._waitCycles = 0;
+  }
+  update() {
+    if (!this._activeState) {
+      return;
+    }
+    if (this._waitCycles > 0) {
+      this._waitCycles--;
+      return;
+    }
+    const result2 = this._activeState.next();
+    if (result2.done) {
+      let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
+      const generator = this._states[nextState];
+      this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
+    } else if (typeof result2.value === "number") {
+      this._waitCycles = result2.value;
+    }
+  }
+};
+
 // relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
 var Engine = class {
   constructor() {
@@ -38203,6 +38230,9 @@ var Engine = class {
         if (actor.init) {
           actor.init(ctx);
         }
+        if (actor.stateMachine) {
+          actor.__stateMachine = new StateMachine(actor.stateMachine(ctx));
+        }
         for (let renderer of Object.values(this._renderers)) {
           if (!renderer.addActor) {
             break;
@@ -38212,6 +38242,11 @@ var Engine = class {
       }
     }
     this._actors._added = [];
+    for (let actor of this._actors) {
+      if (actor.__stateMachine) {
+        actor.__stateMachine.update(ctx);
+      }
+    }
     for (let actor of this._actors) {
       if (actor.update) {
         actor.update(ctx);
@@ -67754,7 +67789,12 @@ function Flex({
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_recorder.js
-function EngineRecorder({ engine, rendererName = "three" }) {
+function EngineRecorder({
+  engine,
+  rendererName = "three",
+  duration = 16600,
+  autoStart = false
+}) {
   const [recording, setRecording] = import_react14.default.useState({
     active: false,
     ready: false,
@@ -67786,7 +67826,6 @@ function EngineRecorder({ engine, rendererName = "three" }) {
     });
   }
   const handleRecord = async () => {
-    const duration = 16600;
     const start = Date.now();
     setRecording({ active: true, ready: false, dataURI: null, countdown: duration });
     let timer = setInterval(() => {
@@ -67803,6 +67842,11 @@ function EngineRecorder({ engine, rendererName = "three" }) {
       dataURI
     });
   };
+  import_react14.default.useEffect(() => {
+    if (autoStart) {
+      setTimeout(() => handleRecord(), 100);
+    }
+  }, []);
   return /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement(Flex, {
     style: {
       padding: "4px 0"
@@ -67826,6 +67870,7 @@ function EngineFrame({
   engine = new Engine(),
   actors = [],
   recorder = null,
+  autoRecord = false,
   style = {}
 }) {
   const refElem = import_react15.default.useRef(null);
@@ -67851,7 +67896,8 @@ function EngineFrame({
     }
   }), recorder && /* @__PURE__ */ import_react15.default.createElement(EngineRecorder, {
     engine,
-    rendererName: recorder
+    rendererName: recorder,
+    autoStart: autoRecord
   }));
 }
 
