@@ -63428,16 +63428,16 @@ function EngineRecorder({
       setTimeout(() => mediaRecorder.stop(), ms2);
     });
   }
-  const handleRecord = async () => {
+  const handleRecord = async (duration2) => {
     const start = Date.now();
-    setRecording({ active: true, ready: false, dataURI: null, countdown: duration });
+    setRecording({ active: true, ready: false, dataURI: null, countdown: duration2 });
     let timer = setInterval(() => {
       const ellapsed = Date.now() - start;
-      const remaining = Math.max(0, duration - ellapsed);
+      const remaining = Math.max(0, duration2 - ellapsed);
       setRecording((r) => ({ ...r, countdown: remaining }));
     }, 500);
     const canvas = engine.renderers[rendererName].canvas;
-    const dataURI = await recordCanvasToBlob(canvas, duration);
+    const dataURI = await recordCanvasToBlob(canvas, duration2);
     clearInterval(timer);
     setRecording({
       active: false,
@@ -63459,8 +63459,28 @@ function EngineRecorder({
       width: "8rem"
     },
     disabled: recording.active,
-    onClick: handleRecord
+    onClick: () => handleRecord(duration)
   }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react14.default.createElement("div", {
+    style: { width: ".25rem" }
+  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+    disabled: recording.active,
+    onClick: () => handleRecord(8e3)
+  }, "8"), /* @__PURE__ */ import_react14.default.createElement("div", {
+    style: { width: ".25rem" }
+  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+    disabled: recording.active,
+    onClick: () => handleRecord(12e3)
+  }, "12"), /* @__PURE__ */ import_react14.default.createElement("div", {
+    style: { width: ".25rem" }
+  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+    disabled: recording.active,
+    onClick: () => handleRecord(3e4)
+  }, "30"), /* @__PURE__ */ import_react14.default.createElement("div", {
+    style: { width: ".25rem" }
+  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+    disabled: recording.active,
+    onClick: () => handleRecord(6e4)
+  }, "60"), /* @__PURE__ */ import_react14.default.createElement("div", {
     style: { width: "1rem" }
   }), /* @__PURE__ */ import_react14.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react14.default.createElement("a", {
     href: recording.dataURI,
@@ -63474,6 +63494,7 @@ function EngineFrame({
   actors = [],
   recorder = null,
   autoRecord = false,
+  recorderDuration = void 0,
   style = {}
 }) {
   const refElem = import_react15.default.useRef(null);
@@ -63500,7 +63521,8 @@ function EngineFrame({
   }), recorder && /* @__PURE__ */ import_react15.default.createElement(EngineRecorder, {
     engine,
     rendererName: recorder,
-    autoStart: autoRecord
+    autoStart: autoRecord,
+    duration: recorderDuration
   }));
 }
 
