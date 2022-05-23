@@ -27065,12 +27065,65 @@ var create3 = function create4(css3) {
 };
 var jsx = create3();
 
-// relative:/workspaces/monorepo/source/lib/react-ex/src/hooks/use_async_effect.js
-var import_react3 = __toESM(require_react());
+// ../../../../../tmp/sea-temp-0.3.3/node_modules/@raiment/react-ex/src/hooks/use_async_effect.js
+var import_react3 = __toESM(require_react(), 1);
+function useAsyncEffect(callback, deps = []) {
+  import_react3.default.useEffect(() => {
+    const token = new Token();
+    callback(token).catch((e) => {
+      for (let cb of token._unwindCallbacks) {
+        cb();
+      }
+      token._unwindCallbacks = [];
+      if (e !== INTERRUPTED) {
+        throw e;
+      }
+    }).finally(() => {
+    });
+    return () => {
+      token._cancel = true;
+      for (let cb of token._unwindCallbacks) {
+        cb();
+      }
+      token._unwindCallbacks = [];
+    };
+  }, deps);
+}
 var INTERRUPTED = Symbol();
+var Token = class {
+  constructor() {
+    this._cancel = false;
+    this._unwindCallbacks = [];
+  }
+  active() {
+    return !this._cancel;
+  }
+  check() {
+    if (this._cancel) {
+      throw INTERRUPTED;
+    }
+  }
+  unwind(fn) {
+    this._unwindCallbacks.push(fn);
+  }
+  sleep(ms2) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (this._cancel) {
+          reject(INTERRUPTED);
+        } else {
+          resolve();
+        }
+      }, ms2);
+    });
+  }
+  yield() {
+    return this.sleep(0);
+  }
+};
 
-// relative:/workspaces/monorepo/source/lib/react-ex/src/hooks/use_google_font.js
-var import_react4 = __toESM(require_react());
+// ../../../../../tmp/sea-temp-0.3.3/node_modules/@raiment/react-ex/src/hooks/use_google_font.js
+var import_react4 = __toESM(require_react(), 1);
 function useGoogleFont(href) {
   const ensureLinkNode = (nodes, rel, href2) => {
     const link = document.createElement("link");
@@ -27100,7 +27153,7 @@ function useGoogleFont(href) {
   }, []);
 }
 
-// relative:/workspaces/monorepo/source/lib/react-ex/src/hooks/use_common_styles.js
+// ../../../../../tmp/sea-temp-0.3.3/node_modules/@raiment/react-ex/src/hooks/use_common_styles.js
 var styles = {
   body: {
     fontFamily: "'Quicksand', sans-serif"
@@ -27138,62 +27191,66 @@ function useCommonStyles() {
   useGoogleFont("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap");
 }
 
-// relative:/workspaces/monorepo/source/lib/react-ex/src/hooks/use_local_storage.js
-var import_react5 = __toESM(require_react());
+// ../../../../../tmp/sea-temp-0.3.3/node_modules/@raiment/react-ex/src/hooks/use_local_storage.js
+var import_react5 = __toESM(require_react(), 1);
 
-// relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
-var import_react6 = __toESM(require_react());
-
-// relative:/workspaces/monorepo/source/lib/react-ex/src/components/flex.js
-var import_react7 = __toESM(require_react());
-function Flex({
-  className,
-  style,
-  children,
-  align = "center"
-}) {
-  return /* @__PURE__ */ import_react7.default.createElement("div", {
+// ../../../../../tmp/sea-temp-0.3.3/node_modules/@raiment/react-ex/src/components/reading_frame.js
+var import_react6 = __toESM(require_react(), 1);
+function ReadingFrame({ children }) {
+  useCommonStyles();
+  return /* @__PURE__ */ import_react6.default.createElement("div", {
     style: {
-      display: "flex",
-      flexDirection: "row",
-      alignItems: align,
-      ...style
+      width: "62rem",
+      margin: "1rem auto 2rem"
     }
   }, children);
 }
 
-// yaml:yaml:./data.yaml
-var engine = { examples: ["01-frame-loop", "02-bounce", "03-state-machine", "04-engine-frame", "05-engine-three", "06-engine-lighting", "07-blocks", "08-noise", "09-terrain-water", "10-sprite"] };
-var data_default = { engine };
+// ../../../../../tmp/sea-temp-0.3.3/node_modules/@raiment/react-ex/src/components/flex.js
+var import_react7 = __toESM(require_react(), 1);
 
 // builtin:./__app.js
 function app_default() {
-  const [opacity, setOpacity] = import_react8.default.useState(0);
-  useCommonStyles();
-  import_react8.default.useEffect(() => {
-    document.title = "\u{1F6A7} Raiment Studios website";
-    setTimeout(() => setOpacity(1), 100);
+  const [data, setData] = import_react8.default.useState("");
+  useAsyncEffect(async (token) => {
+    const resp = await fetch("kestrel.png.asset.yaml");
+    const text = await resp.text();
+    token.check();
+    setData(text);
   }, []);
-  return /* @__PURE__ */ import_react8.default.createElement("div", {
-    style: { opacity }
-  }, /* @__PURE__ */ import_react8.default.createElement(Flex, {
-    style: { padding: "0.5rem 2rem" }
-  }, /* @__PURE__ */ import_react8.default.createElement("div", null, "logo"), /* @__PURE__ */ import_react8.default.createElement("div", {
-    style: { width: "1rem" }
+  return /* @__PURE__ */ import_react8.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react8.default.createElement("h1", null, "Sprite"), /* @__PURE__ */ import_react8.default.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "row"
+    }
+  }, /* @__PURE__ */ import_react8.default.createElement("div", {
+    style: { flex: "1 0 0" }
+  }), /* @__PURE__ */ import_react8.default.createElement(Img, {
+    src: "kestrel.png"
   }), /* @__PURE__ */ import_react8.default.createElement("div", {
     style: { flex: "1 0 0" }
-  }), /* @__PURE__ */ import_react8.default.createElement("div", null, "contact")), /* @__PURE__ */ import_react8.default.createElement("div", {
+  })), /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("pre", null, data)));
+}
+function Img({ src, scale = 6 }) {
+  const [image, setImage] = import_react8.default.useState(null);
+  useAsyncEffect(async (token) => {
+    const img = new Image();
+    img.onload = () => {
+      if (!token.active) {
+        return;
+      }
+      setImage(img);
+    };
+    img.src = src;
+  }, []);
+  return image && /* @__PURE__ */ import_react8.default.createElement("img", {
     style: {
-      width: "62rem",
-      margin: "1rem auto 6rem"
-    }
-  }, /* @__PURE__ */ import_react8.default.createElement("h1", null, "Raiment Studios"), /* @__PURE__ */ import_react8.default.createElement("h3", null, "\u{1F6A7} Under construction"), /* @__PURE__ */ import_react8.default.createElement("hr", null), /* @__PURE__ */ import_react8.default.createElement("h3", null, "Library docs"), /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("a", {
-    href: `core/docs`
-  }, "@raiment/core")), /* @__PURE__ */ import_react8.default.createElement("h3", null, "Engine examples"), data_default.engine.examples.map((folder) => /* @__PURE__ */ import_react8.default.createElement("div", {
-    key: folder
-  }, /* @__PURE__ */ import_react8.default.createElement("a", {
-    href: `engine/examples/${folder}`
-  }, folder)))));
+      width: image.width * scale,
+      height: image.height * scale,
+      imageRendering: "pixelated"
+    },
+    src: image.src
+  });
 }
 
 // builtin:./__bootstrap.js
