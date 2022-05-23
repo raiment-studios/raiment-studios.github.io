@@ -27209,6 +27209,10 @@ function ReadingFrame({ children }) {
 // ../../../../../tmp/sea-temp-0.3.3/node_modules/@raiment/react-ex/src/components/flex.js
 var import_react7 = __toESM(require_react(), 1);
 
+// glob:glob:**/*{.png,*.asset.yaml}
+var matches = [{ url: "node_modules/union/examples/simple/favicon.png" }, { url: "node_modules/union/union.png" }];
+var png_asset_default = { matches };
+
 // builtin:./__app.js
 function app_default() {
   const [data, setData] = import_react8.default.useState("");
@@ -27229,7 +27233,7 @@ function app_default() {
     src: "kestrel.png"
   }), /* @__PURE__ */ import_react8.default.createElement("div", {
     style: { flex: "1 0 0" }
-  })), /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("pre", null, data)));
+  })), /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("pre", null, JSON.stringify(png_asset_default, null, 4))), /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("pre", null, data)));
 }
 function Img({ src, scale = 6 }) {
   const [image, setImage] = import_react8.default.useState(null);
