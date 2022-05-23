@@ -22534,6 +22534,37 @@ var require_react_dom = __commonJS({
   }
 });
 
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/react-dom/client.js
+var require_client = __commonJS({
+  "../../../../../tmp/sea-temp-0.3.5/node_modules/react-dom/client.js"(exports) {
+    "use strict";
+    var m = require_react_dom();
+    if (false) {
+      exports.createRoot = m.createRoot;
+      exports.hydrateRoot = m.hydrateRoot;
+    } else {
+      i = m.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+      exports.createRoot = function(c, o) {
+        i.usingClientEntryPoint = true;
+        try {
+          return m.createRoot(c, o);
+        } finally {
+          i.usingClientEntryPoint = false;
+        }
+      };
+      exports.hydrateRoot = function(c, h, o) {
+        i.usingClientEntryPoint = true;
+        try {
+          return m.hydrateRoot(c, h, o);
+        } finally {
+          i.usingClientEntryPoint = false;
+        }
+      };
+    }
+    var i;
+  }
+});
+
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/mersenne-twister/src/mersenne-twister.js
 var require_mersenne_twister = __commonJS({
   "../../../../../tmp/sea-temp-0.3.5/node_modules/mersenne-twister/src/mersenne-twister.js"(exports, module2) {
@@ -37672,7 +37703,7 @@ var require_getDisplayName = __commonJS({
 
 // builtin:./__bootstrap.js
 var import_react12 = __toESM(require_react());
-var import_client = __toESM(require_react_dom());
+var import_client = __toESM(require_client());
 
 // builtin:./__app.js
 var import_react11 = __toESM(require_react());
