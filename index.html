@@ -27150,12 +27150,15 @@ function Flex({
   className,
   style,
   children,
-  align = "center"
+  align = "center",
+  direction = "row",
+  dir
 }) {
+  direction = direction || dir;
   return /* @__PURE__ */ import_react7.default.createElement("div", {
     style: {
       display: "flex",
-      flexDirection: "row",
+      flexDirection: direction,
       alignItems: align,
       ...style
     }

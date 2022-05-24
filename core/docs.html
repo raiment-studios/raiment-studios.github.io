@@ -23530,6 +23530,92 @@ var require_mersenne_twister = __commonJS({
   }
 });
 
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/js-levenshtein/index.js
+var require_js_levenshtein = __commonJS({
+  "../../../../../tmp/sea-temp-0.3.5/node_modules/js-levenshtein/index.js"(exports, module2) {
+    "use strict";
+    module2.exports = function() {
+      function _min(d0, d1, d2, bx, ay) {
+        return d0 < d1 || d2 < d1 ? d0 > d2 ? d2 + 1 : d0 + 1 : bx === ay ? d1 : d1 + 1;
+      }
+      return function(a, b) {
+        if (a === b) {
+          return 0;
+        }
+        if (a.length > b.length) {
+          var tmp = a;
+          a = b;
+          b = tmp;
+        }
+        var la = a.length;
+        var lb = b.length;
+        while (la > 0 && a.charCodeAt(la - 1) === b.charCodeAt(lb - 1)) {
+          la--;
+          lb--;
+        }
+        var offset = 0;
+        while (offset < la && a.charCodeAt(offset) === b.charCodeAt(offset)) {
+          offset++;
+        }
+        la -= offset;
+        lb -= offset;
+        if (la === 0 || lb < 3) {
+          return lb;
+        }
+        var x = 0;
+        var y;
+        var d0;
+        var d1;
+        var d2;
+        var d3;
+        var dd;
+        var dy;
+        var ay;
+        var bx0;
+        var bx1;
+        var bx2;
+        var bx3;
+        var vector = [];
+        for (y = 0; y < la; y++) {
+          vector.push(y + 1);
+          vector.push(a.charCodeAt(offset + y));
+        }
+        var len = vector.length - 1;
+        for (; x < lb - 3; ) {
+          bx0 = b.charCodeAt(offset + (d0 = x));
+          bx1 = b.charCodeAt(offset + (d1 = x + 1));
+          bx2 = b.charCodeAt(offset + (d2 = x + 2));
+          bx3 = b.charCodeAt(offset + (d3 = x + 3));
+          dd = x += 4;
+          for (y = 0; y < len; y += 2) {
+            dy = vector[y];
+            ay = vector[y + 1];
+            d0 = _min(dy, d0, d1, bx0, ay);
+            d1 = _min(d0, d1, d2, bx1, ay);
+            d2 = _min(d1, d2, d3, bx2, ay);
+            dd = _min(d2, d3, dd, bx3, ay);
+            vector[y] = dd;
+            d3 = d2;
+            d2 = d1;
+            d1 = d0;
+            d0 = dy;
+          }
+        }
+        for (; x < lb; ) {
+          bx0 = b.charCodeAt(offset + (d0 = x));
+          dd = ++x;
+          for (y = 0; y < len; y += 2) {
+            dy = vector[y];
+            vector[y] = dd = _min(dy, d0, dd, bx0, vector[y + 1]);
+            d0 = dy;
+          }
+        }
+        return dd;
+      };
+    }();
+  }
+});
+
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/yaml/dist/PlainValue-ec8e588e.js
 var require_PlainValue_ec8e588e = __commonJS({
   "../../../../../tmp/sea-temp-0.3.5/node_modules/yaml/dist/PlainValue-ec8e588e.js"(exports) {
@@ -29162,92 +29248,6 @@ var require_yaml = __commonJS({
   }
 });
 
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/js-levenshtein/index.js
-var require_js_levenshtein = __commonJS({
-  "../../../../../tmp/sea-temp-0.3.5/node_modules/js-levenshtein/index.js"(exports, module2) {
-    "use strict";
-    module2.exports = function() {
-      function _min(d0, d1, d2, bx, ay) {
-        return d0 < d1 || d2 < d1 ? d0 > d2 ? d2 + 1 : d0 + 1 : bx === ay ? d1 : d1 + 1;
-      }
-      return function(a, b) {
-        if (a === b) {
-          return 0;
-        }
-        if (a.length > b.length) {
-          var tmp = a;
-          a = b;
-          b = tmp;
-        }
-        var la = a.length;
-        var lb = b.length;
-        while (la > 0 && a.charCodeAt(la - 1) === b.charCodeAt(lb - 1)) {
-          la--;
-          lb--;
-        }
-        var offset = 0;
-        while (offset < la && a.charCodeAt(offset) === b.charCodeAt(offset)) {
-          offset++;
-        }
-        la -= offset;
-        lb -= offset;
-        if (la === 0 || lb < 3) {
-          return lb;
-        }
-        var x = 0;
-        var y;
-        var d0;
-        var d1;
-        var d2;
-        var d3;
-        var dd;
-        var dy;
-        var ay;
-        var bx0;
-        var bx1;
-        var bx2;
-        var bx3;
-        var vector = [];
-        for (y = 0; y < la; y++) {
-          vector.push(y + 1);
-          vector.push(a.charCodeAt(offset + y));
-        }
-        var len = vector.length - 1;
-        for (; x < lb - 3; ) {
-          bx0 = b.charCodeAt(offset + (d0 = x));
-          bx1 = b.charCodeAt(offset + (d1 = x + 1));
-          bx2 = b.charCodeAt(offset + (d2 = x + 2));
-          bx3 = b.charCodeAt(offset + (d3 = x + 3));
-          dd = x += 4;
-          for (y = 0; y < len; y += 2) {
-            dy = vector[y];
-            ay = vector[y + 1];
-            d0 = _min(dy, d0, d1, bx0, ay);
-            d1 = _min(d0, d1, d2, bx1, ay);
-            d2 = _min(d1, d2, d3, bx2, ay);
-            dd = _min(d2, d3, dd, bx3, ay);
-            vector[y] = dd;
-            d3 = d2;
-            d2 = d1;
-            d1 = d0;
-            d0 = dy;
-          }
-        }
-        for (; x < lb; ) {
-          bx0 = b.charCodeAt(offset + (d0 = x));
-          dd = ++x;
-          for (y = 0; y < len; y += 2) {
-            dy = vector[y];
-            vector[y] = dd = _min(dy, d0, dd, bx0, vector[y + 1]);
-            d0 = dy;
-          }
-        }
-        return dd;
-      };
-    }();
-  }
-});
-
 // builtin:./__bootstrap.js
 var import_react9 = __toESM(require_react());
 var import_client = __toESM(require_client());
@@ -32995,7 +32995,8 @@ __export(src_exports, {
   nearestOverlap: () => nearestOverlap,
   parseYAML: () => parseYAML,
   shortID: () => shortID,
-  stringifyYAML: () => stringifyYAML
+  stringifyYAML: () => stringifyYAML,
+  uuid: () => uuid
 });
 
 // relative:/workspaces/monorepo/source/lib/core/src/collections/generate.js
@@ -33148,8 +33149,8 @@ var RNG = class {
     return Math.floor(this.random() * 65536).toString(16).substring(1);
   }
   uuid() {
-    const s4 = () => this._s4();
-    return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
+    const s42 = () => this._s4();
+    return `${s42() + s42()}-${s42()}-${s42()}-${s42()}-${s42()}${s42()}${s42()}`;
   }
   shuffle(arr) {
     const temp = [...arr];
@@ -33745,38 +33746,6 @@ function makeSimplexNoise(seed) {
   return new simplex_noise_default(seed);
 }
 
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/nanoid/index.browser.js
-var nanoid = (size = 21) => crypto.getRandomValues(new Uint8Array(size)).reduce((id, byte) => {
-  byte &= 63;
-  if (byte < 36) {
-    id += byte.toString(36);
-  } else if (byte < 62) {
-    id += (byte - 26).toString(36).toUpperCase();
-  } else if (byte > 62) {
-    id += "-";
-  } else {
-    id += "_";
-  }
-  return id;
-}, "");
-
-// relative:/workspaces/monorepo/source/lib/core/src/strings/short_id.js
-function shortID() {
-  return nanoid(12);
-}
-
-// relative:/workspaces/monorepo/source/lib/core/src/strings/parse_yaml.js
-var import_yaml = __toESM(require_yaml());
-function parseYAML(s) {
-  return import_yaml.default.parse(s);
-}
-
-// relative:/workspaces/monorepo/source/lib/core/src/strings/stringify_yaml.js
-var import_yaml2 = __toESM(require_yaml());
-function stringifyYAML(obj) {
-  return import_yaml2.default.stringify(obj);
-}
-
 // relative:/workspaces/monorepo/source/lib/core/src/strings/nearest_overlap.js
 var import_js_levenshtein = __toESM(require_js_levenshtein());
 function nearestOverlap(set, word) {
@@ -33805,6 +33774,46 @@ function nearestOverlap(set, word) {
     return 0;
   });
   return results;
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/strings/parse_yaml.js
+var import_yaml = __toESM(require_yaml());
+function parseYAML(s) {
+  return import_yaml.default.parse(s);
+}
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/nanoid/index.browser.js
+var nanoid = (size = 21) => crypto.getRandomValues(new Uint8Array(size)).reduce((id, byte) => {
+  byte &= 63;
+  if (byte < 36) {
+    id += byte.toString(36);
+  } else if (byte < 62) {
+    id += (byte - 26).toString(36).toUpperCase();
+  } else if (byte > 62) {
+    id += "-";
+  } else {
+    id += "_";
+  }
+  return id;
+}, "");
+
+// relative:/workspaces/monorepo/source/lib/core/src/strings/short_id.js
+function shortID() {
+  return nanoid(12);
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/strings/stringify_yaml.js
+var import_yaml2 = __toESM(require_yaml());
+function stringifyYAML(obj) {
+  return import_yaml2.default.stringify(obj);
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/strings/uuid.js
+function s4() {
+  return Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
+}
+function uuid() {
+  return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
 }
 
 // builtin:./__app.js

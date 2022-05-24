@@ -23535,6 +23535,92 @@ var require_mersenne_twister = __commonJS({
   }
 });
 
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/js-levenshtein/index.js
+var require_js_levenshtein = __commonJS({
+  "../../../../../tmp/sea-temp-0.3.5/node_modules/js-levenshtein/index.js"(exports, module2) {
+    "use strict";
+    module2.exports = function() {
+      function _min(d0, d1, d2, bx, ay) {
+        return d0 < d1 || d2 < d1 ? d0 > d2 ? d2 + 1 : d0 + 1 : bx === ay ? d1 : d1 + 1;
+      }
+      return function(a, b) {
+        if (a === b) {
+          return 0;
+        }
+        if (a.length > b.length) {
+          var tmp2 = a;
+          a = b;
+          b = tmp2;
+        }
+        var la = a.length;
+        var lb = b.length;
+        while (la > 0 && a.charCodeAt(la - 1) === b.charCodeAt(lb - 1)) {
+          la--;
+          lb--;
+        }
+        var offset = 0;
+        while (offset < la && a.charCodeAt(offset) === b.charCodeAt(offset)) {
+          offset++;
+        }
+        la -= offset;
+        lb -= offset;
+        if (la === 0 || lb < 3) {
+          return lb;
+        }
+        var x = 0;
+        var y;
+        var d0;
+        var d1;
+        var d2;
+        var d3;
+        var dd;
+        var dy;
+        var ay;
+        var bx0;
+        var bx1;
+        var bx2;
+        var bx3;
+        var vector = [];
+        for (y = 0; y < la; y++) {
+          vector.push(y + 1);
+          vector.push(a.charCodeAt(offset + y));
+        }
+        var len = vector.length - 1;
+        for (; x < lb - 3; ) {
+          bx0 = b.charCodeAt(offset + (d0 = x));
+          bx1 = b.charCodeAt(offset + (d1 = x + 1));
+          bx2 = b.charCodeAt(offset + (d2 = x + 2));
+          bx3 = b.charCodeAt(offset + (d3 = x + 3));
+          dd = x += 4;
+          for (y = 0; y < len; y += 2) {
+            dy = vector[y];
+            ay = vector[y + 1];
+            d0 = _min(dy, d0, d1, bx0, ay);
+            d1 = _min(d0, d1, d2, bx1, ay);
+            d2 = _min(d1, d2, d3, bx2, ay);
+            dd = _min(d2, d3, dd, bx3, ay);
+            vector[y] = dd;
+            d3 = d2;
+            d2 = d1;
+            d1 = d0;
+            d0 = dy;
+          }
+        }
+        for (; x < lb; ) {
+          bx0 = b.charCodeAt(offset + (d0 = x));
+          dd = ++x;
+          for (y = 0; y < len; y += 2) {
+            dy = vector[y];
+            vector[y] = dd = _min(dy, d0, dd, bx0, vector[y + 1]);
+            d0 = dy;
+          }
+        }
+        return dd;
+      };
+    }();
+  }
+});
+
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/yaml/dist/PlainValue-ec8e588e.js
 var require_PlainValue_ec8e588e = __commonJS({
   "../../../../../tmp/sea-temp-0.3.5/node_modules/yaml/dist/PlainValue-ec8e588e.js"(exports) {
@@ -29164,92 +29250,6 @@ var require_dist = __commonJS({
 var require_yaml = __commonJS({
   "../../../../../tmp/sea-temp-0.3.5/node_modules/yaml/index.js"(exports, module2) {
     module2.exports = require_dist().YAML;
-  }
-});
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/js-levenshtein/index.js
-var require_js_levenshtein = __commonJS({
-  "../../../../../tmp/sea-temp-0.3.5/node_modules/js-levenshtein/index.js"(exports, module2) {
-    "use strict";
-    module2.exports = function() {
-      function _min(d0, d1, d2, bx, ay) {
-        return d0 < d1 || d2 < d1 ? d0 > d2 ? d2 + 1 : d0 + 1 : bx === ay ? d1 : d1 + 1;
-      }
-      return function(a, b) {
-        if (a === b) {
-          return 0;
-        }
-        if (a.length > b.length) {
-          var tmp2 = a;
-          a = b;
-          b = tmp2;
-        }
-        var la = a.length;
-        var lb = b.length;
-        while (la > 0 && a.charCodeAt(la - 1) === b.charCodeAt(lb - 1)) {
-          la--;
-          lb--;
-        }
-        var offset = 0;
-        while (offset < la && a.charCodeAt(offset) === b.charCodeAt(offset)) {
-          offset++;
-        }
-        la -= offset;
-        lb -= offset;
-        if (la === 0 || lb < 3) {
-          return lb;
-        }
-        var x = 0;
-        var y;
-        var d0;
-        var d1;
-        var d2;
-        var d3;
-        var dd;
-        var dy;
-        var ay;
-        var bx0;
-        var bx1;
-        var bx2;
-        var bx3;
-        var vector = [];
-        for (y = 0; y < la; y++) {
-          vector.push(y + 1);
-          vector.push(a.charCodeAt(offset + y));
-        }
-        var len = vector.length - 1;
-        for (; x < lb - 3; ) {
-          bx0 = b.charCodeAt(offset + (d0 = x));
-          bx1 = b.charCodeAt(offset + (d1 = x + 1));
-          bx2 = b.charCodeAt(offset + (d2 = x + 2));
-          bx3 = b.charCodeAt(offset + (d3 = x + 3));
-          dd = x += 4;
-          for (y = 0; y < len; y += 2) {
-            dy = vector[y];
-            ay = vector[y + 1];
-            d0 = _min(dy, d0, d1, bx0, ay);
-            d1 = _min(d0, d1, d2, bx1, ay);
-            d2 = _min(d1, d2, d3, bx2, ay);
-            dd = _min(d2, d3, dd, bx3, ay);
-            vector[y] = dd;
-            d3 = d2;
-            d2 = d1;
-            d1 = d0;
-            d0 = dy;
-          }
-        }
-        for (; x < lb; ) {
-          bx0 = b.charCodeAt(offset + (d0 = x));
-          dd = ++x;
-          for (y = 0; y < len; y += 2) {
-            dy = vector[y];
-            vector[y] = dd = _min(dy, d0, dd, bx0, vector[y + 1]);
-            d0 = dy;
-          }
-        }
-        return dd;
-      };
-    }();
   }
 });
 
@@ -38399,8 +38399,8 @@ function generateUUID() {
   const d1 = Math.random() * 4294967295 | 0;
   const d2 = Math.random() * 4294967295 | 0;
   const d3 = Math.random() * 4294967295 | 0;
-  const uuid = _lut[d0 & 255] + _lut[d0 >> 8 & 255] + _lut[d0 >> 16 & 255] + _lut[d0 >> 24 & 255] + "-" + _lut[d1 & 255] + _lut[d1 >> 8 & 255] + "-" + _lut[d1 >> 16 & 15 | 64] + _lut[d1 >> 24 & 255] + "-" + _lut[d2 & 63 | 128] + _lut[d2 >> 8 & 255] + "-" + _lut[d2 >> 16 & 255] + _lut[d2 >> 24 & 255] + _lut[d3 & 255] + _lut[d3 >> 8 & 255] + _lut[d3 >> 16 & 255] + _lut[d3 >> 24 & 255];
-  return uuid.toLowerCase();
+  const uuid2 = _lut[d0 & 255] + _lut[d0 >> 8 & 255] + _lut[d0 >> 16 & 255] + _lut[d0 >> 24 & 255] + "-" + _lut[d1 & 255] + _lut[d1 >> 8 & 255] + "-" + _lut[d1 >> 16 & 15 | 64] + _lut[d1 >> 24 & 255] + "-" + _lut[d2 & 63 | 128] + _lut[d2 >> 8 & 255] + "-" + _lut[d2 >> 16 & 255] + _lut[d2 >> 24 & 255] + _lut[d3 & 255] + _lut[d3 >> 8 & 255] + _lut[d3 >> 16 & 255] + _lut[d3 >> 24 & 255];
+  return uuid2.toLowerCase();
 }
 function clamp(value2, min, max) {
   return Math.max(min, Math.min(max, value2));
@@ -55309,10 +55309,10 @@ var Skeleton = class {
   fromJSON(json, bones) {
     this.uuid = json.uuid;
     for (let i = 0, l = json.bones.length; i < l; i++) {
-      const uuid = json.bones[i];
-      let bone = bones[uuid];
+      const uuid2 = json.bones[i];
+      let bone = bones[uuid2];
       if (bone === void 0) {
-        console.warn("THREE.Skeleton: No bone found with UUID:", uuid);
+        console.warn("THREE.Skeleton: No bone found with UUID:", uuid2);
         bone = new Bone();
       }
       this.bones.push(bone);
@@ -61876,25 +61876,25 @@ var BufferGeometryLoader = class extends Loader {
   parse(json) {
     const interleavedBufferMap = {};
     const arrayBufferMap = {};
-    function getInterleavedBuffer(json2, uuid) {
-      if (interleavedBufferMap[uuid] !== void 0)
-        return interleavedBufferMap[uuid];
+    function getInterleavedBuffer(json2, uuid2) {
+      if (interleavedBufferMap[uuid2] !== void 0)
+        return interleavedBufferMap[uuid2];
       const interleavedBuffers = json2.interleavedBuffers;
-      const interleavedBuffer = interleavedBuffers[uuid];
+      const interleavedBuffer = interleavedBuffers[uuid2];
       const buffer = getArrayBuffer(json2, interleavedBuffer.buffer);
       const array = getTypedArray(interleavedBuffer.type, buffer);
       const ib = new InterleavedBuffer(array, interleavedBuffer.stride);
       ib.uuid = interleavedBuffer.uuid;
-      interleavedBufferMap[uuid] = ib;
+      interleavedBufferMap[uuid2] = ib;
       return ib;
     }
-    function getArrayBuffer(json2, uuid) {
-      if (arrayBufferMap[uuid] !== void 0)
-        return arrayBufferMap[uuid];
+    function getArrayBuffer(json2, uuid2) {
+      if (arrayBufferMap[uuid2] !== void 0)
+        return arrayBufferMap[uuid2];
       const arrayBuffers = json2.arrayBuffers;
-      const arrayBuffer = arrayBuffers[uuid];
+      const arrayBuffer = arrayBuffers[uuid2];
       const ab = new Uint32Array(arrayBuffer).buffer;
-      arrayBufferMap[uuid] = ab;
+      arrayBufferMap[uuid2] = ab;
       return ab;
     }
     const geometry = json.isInstancedBufferGeometry ? new InstancedBufferGeometry() : new BufferGeometry();
@@ -62034,8 +62034,8 @@ var ObjectLoader = class extends Loader {
     this.bindSkeletons(object, skeletons);
     if (onLoad !== void 0) {
       let hasImages = false;
-      for (const uuid in images) {
-        if (images[uuid] instanceof HTMLImageElement) {
+      for (const uuid2 in images) {
+        if (images[uuid2] instanceof HTMLImageElement) {
           hasImages = true;
           break;
         }
@@ -62157,7 +62157,7 @@ var ObjectLoader = class extends Loader {
     const scope = this;
     const images = {};
     let loader;
-    function loadImage(url) {
+    function loadImage2(url) {
       scope.manager.itemStart(url);
       return loader.load(url, function() {
         scope.manager.itemEnd(url);
@@ -62170,7 +62170,7 @@ var ObjectLoader = class extends Loader {
       if (typeof image === "string") {
         const url = image;
         const path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test(url) ? url : scope.resourcePath + url;
-        return loadImage(path);
+        return loadImage2(path);
       } else {
         if (image.data) {
           return {
@@ -62351,11 +62351,11 @@ var ObjectLoader = class extends Loader {
       if (Array.isArray(name)) {
         const array = [];
         for (let i = 0, l = name.length; i < l; i++) {
-          const uuid = name[i];
-          if (materials[uuid] === void 0) {
-            console.warn("THREE.ObjectLoader: Undefined material", uuid);
+          const uuid2 = name[i];
+          if (materials[uuid2] === void 0) {
+            console.warn("THREE.ObjectLoader: Undefined material", uuid2);
           }
-          array.push(materials[uuid]);
+          array.push(materials[uuid2]);
         }
         return array;
       }
@@ -62364,11 +62364,11 @@ var ObjectLoader = class extends Loader {
       }
       return materials[name];
     }
-    function getTexture(uuid) {
-      if (textures[uuid] === void 0) {
-        console.warn("THREE.ObjectLoader: Undefined texture", uuid);
+    function getTexture(uuid2) {
+      if (textures[uuid2] === void 0) {
+        console.warn("THREE.ObjectLoader: Undefined texture", uuid2);
       }
-      return textures[uuid];
+      return textures[uuid2];
     }
     let geometry, material;
     switch (data.type) {
@@ -62542,8 +62542,8 @@ var ObjectLoader = class extends Loader {
     if (data.animations !== void 0) {
       const objectAnimations = data.animations;
       for (let i = 0; i < objectAnimations.length; i++) {
-        const uuid = objectAnimations[i];
-        object.animations.push(animations[uuid]);
+        const uuid2 = objectAnimations[i];
+        object.animations.push(animations[uuid2]);
       }
     }
     if (data.type === "LOD") {
@@ -63717,11 +63717,11 @@ var AnimationObjectGroup = class {
     const objects = this._objects, indicesByUUID = this._indicesByUUID, paths = this._paths, parsedPaths = this._parsedPaths, bindings = this._bindings, nBindings = bindings.length;
     let knownObject = void 0, nObjects = objects.length, nCachedObjects = this.nCachedObjects_;
     for (let i = 0, n = arguments.length; i !== n; ++i) {
-      const object = arguments[i], uuid = object.uuid;
-      let index4 = indicesByUUID[uuid];
+      const object = arguments[i], uuid2 = object.uuid;
+      let index4 = indicesByUUID[uuid2];
       if (index4 === void 0) {
         index4 = nObjects++;
-        indicesByUUID[uuid] = index4;
+        indicesByUUID[uuid2] = index4;
         objects.push(object);
         for (let j = 0, m = nBindings; j !== m; ++j) {
           bindings[j].push(new PropertyBinding(object, paths[j], parsedPaths[j]));
@@ -63731,7 +63731,7 @@ var AnimationObjectGroup = class {
         const firstActiveIndex = --nCachedObjects, lastCachedObject = objects[firstActiveIndex];
         indicesByUUID[lastCachedObject.uuid] = index4;
         objects[index4] = lastCachedObject;
-        indicesByUUID[uuid] = firstActiveIndex;
+        indicesByUUID[uuid2] = firstActiveIndex;
         objects[firstActiveIndex] = object;
         for (let j = 0, m = nBindings; j !== m; ++j) {
           const bindingsForPath = bindings[j], lastCached = bindingsForPath[firstActiveIndex];
@@ -63752,12 +63752,12 @@ var AnimationObjectGroup = class {
     const objects = this._objects, indicesByUUID = this._indicesByUUID, bindings = this._bindings, nBindings = bindings.length;
     let nCachedObjects = this.nCachedObjects_;
     for (let i = 0, n = arguments.length; i !== n; ++i) {
-      const object = arguments[i], uuid = object.uuid, index4 = indicesByUUID[uuid];
+      const object = arguments[i], uuid2 = object.uuid, index4 = indicesByUUID[uuid2];
       if (index4 !== void 0 && index4 >= nCachedObjects) {
         const lastCachedIndex = nCachedObjects++, firstActiveObject = objects[lastCachedIndex];
         indicesByUUID[firstActiveObject.uuid] = index4;
         objects[index4] = firstActiveObject;
-        indicesByUUID[uuid] = lastCachedIndex;
+        indicesByUUID[uuid2] = lastCachedIndex;
         objects[lastCachedIndex] = object;
         for (let j = 0, m = nBindings; j !== m; ++j) {
           const bindingsForPath = bindings[j], firstActive = bindingsForPath[lastCachedIndex], binding = bindingsForPath[index4];
@@ -63772,9 +63772,9 @@ var AnimationObjectGroup = class {
     const objects = this._objects, indicesByUUID = this._indicesByUUID, bindings = this._bindings, nBindings = bindings.length;
     let nCachedObjects = this.nCachedObjects_, nObjects = objects.length;
     for (let i = 0, n = arguments.length; i !== n; ++i) {
-      const object = arguments[i], uuid = object.uuid, index4 = indicesByUUID[uuid];
+      const object = arguments[i], uuid2 = object.uuid, index4 = indicesByUUID[uuid2];
       if (index4 !== void 0) {
-        delete indicesByUUID[uuid];
+        delete indicesByUUID[uuid2];
         if (index4 < nCachedObjects) {
           const firstActiveIndex = --nCachedObjects, lastCachedObject = objects[firstActiveIndex], lastIndex = --nObjects, lastObject = objects[lastIndex];
           indicesByUUID[lastCachedObject.uuid] = index4;
@@ -70811,8 +70811,8 @@ var RNG = class {
     return Math.floor(this.random() * 65536).toString(16).substring(1);
   }
   uuid() {
-    const s4 = () => this._s4();
-    return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
+    const s42 = () => this._s4();
+    return `${s42() + s42()}-${s42()}-${s42()}-${s42()}-${s42()}${s42()}${s42()}`;
   }
   shuffle(arr) {
     const temp = [...arr];
@@ -71055,14 +71055,22 @@ var grad4 = new Float32Array([
   0
 ]);
 
+// relative:/workspaces/monorepo/source/lib/core/src/strings/nearest_overlap.js
+var import_js_levenshtein = __toESM(require_js_levenshtein());
+
 // relative:/workspaces/monorepo/source/lib/core/src/strings/parse_yaml.js
 var import_yaml = __toESM(require_yaml());
 
 // relative:/workspaces/monorepo/source/lib/core/src/strings/stringify_yaml.js
 var import_yaml2 = __toESM(require_yaml());
 
-// relative:/workspaces/monorepo/source/lib/core/src/strings/nearest_overlap.js
-var import_js_levenshtein = __toESM(require_js_levenshtein());
+// relative:/workspaces/monorepo/source/lib/core/src/strings/uuid.js
+function s4() {
+  return Math.floor((1 + Math.random()) * 65536).toString(16).substring(1);
+}
+function uuid() {
+  return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
+}
 
 // relative:/workspaces/monorepo/source/lib/engine/src/engine/actor_list.js
 var ActorList = class {
@@ -71242,6 +71250,7 @@ var StateMachine = class {
 var Engine = class {
   constructor() {
     EventEmitter.composeInto(this);
+    this._uuid = uuid();
     this._frameLoop = new FrameLoop(this.runFrame.bind(this));
     this._context = {
       engine: this,
@@ -71250,6 +71259,7 @@ var Engine = class {
       frameFPS: 0
     };
     this._renderers = {};
+    this._cache = {};
     this._actors = new ActorList();
     this._world = new World();
   }
@@ -71259,8 +71269,14 @@ var Engine = class {
       renderer.dispose();
     }
   }
+  get uuid() {
+    return this._uuid;
+  }
   get renderers() {
     return this._renderers;
+  }
+  get cache() {
+    return this._cache;
   }
   get actors() {
     return this._actors;
@@ -71316,14 +71332,14 @@ var Engine = class {
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/math/rng.js
 var import_mersenne_twister2 = __toESM(require_mersenne_twister(), 1);
 
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
+var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
+
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/parse_yaml.js
 var import_yaml3 = __toESM(require_yaml(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/stringify_yaml.js
 var import_yaml4 = __toESM(require_yaml(), 1);
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
-var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
 
 // relative:/workspaces/monorepo/source/lib/engine/src/texture_atlas.js
 var import_lodash = __toESM(require_lodash());
@@ -71400,15 +71416,16 @@ var Grid = class {
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/orbit_camera.js
 var OrbitCamera = class {
-  constructor({ radius = 192 } = {}) {
+  constructor({ radius = 192, periodMS = 1e4 } = {}) {
     this._radius = radius;
+    this._periodMS = periodMS;
   }
   update({ engine, timeMS }) {
     const worldUp = new Vector3(0, 0, 1);
     const radius = this._radius;
     const camera = engine.renderers.three.camera;
-    const ang = timeMS * Math.PI / 1e4;
-    const ang2 = timeMS * Math.PI / 18020;
+    const ang = timeMS * Math.PI / this._periodMS;
+    const ang2 = timeMS * Math.PI / (this._periodMS * 1.802);
     const cx = radius * Math.cos(ang);
     const cy = radius * Math.sin(ang);
     const cz = radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
@@ -71435,11 +71452,127 @@ var OrbitCamera = class {
   }
 };
 
+// relative:/workspaces/monorepo/source/lib/engine/src/image/get_image_pixel_data.js
+function getImagePixelData(img) {
+  let canvas = document.createElement("canvas");
+  let context = canvas.getContext("2d");
+  context.drawImage(img, 0, 0);
+  const width = img.width;
+  const height = img.height;
+  const pixels = context.getImageData(0, 0, width, height).data;
+  return {
+    width,
+    height,
+    pixels
+  };
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/image/load_image.js
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    let img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = (err) => {
+      console.error(err);
+      reject(err);
+    };
+    img.src = src;
+  });
+}
+
 // relative:/workspaces/monorepo/source/lib/engine/src/react/use_engine.js
 var import_react8 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
 var import_react15 = __toESM(require_react());
+
+// relative:/workspaces/monorepo/source/lib/engine/src/caches/image_geometry_cache.js
+var ImageGeometryCache = class {
+  constructor() {
+    this._cache = {};
+  }
+  async get(url, scale, density, offset) {
+    const key = [url, scale, density, offset].join("|");
+    let geometry = this._cache[key];
+    if (!geometry) {
+      const img = await loadImage(url);
+      const image = getImagePixelData(img);
+      geometry = makeGeometry(image);
+      const maxDim = Math.max(img.width, img.height);
+      const s = scale * (8 * 1) / maxDim;
+      geometry.translate(-image.width / 2, -0.5, 0);
+      geometry.scale(s, density * s, s);
+      geometry.translate(offset.x, offset.y, offset.z);
+      this._cache[key] = geometry;
+    }
+    return geometry;
+  }
+};
+function makeGeometry(image) {
+  const positions = [];
+  const colors = [];
+  const index4 = [];
+  function quad(p0, p1, p2, p3, color, shade = 1) {
+    const vi = positions.length / 3;
+    positions.push(...p0);
+    positions.push(...p1);
+    positions.push(...p2);
+    positions.push(...p3);
+    color = [color[0] * shade, color[1] * shade, color[2] * shade];
+    colors.push(...color);
+    colors.push(...color);
+    colors.push(...color);
+    colors.push(...color);
+    index4.push(vi + 0, vi + 1, vi + 2);
+    index4.push(vi + 2, vi + 3, vi + 0);
+  }
+  function transparent(ix, iy) {
+    const i = 4 * (iy * image.width + ix);
+    if (image.pixels[i + 3] < 1) {
+      return true;
+    }
+    if (image.pixels[i + 0] === 0 && image.pixels[i + 1] === 0 && image.pixels[i + 2] === 0) {
+      return true;
+    }
+    return false;
+  }
+  for (let iy = 0; iy < image.height; iy++) {
+    for (let ix = 0; ix < image.width; ix++) {
+      const i = 4 * (iy * image.width + ix);
+      const x = ix;
+      const y = 0;
+      const z = image.height - iy - 1;
+      if (i < 0 || i >= image.pixels.length) {
+        throw new Error("Internal error: index out of range");
+      }
+      if (transparent(ix, iy)) {
+        continue;
+      }
+      const color = [
+        image.pixels[i + 0] / 255,
+        image.pixels[i + 1] / 255,
+        image.pixels[i + 2] / 255
+      ];
+      if (transparent(ix, iy - 1)) {
+        quad([x + 0, y + 0, z + 1], [x + 1, y + 0, z + 1], [x + 1, y + 1, z + 1], [x + 0, y + 1, z + 1], color);
+      }
+      if (transparent(ix - 1, iy)) {
+        quad([x + 0, y + 0, z + 0], [x + 0, y + 0, z + 1], [x + 0, y + 1, z + 1], [x + 0, y + 1, z + 0], color, 0.5);
+      }
+      if (transparent(ix + 1, iy)) {
+        quad([x + 1, y + 0, z + 0], [x + 1, y + 1, z + 0], [x + 1, y + 1, z + 1], [x + 1, y + 0, z + 1], color, 0.5);
+      }
+      quad([x + 0, y + 0, z + 0], [x + 1, y + 0, z + 0], [x + 1, y + 0, z + 1], [x + 0, y + 0, z + 1], color, 1);
+      quad([x + 0, y + 1, z + 0], [x + 0, y + 1, z + 1], [x + 1, y + 1, z + 1], [x + 1, y + 1, z + 0], color, 1);
+    }
+  }
+  let geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  geometry.setIndex(Array.from(index4));
+  geometry.computeBoundingBox();
+  return geometry;
+}
 
 // relative:/workspaces/monorepo/source/lib/engine/src/renderer_hud/renderer_hud.js
 var RendererHUD = class {
@@ -71518,7 +71651,15 @@ var RendererThree = class {
     if (!actor.mesh) {
       return;
     }
-    this._scene.add(actor.mesh(ctx));
+    const { scene } = this;
+    const ret = actor.mesh(ctx);
+    if (typeof ret.then === "function") {
+      ret.then((mesh) => {
+        scene.add(mesh);
+      });
+    } else {
+      scene.add(ret);
+    }
   }
   renderFrame() {
     this._renderer.render(this._scene, this._camera);
@@ -71743,7 +71884,7 @@ function EngineRecorder({
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-function EngineFrame({
+var EngineFrame = import_react15.default.memo(function({
   engine = new Engine(),
   actors = [],
   recorder = null,
@@ -71756,13 +71897,14 @@ function EngineFrame({
     engine._renderers["three"] = new RendererThree(refElem.current);
     engine._renderers["two"] = new RendererTwo(refElem.current);
     engine._renderers["hud"] = new RendererHUD(refElem.current);
+    engine._cache.imageGeometry = new ImageGeometryCache();
     engine._actors.push(...actors);
     engine.start();
     return () => {
       engine.stop();
       engine.dispose();
     };
-  }, [refElem?.current]);
+  }, [refElem.current]);
   return /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("div", {
     ref: refElem,
     style: {
@@ -71778,7 +71920,7 @@ function EngineFrame({
     autoStart: autoRecord,
     duration: recorderDuration
   }));
-}
+});
 
 // builtin:./__app.js
 function app_default() {
