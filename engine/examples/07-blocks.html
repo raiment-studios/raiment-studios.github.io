@@ -71883,7 +71883,8 @@ var HeightMap = class {
     segments = 16,
     heightFunc = null,
     colorFunc = (x, y, u, v) => [1, 0, 0.5],
-    opacity = 1
+    opacity = 1,
+    layers = []
   } = {}) {
     this._offset = offset;
     this._scale = scale;
@@ -71892,6 +71893,12 @@ var HeightMap = class {
     this._layers = {
       height: new Float32Array(segments * segments)
     };
+    for (let layerName of layers) {
+      if (layerName === "height") {
+        continue;
+      }
+      this.addLayer(layerName);
+    }
     this._layers.height.fill(0);
     this._colorFunc = colorFunc;
     this._heightFunc = heightFunc;
@@ -71918,6 +71925,9 @@ var HeightMap = class {
   worldGroundHeight(wx, wy) {
     return this.getLayerWC("height", wx, wy);
   }
+  mesh(ctx) {
+    return this._createMesh(ctx);
+  }
   coordW2S(wx, wy) {
     const s = this._segments / this._scale;
     const sx = Math.floor((wx - this._offset[0]) * s);
@@ -71927,6 +71937,16 @@ var HeightMap = class {
     }
     return [-1, -1, -1];
   }
+  coordW2I(wx, wy) {
+    const N = this._segments;
+    const s = N / this._scale;
+    const sx = Math.floor((wx - this._offset[0]) * s);
+    const sy = Math.floor((wy - this._offset[1]) * s);
+    if (sx >= 0 && sx < N && sy >= 0 && sy < N) {
+      return sy * N + sx;
+    }
+    return -1;
+  }
   coordS2W(sx, sy) {
     const wx = (sx + 0.5) * this._scale / this._segments + this._offset[0];
     const wy = (sy + 0.5) * this._scale / this._segments + this._offset[1];
@@ -71934,6 +71954,15 @@ var HeightMap = class {
   }
   coordValidS(sx, sy) {
     return sx >= 0 && sx < this._segments && sy >= 0 && sy < this._segments;
+  }
+  addLayer(layerName) {
+    const n = this.segments;
+    const layer = new Float32Array(n * n);
+    layer.fill(0);
+    this._layers[layerName] = layer;
+  }
+  getLayerArray(layerName) {
+    return this._layers[layerName];
   }
   getLayerWC(layerName, wx, wy) {
     const [sx, sy] = this.coordW2S(wx, wy);
@@ -71974,7 +72003,7 @@ var HeightMap = class {
       }
     }
   }
-  mesh({ engine }) {
+  _createMesh({ engine }) {
     const segs = this._segments;
     const arrays = {
       position: new Float32Array(5 * 4 * 3 * segs * segs),

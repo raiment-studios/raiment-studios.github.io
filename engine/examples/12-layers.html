@@ -73018,10 +73018,10 @@ var EngineFrame = import_react16.default.memo(function({
   }));
 });
 
-// relative:/workspaces/monorepo/source/lib/engine/examples/11-world/forest.js
+// relative:/workspaces/monorepo/source/lib/engine/examples/12-layers/forest.js
 var import_chroma_js2 = __toESM(require_chroma());
 
-// relative:/workspaces/monorepo/source/lib/engine/examples/11-world/make_voxel_geometry.js
+// relative:/workspaces/monorepo/source/lib/engine/examples/12-layers/make_voxel_geometry.js
 function makeVoxelGeometry(voxels, options) {
   options = Object.assign({
     voxelScale: 1,
@@ -73252,7 +73252,7 @@ var ChunkedFloat32Array = class {
   }
 };
 
-// relative:/workspaces/monorepo/source/lib/engine/examples/11-world/voxel_mesh_sg.js
+// relative:/workspaces/monorepo/source/lib/engine/examples/12-layers/voxel_mesh_sg.js
 function grid3d(x, y, z, size, out = {}) {
   out.gx = Math.floor(x / size);
   out.gy = Math.floor(y / size);
@@ -73410,7 +73410,7 @@ var MaterialCache = class {
 };
 var materialCache = new MaterialCache();
 
-// relative:/workspaces/monorepo/source/lib/engine/examples/11-world/forest.js
+// relative:/workspaces/monorepo/source/lib/engine/examples/12-layers/forest.js
 var Forest = class {
   constructor(params) {
     this._params = Object.assign({
@@ -73597,49 +73597,7 @@ function EngineView() {
         },
         worldX,
         worldY,
-        stateMachine: function() {
-          return {
-            _start: function* () {
-              this.position.x = rng.rangei(-RANGE, RANGE);
-              this.position.y = rng.rangei(-RANGE, RANGE);
-              return "target";
-            },
-            target: function* () {
-              const thinking = 60 * rng.range(0.5, 4);
-              yield thinking;
-              const dest = [rng.rangei(-RANGE, RANGE), rng.rangei(-RANGE, RANGE)];
-              return ["move", dest];
-            },
-            move: function* (dest) {
-              const step = 0.1;
-              do {
-                const dx = dest[0] - this.position.x;
-                const dy = dest[1] - this.position.y;
-                let count = 0;
-                if (dx < -step) {
-                  this.position.x -= step;
-                } else if (dx > step) {
-                  this.position.x += step;
-                } else {
-                  this.position.x = dest[0];
-                  count++;
-                }
-                if (dy < -step) {
-                  this.position.y -= step;
-                } else if (dy > step) {
-                  this.position.y += step;
-                } else {
-                  this.position.y = dest[1];
-                  count++;
-                }
-                if (count > 1) {
-                  return "target";
-                }
-                yield;
-              } while (true);
-            }
-          };
-        }
+        stateMachine: () => wanderBehavior({ RANGE })
       });
       sprites.push(sprite);
     }
@@ -73649,12 +73607,14 @@ function EngineView() {
       offset: [-256 / 2, -256 / 2, 0],
       scale: 256,
       segments: 256,
+      layers: ["height", "type"],
       heightFunc: (sx, sy) => {
         const a = (1 + simplex3.noise2D(sx / 96, sy / 96)) / 2;
         return 0.1 * a;
       },
-      colorFunc: (sx, sy) => {
-        const rgb = [146 / 255, 201 / 255, 117 / 255];
+      colorFunc: function(sx, sy) {
+        const type = this.getLayerSC("type", sx, sy);
+        const rgb = type !== 0 ? [146 / 255, 201 / 255, 117 / 255] : [0.6, 0.5, 0.1];
         const a = (1 + simplex3.noise2D(sx, sy)) / 2;
         const b = (1 + simplex2.noise2D(sx / 100, sy / 100)) / 2;
         const t = 0.5 * b + 0.5;
@@ -73668,6 +73628,50 @@ function EngineView() {
     engine,
     recorder: "three"
   });
+}
+function wanderBehavior({ RANGE }) {
+  const rng = makeRNG();
+  return {
+    _start: function* () {
+      this.position.x = rng.rangei(-RANGE, RANGE);
+      this.position.y = rng.rangei(-RANGE, RANGE);
+      return "target";
+    },
+    target: function* () {
+      const thinking = 60 * rng.range(0.5, 4);
+      yield thinking;
+      const dest = [rng.rangei(-RANGE, RANGE), rng.rangei(-RANGE, RANGE)];
+      return ["move", dest];
+    },
+    move: function* (dest) {
+      const step = 0.1;
+      do {
+        const dx = dest[0] - this.position.x;
+        const dy = dest[1] - this.position.y;
+        let count = 0;
+        if (dx < -step) {
+          this.position.x -= step;
+        } else if (dx > step) {
+          this.position.x += step;
+        } else {
+          this.position.x = dest[0];
+          count++;
+        }
+        if (dy < -step) {
+          this.position.y -= step;
+        } else if (dy > step) {
+          this.position.y += step;
+        } else {
+          this.position.y = dest[1];
+          count++;
+        }
+        if (count > 1) {
+          return "target";
+        }
+        yield;
+      } while (true);
+    }
+  };
 }
 var Updater = class {
   constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
@@ -73727,15 +73731,19 @@ var Updater = class {
         return "update";
       },
       update: function* () {
-        const D = 32;
+        const D = 64;
         const MAX_DIST = Math.sqrt(2 * D * D);
         const heightMap = this._heightMap;
         const frames = rng.rangei(10, 100);
+        const typeLayer = heightMap.getLayerArray("type");
         for (let i = 0; i < frames; i++) {
           const centerSX = Math.floor(this._position.x);
           const centerSY = Math.floor(this._position.y);
           for (let sy = centerSY - D, lsy = -D; sy <= centerSY + D; lsy++, sy++) {
             for (let sx = centerSX - D, lsx = -D; sx <= centerSX + D; lsx++, sx++) {
+              if (rng.random() < 0.99) {
+                continue;
+              }
               if (!heightMap.coordValidS(sx, sy)) {
                 continue;
               }
@@ -73751,7 +73759,8 @@ var Updater = class {
               const k = 0.01;
               dz *= k + (1 - k) * (1 - normalizedDist);
               const nz = wz + dz;
-              heightMap.setLayerWC("height", wx, wy, nz, false);
+              const si = sy * heightMap.segments + sx;
+              typeLayer[si] = 1;
             }
           }
           const K = D + 1;
@@ -73763,7 +73772,7 @@ var Updater = class {
               heightMap.updateSegment(sx, sy);
             }
           }
-          yield;
+          yield 5;
         }
         return "changeTerrain";
       }
