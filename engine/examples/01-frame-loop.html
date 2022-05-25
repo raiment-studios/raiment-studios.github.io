@@ -34430,6 +34430,25 @@ var RingBuffer = class {
 
 // relative:/workspaces/monorepo/source/lib/engine/src/engine/world.js
 var World = class {
+  constructor(engine) {
+    this._engine = engine;
+  }
+  get engine() {
+    return this._engine;
+  }
+  groundHeight(wx, wy) {
+    let max = -Infinity;
+    for (let actor of this.engine.actors) {
+      if (!actor.worldGroundHeight) {
+        continue;
+      }
+      const z = actor.worldGroundHeight(wx, wy);
+      if (z > max) {
+        max = z;
+      }
+    }
+    return max;
+  }
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/state_machine.js
@@ -34439,6 +34458,9 @@ var StateMachine = class {
     this._states = states;
     this._activeState = states._start.call(this._self);
     this._waitCycles = 0;
+  }
+  bind(obj) {
+    this._self = obj;
   }
   update() {
     if (!this._activeState) {
@@ -34459,97 +34481,29 @@ var StateMachine = class {
   }
 };
 
-// relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
-var Engine = class {
-  constructor() {
-    EventEmitter.composeInto(this);
-    this._uuid = uuid();
-    this._frameLoop = new FrameLoop(this.runFrame.bind(this));
-    this._context = {
-      engine: this,
-      timeMS: 0,
-      frameNumber: 0,
-      frameFPS: 0
-    };
-    this._renderers = {};
-    this._cache = {};
-    this._actors = new ActorList();
-    this._world = new World();
-  }
-  dispose() {
-    this.stop();
-    for (let renderer of Object.values(this._renderers)) {
-      renderer.dispose();
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/behaviors/register_pin_to_world_ground.js
+function registerPinToWorldGround(engine) {
+  engine.events.on("actor.postinit", ({ actor }) => {
+    if (!actor.flags?.pinToWorldGround) {
+      return;
     }
-  }
-  get uuid() {
-    return this._uuid;
-  }
-  get renderers() {
-    return this._renderers;
-  }
-  get cache() {
-    return this._cache;
-  }
-  get actors() {
-    return this._actors;
-  }
-  get world() {
-    return this._world;
-  }
-  start() {
-    this._frameLoop.start();
-  }
-  stop() {
-    this._frameLoop.stop();
-  }
-  runFrame({ frameNumber, frameFPS }) {
-    const ctx = this._context;
-    ctx.timeMS = window.performance.now();
-    ctx.frameNumber = frameNumber;
-    ctx.frameFPS = frameFPS;
-    ctx.actors = this._actors;
-    if (this._actors._added.length > 0) {
-      for (let actor of this._actors._added) {
-        if (actor.init) {
-          actor.init(ctx);
-        }
-        if (actor.stateMachine) {
-          actor.__stateMachine = new StateMachine(actor.stateMachine(ctx));
-        }
-        for (let renderer of Object.values(this._renderers)) {
-          if (!renderer.addActor) {
-            break;
-          }
-          renderer.addActor(ctx, actor);
-        }
-      }
+    if (!actor.position) {
+      const err = `Actor must define the position property to use the pinToWorldGround flag`;
+      console.error(err, { actor });
+      throw new Error(err);
     }
-    this._actors._added = [];
-    for (let actor of this._actors) {
-      if (actor.__stateMachine) {
-        actor.__stateMachine.update(ctx);
-      }
+  });
+  engine.events.on("actor.postupdate", ({ engine: engine2, actor }) => {
+    if (!actor.flags?.pinToWorldGround) {
+      return;
     }
-    for (let actor of this._actors) {
-      if (actor.update) {
-        actor.update(ctx);
-      }
+    const pos = actor.position;
+    const z = engine2.world.groundHeight(pos.x, pos.y);
+    if (z > -Infinity) {
+      actor.position.set(pos.x, pos.y, z);
     }
-    for (let renderer of Object.values(this._renderers)) {
-      renderer.renderFrame(ctx);
-    }
-  }
-};
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/math/rng.js
-var import_mersenne_twister2 = __toESM(require_mersenne_twister(), 1);
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
-var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
-
-// relative:/workspaces/monorepo/source/lib/engine/src/texture_atlas.js
-var import_lodash = __toESM(require_lodash());
+  });
+}
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/three/build/three.module.js
 var REVISION = "140";
@@ -58953,6 +58907,134 @@ if (typeof window !== "undefined") {
   }
 }
 
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/behaviors/register_billboard.js
+function registerBillboard(engine) {
+  const state = {
+    angle: 0,
+    zAxis: new Vector3(0, 0, 1)
+  };
+  engine.events.on("engine.preupdate", ({ engine: engine2 }) => {
+    const viewVector = new Vector3(0, 0, -1);
+    viewVector.applyQuaternion(engine2.renderers.three.camera.quaternion);
+    state.angle = Math.atan2(-viewVector.y, -viewVector.x);
+  });
+  engine.events.on("actor.postupdate", ({ engine: engine2, actor }) => {
+    if (!actor.flags?.billboard) {
+      return;
+    }
+    const mesh = actor.__mesh;
+    mesh?.setRotationFromAxisAngle(state.zAxis, state.angle + Math.PI / 2);
+  });
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
+var Engine = class {
+  constructor() {
+    EventEmitter.composeInto(this);
+    this._uuid = uuid();
+    this._frameLoop = new FrameLoop(this.runFrame.bind(this));
+    this._context = {
+      engine: this,
+      timeMS: 0,
+      frameNumber: 0,
+      frameFPS: 0,
+      actors: null,
+      actor: null
+    };
+    this._renderers = {};
+    this._cache = {};
+    this._actors = new ActorList();
+    this._world = new World(this);
+    registerPinToWorldGround(this);
+    registerBillboard(this);
+  }
+  dispose() {
+    this.stop();
+    for (let renderer of Object.values(this._renderers)) {
+      renderer.dispose();
+    }
+  }
+  get uuid() {
+    return this._uuid;
+  }
+  get renderers() {
+    return this._renderers;
+  }
+  get cache() {
+    return this._cache;
+  }
+  get actors() {
+    return this._actors;
+  }
+  get world() {
+    return this._world;
+  }
+  start() {
+    this._frameLoop.start();
+  }
+  stop() {
+    this._frameLoop.stop();
+  }
+  runFrame({ frameNumber, frameFPS }) {
+    const ctx = this._context;
+    ctx.timeMS = window.performance.now();
+    ctx.frameNumber = frameNumber;
+    ctx.frameFPS = frameFPS;
+    ctx.actors = this._actors;
+    if (this._actors._added.length > 0) {
+      for (let actor of this._actors._added) {
+        ctx.actor = actor;
+        if (actor.init) {
+          actor.init(ctx);
+        }
+        this.events.fire("actor.postinit", ctx);
+        if (actor.stateMachine) {
+          const desc = actor.stateMachine(ctx);
+          if (desc) {
+            actor.__stateMachine = new StateMachine(desc);
+          }
+        }
+        for (let renderer of Object.values(this._renderers)) {
+          if (!renderer.addActor) {
+            break;
+          }
+          renderer.addActor(ctx, actor);
+        }
+      }
+    }
+    this._actors._added = [];
+    this.events.fire("engine.preupdate", ctx);
+    for (let actor of this._actors) {
+      ctx.actor = actor;
+      this.events.fire("actor.preupdate", ctx);
+      if (actor.__stateMachine) {
+        actor.__stateMachine.update(ctx);
+      }
+    }
+    for (let actor of this._actors) {
+      ctx.actor = actor;
+      if (actor.update) {
+        actor.update(ctx);
+      }
+      this.events.fire("actor.postupdate", ctx);
+    }
+    this.events.fire("engine.preupdate", ctx);
+    ctx.actor = null;
+    for (let renderer of Object.values(this._renderers)) {
+      renderer.renderFrame(ctx);
+    }
+  }
+};
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/math/rng.js
+var import_mersenne_twister2 = __toESM(require_mersenne_twister(), 1);
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
+var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
+
+// relative:/workspaces/monorepo/source/lib/engine/src/texture_atlas.js
+var import_lodash = __toESM(require_lodash());
+
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/basic_lighting.js
 var import_chroma_js = __toESM(require_chroma());
 
@@ -59159,13 +59241,20 @@ var RendererThree = class {
     const ret = actor.mesh(ctx);
     if (typeof ret.then === "function") {
       ret.then((mesh) => {
+        actor.__mesh = mesh;
         scene.add(mesh);
       });
     } else {
+      actor.__mesh = ret;
       scene.add(ret);
     }
   }
-  renderFrame() {
+  renderFrame({ engine }) {
+    for (let actor of engine.actors) {
+      if (actor.position && actor.__mesh) {
+        actor.__mesh.position.copy(actor.position);
+      }
+    }
     this._renderer.render(this._scene, this._camera);
   }
 };

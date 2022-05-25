@@ -2298,9 +2298,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React16 = require_react();
+        var React17 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React16.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React17.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3701,7 +3701,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React16.Children.forEach(props.children, function(child) {
+                React17.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -11273,7 +11273,7 @@ var require_react_dom_development = __commonJS({
           }
         }
         var fakeInternalInstance = {};
-        var emptyRefsObject = new React16.Component().refs;
+        var emptyRefsObject = new React17.Component().refs;
         var didWarnAboutStateAssignmentForComponent;
         var didWarnAboutUninitializedState;
         var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -32070,11 +32070,11 @@ var require_chroma = __commonJS({
 });
 
 // builtin:./__bootstrap.js
-var import_react17 = __toESM(require_react());
+var import_react18 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // builtin:./__app.js
-var import_react16 = __toESM(require_react());
+var import_react17 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@babel/runtime/helpers/esm/extends.js
 function _extends() {
@@ -35789,20 +35789,23 @@ function useCommonStyles() {
 // relative:/workspaces/monorepo/source/lib/react-ex/src/hooks/use_local_storage.js
 var import_react5 = __toESM(require_react());
 
-// relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
+// relative:/workspaces/monorepo/source/lib/react-ex/src/components/flex.js
 var import_react6 = __toESM(require_react());
+
+// relative:/workspaces/monorepo/source/lib/react-ex/src/components/pixelated_image.js
+var import_react7 = __toESM(require_react());
+
+// relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
+var import_react8 = __toESM(require_react());
 function ReadingFrame({ children }) {
   useCommonStyles();
-  return /* @__PURE__ */ import_react6.default.createElement("div", {
+  return /* @__PURE__ */ import_react8.default.createElement("div", {
     style: {
       width: "62rem",
       margin: "1rem auto 2rem"
     }
   }, children);
 }
-
-// relative:/workspaces/monorepo/source/lib/react-ex/src/components/flex.js
-var import_react7 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/core/src/controllers/event_emitter.js
 var EventEmitter = class {
@@ -38158,6 +38161,25 @@ var RingBuffer = class {
 
 // relative:/workspaces/monorepo/source/lib/engine/src/engine/world.js
 var World = class {
+  constructor(engine) {
+    this._engine = engine;
+  }
+  get engine() {
+    return this._engine;
+  }
+  groundHeight(wx, wy) {
+    let max = -Infinity;
+    for (let actor of this.engine.actors) {
+      if (!actor.worldGroundHeight) {
+        continue;
+      }
+      const z = actor.worldGroundHeight(wx, wy);
+      if (z > max) {
+        max = z;
+      }
+    }
+    return max;
+  }
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/state_machine.js
@@ -38167,6 +38189,9 @@ var StateMachine = class {
     this._states = states;
     this._activeState = states._start.call(this._self);
     this._waitCycles = 0;
+  }
+  bind(obj) {
+    this._self = obj;
   }
   update() {
     if (!this._activeState) {
@@ -38187,97 +38212,29 @@ var StateMachine = class {
   }
 };
 
-// relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
-var Engine = class {
-  constructor() {
-    EventEmitter.composeInto(this);
-    this._uuid = uuid();
-    this._frameLoop = new FrameLoop(this.runFrame.bind(this));
-    this._context = {
-      engine: this,
-      timeMS: 0,
-      frameNumber: 0,
-      frameFPS: 0
-    };
-    this._renderers = {};
-    this._cache = {};
-    this._actors = new ActorList();
-    this._world = new World();
-  }
-  dispose() {
-    this.stop();
-    for (let renderer of Object.values(this._renderers)) {
-      renderer.dispose();
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/behaviors/register_pin_to_world_ground.js
+function registerPinToWorldGround(engine) {
+  engine.events.on("actor.postinit", ({ actor }) => {
+    if (!actor.flags?.pinToWorldGround) {
+      return;
     }
-  }
-  get uuid() {
-    return this._uuid;
-  }
-  get renderers() {
-    return this._renderers;
-  }
-  get cache() {
-    return this._cache;
-  }
-  get actors() {
-    return this._actors;
-  }
-  get world() {
-    return this._world;
-  }
-  start() {
-    this._frameLoop.start();
-  }
-  stop() {
-    this._frameLoop.stop();
-  }
-  runFrame({ frameNumber, frameFPS }) {
-    const ctx = this._context;
-    ctx.timeMS = window.performance.now();
-    ctx.frameNumber = frameNumber;
-    ctx.frameFPS = frameFPS;
-    ctx.actors = this._actors;
-    if (this._actors._added.length > 0) {
-      for (let actor of this._actors._added) {
-        if (actor.init) {
-          actor.init(ctx);
-        }
-        if (actor.stateMachine) {
-          actor.__stateMachine = new StateMachine(actor.stateMachine(ctx));
-        }
-        for (let renderer of Object.values(this._renderers)) {
-          if (!renderer.addActor) {
-            break;
-          }
-          renderer.addActor(ctx, actor);
-        }
-      }
+    if (!actor.position) {
+      const err = `Actor must define the position property to use the pinToWorldGround flag`;
+      console.error(err, { actor });
+      throw new Error(err);
     }
-    this._actors._added = [];
-    for (let actor of this._actors) {
-      if (actor.__stateMachine) {
-        actor.__stateMachine.update(ctx);
-      }
+  });
+  engine.events.on("actor.postupdate", ({ engine: engine2, actor }) => {
+    if (!actor.flags?.pinToWorldGround) {
+      return;
     }
-    for (let actor of this._actors) {
-      if (actor.update) {
-        actor.update(ctx);
-      }
+    const pos = actor.position;
+    const z = engine2.world.groundHeight(pos.x, pos.y);
+    if (z > -Infinity) {
+      actor.position.set(pos.x, pos.y, z);
     }
-    for (let renderer of Object.values(this._renderers)) {
-      renderer.renderFrame(ctx);
-    }
-  }
-};
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/math/rng.js
-var import_mersenne_twister2 = __toESM(require_mersenne_twister(), 1);
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
-var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
-
-// relative:/workspaces/monorepo/source/lib/engine/src/texture_atlas.js
-var import_lodash = __toESM(require_lodash());
+  });
+}
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/three/build/three.module.js
 var REVISION = "140";
@@ -62681,6 +62638,134 @@ if (typeof window !== "undefined") {
   }
 }
 
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/behaviors/register_billboard.js
+function registerBillboard(engine) {
+  const state = {
+    angle: 0,
+    zAxis: new Vector3(0, 0, 1)
+  };
+  engine.events.on("engine.preupdate", ({ engine: engine2 }) => {
+    const viewVector = new Vector3(0, 0, -1);
+    viewVector.applyQuaternion(engine2.renderers.three.camera.quaternion);
+    state.angle = Math.atan2(-viewVector.y, -viewVector.x);
+  });
+  engine.events.on("actor.postupdate", ({ engine: engine2, actor }) => {
+    if (!actor.flags?.billboard) {
+      return;
+    }
+    const mesh = actor.__mesh;
+    mesh?.setRotationFromAxisAngle(state.zAxis, state.angle + Math.PI / 2);
+  });
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
+var Engine = class {
+  constructor() {
+    EventEmitter.composeInto(this);
+    this._uuid = uuid();
+    this._frameLoop = new FrameLoop(this.runFrame.bind(this));
+    this._context = {
+      engine: this,
+      timeMS: 0,
+      frameNumber: 0,
+      frameFPS: 0,
+      actors: null,
+      actor: null
+    };
+    this._renderers = {};
+    this._cache = {};
+    this._actors = new ActorList();
+    this._world = new World(this);
+    registerPinToWorldGround(this);
+    registerBillboard(this);
+  }
+  dispose() {
+    this.stop();
+    for (let renderer of Object.values(this._renderers)) {
+      renderer.dispose();
+    }
+  }
+  get uuid() {
+    return this._uuid;
+  }
+  get renderers() {
+    return this._renderers;
+  }
+  get cache() {
+    return this._cache;
+  }
+  get actors() {
+    return this._actors;
+  }
+  get world() {
+    return this._world;
+  }
+  start() {
+    this._frameLoop.start();
+  }
+  stop() {
+    this._frameLoop.stop();
+  }
+  runFrame({ frameNumber, frameFPS }) {
+    const ctx = this._context;
+    ctx.timeMS = window.performance.now();
+    ctx.frameNumber = frameNumber;
+    ctx.frameFPS = frameFPS;
+    ctx.actors = this._actors;
+    if (this._actors._added.length > 0) {
+      for (let actor of this._actors._added) {
+        ctx.actor = actor;
+        if (actor.init) {
+          actor.init(ctx);
+        }
+        this.events.fire("actor.postinit", ctx);
+        if (actor.stateMachine) {
+          const desc = actor.stateMachine(ctx);
+          if (desc) {
+            actor.__stateMachine = new StateMachine(desc);
+          }
+        }
+        for (let renderer of Object.values(this._renderers)) {
+          if (!renderer.addActor) {
+            break;
+          }
+          renderer.addActor(ctx, actor);
+        }
+      }
+    }
+    this._actors._added = [];
+    this.events.fire("engine.preupdate", ctx);
+    for (let actor of this._actors) {
+      ctx.actor = actor;
+      this.events.fire("actor.preupdate", ctx);
+      if (actor.__stateMachine) {
+        actor.__stateMachine.update(ctx);
+      }
+    }
+    for (let actor of this._actors) {
+      ctx.actor = actor;
+      if (actor.update) {
+        actor.update(ctx);
+      }
+      this.events.fire("actor.postupdate", ctx);
+    }
+    this.events.fire("engine.preupdate", ctx);
+    ctx.actor = null;
+    for (let renderer of Object.values(this._renderers)) {
+      renderer.renderFrame(ctx);
+    }
+  }
+};
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/math/rng.js
+var import_mersenne_twister2 = __toESM(require_mersenne_twister(), 1);
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
+var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
+
+// relative:/workspaces/monorepo/source/lib/engine/src/texture_atlas.js
+var import_lodash = __toESM(require_lodash());
+
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/basic_lighting.js
 var import_chroma_js = __toESM(require_chroma());
 
@@ -62713,10 +62798,10 @@ function loadImage(src) {
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/use_engine.js
-var import_react8 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-var import_react15 = __toESM(require_react());
+var import_react16 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/caches/image_geometry_cache.js
 var ImageGeometryCache = class {
@@ -62887,13 +62972,20 @@ var RendererThree = class {
     const ret = actor.mesh(ctx);
     if (typeof ret.then === "function") {
       ret.then((mesh) => {
+        actor.__mesh = mesh;
         scene.add(mesh);
       });
     } else {
+      actor.__mesh = ret;
       scene.add(ret);
     }
   }
-  renderFrame() {
+  renderFrame({ engine }) {
+    for (let actor of engine.actors) {
+      if (actor.position && actor.__mesh) {
+        actor.__mesh.position.copy(actor.position);
+      }
+    }
     this._renderer.render(this._scene, this._camera);
   }
 };
@@ -62952,14 +63044,14 @@ var RendererTwo = class {
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_recorder.js
-var import_react14 = __toESM(require_react());
+var import_react15 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_async_effect.js
-var import_react9 = __toESM(require_react(), 1);
+var import_react10 = __toESM(require_react(), 1);
 var INTERRUPTED2 = Symbol();
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_google_font.js
-var import_react10 = __toESM(require_react(), 1);
+var import_react11 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_common_styles.js
 var styles2 = {
@@ -62995,20 +63087,20 @@ var useCommonStyles22 = createUseStyles({
 });
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_local_storage.js
-var import_react11 = __toESM(require_react(), 1);
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/reading_frame.js
 var import_react12 = __toESM(require_react(), 1);
 
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/flex.js
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/reading_frame.js
 var import_react13 = __toESM(require_react(), 1);
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/flex.js
+var import_react14 = __toESM(require_react(), 1);
 function Flex({
   className,
   style,
   children,
   align = "center"
 }) {
-  return /* @__PURE__ */ import_react13.default.createElement("div", {
+  return /* @__PURE__ */ import_react14.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "row",
@@ -63025,7 +63117,7 @@ function EngineRecorder({
   duration = 16600,
   autoStart = false
 }) {
-  const [recording, setRecording] = import_react14.default.useState({
+  const [recording, setRecording] = import_react15.default.useState({
     active: false,
     ready: false,
     dataURI: null,
@@ -63072,51 +63164,51 @@ function EngineRecorder({
       dataURI
     });
   };
-  import_react14.default.useEffect(() => {
+  import_react15.default.useEffect(() => {
     if (autoStart) {
       setTimeout(() => handleRecord(), 100);
     }
   }, []);
-  return /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement(Flex, {
+  return /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement(Flex, {
     style: {
       padding: "4px 0"
     }
-  }, /* @__PURE__ */ import_react14.default.createElement("button", {
+  }, /* @__PURE__ */ import_react15.default.createElement("button", {
     style: {
       width: "8rem"
     },
     disabled: recording.active,
     onClick: () => handleRecord(duration)
-  }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+  }), /* @__PURE__ */ import_react15.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(8e3)
-  }, "8"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, "8"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+  }), /* @__PURE__ */ import_react15.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(12e3)
-  }, "12"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, "12"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+  }), /* @__PURE__ */ import_react15.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(3e4)
-  }, "30"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, "30"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+  }), /* @__PURE__ */ import_react15.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(6e4)
-  }, "60"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, "60"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: "1rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react14.default.createElement("a", {
+  }), /* @__PURE__ */ import_react15.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react15.default.createElement("a", {
     href: recording.dataURI,
     target: "_blank"
   }, "download"))));
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-var EngineFrame = import_react15.default.memo(function({
+var EngineFrame = import_react16.default.memo(function({
   engine = new Engine(),
   actors = [],
   recorder = null,
@@ -63124,8 +63216,8 @@ var EngineFrame = import_react15.default.memo(function({
   recorderDuration = void 0,
   style = {}
 }) {
-  const refElem = import_react15.default.useRef(null);
-  import_react15.default.useEffect(() => {
+  const refElem = import_react16.default.useRef(null);
+  import_react16.default.useEffect(() => {
     engine._renderers["three"] = new RendererThree(refElem.current);
     engine._renderers["two"] = new RendererTwo(refElem.current);
     engine._renderers["hud"] = new RendererHUD(refElem.current);
@@ -63137,7 +63229,7 @@ var EngineFrame = import_react15.default.memo(function({
       engine.dispose();
     };
   }, [refElem.current]);
-  return /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("div", {
+  return /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, /* @__PURE__ */ import_react16.default.createElement("div", {
     ref: refElem,
     style: {
       width: "100%",
@@ -63146,7 +63238,7 @@ var EngineFrame = import_react15.default.memo(function({
       margin: 0,
       ...style
     }
-  }), recorder && /* @__PURE__ */ import_react15.default.createElement(EngineRecorder, {
+  }), recorder && /* @__PURE__ */ import_react16.default.createElement(EngineRecorder, {
     engine,
     rendererName: recorder,
     autoStart: autoRecord,
@@ -63157,12 +63249,12 @@ var EngineFrame = import_react15.default.memo(function({
 // builtin:./__app.js
 var start = Date.now();
 function app_default() {
-  const [log, setLog] = import_react16.default.useState([]);
+  const [log, setLog] = import_react17.default.useState([]);
   const append = (s) => {
     const ts = Math.floor((Date.now() - start) / 1e3);
     setLog((log2) => [...log2, `${`${ts}`.padStart(3, "0")} ${s}`]);
   };
-  import_react16.default.useEffect(() => {
+  import_react17.default.useEffect(() => {
     append("Starting...");
     const sm = new StateMachine({
       _start: function* () {
@@ -63187,13 +63279,13 @@ function app_default() {
       clearInterval(timer);
     };
   }, []);
-  return /* @__PURE__ */ import_react16.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react16.default.createElement("h1", null, "State Machine"), /* @__PURE__ */ import_react16.default.createElement("pre", null, log.join("\n")));
+  return /* @__PURE__ */ import_react17.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react17.default.createElement("h1", null, "State Machine"), /* @__PURE__ */ import_react17.default.createElement("pre", null, log.join("\n")));
 }
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");
 var root2 = import_client.default.createRoot(container);
-root2.render(/* @__PURE__ */ import_react17.default.createElement(app_default, null));
+root2.render(/* @__PURE__ */ import_react18.default.createElement(app_default, null));
 /*
 object-assign
 (c) Sindre Sorhus

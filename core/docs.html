@@ -2302,9 +2302,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React9 = require_react();
+        var React10 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React9.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React10.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3705,7 +3705,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React9.Children.forEach(props.children, function(child) {
+                React10.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -11277,7 +11277,7 @@ var require_react_dom_development = __commonJS({
           }
         }
         var fakeInternalInstance = {};
-        var emptyRefsObject = new React9.Component().refs;
+        var emptyRefsObject = new React10.Component().refs;
         var didWarnAboutStateAssignmentForComponent;
         var didWarnAboutUninitializedState;
         var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -23617,11 +23617,11 @@ var require_js_levenshtein = __commonJS({
 });
 
 // builtin:./__bootstrap.js
-var import_react9 = __toESM(require_react());
+var import_react10 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // builtin:./__app.js
-var import_react8 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@babel/runtime/helpers/esm/extends.js
 function _extends() {
@@ -27336,20 +27336,23 @@ function useCommonStyles() {
 // relative:/workspaces/monorepo/source/lib/react-ex/src/hooks/use_local_storage.js
 var import_react5 = __toESM(require_react());
 
-// relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
+// relative:/workspaces/monorepo/source/lib/react-ex/src/components/flex.js
 var import_react6 = __toESM(require_react());
+
+// relative:/workspaces/monorepo/source/lib/react-ex/src/components/pixelated_image.js
+var import_react7 = __toESM(require_react());
+
+// relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
+var import_react8 = __toESM(require_react());
 function ReadingFrame({ children }) {
   useCommonStyles();
-  return /* @__PURE__ */ import_react6.default.createElement("div", {
+  return /* @__PURE__ */ import_react8.default.createElement("div", {
     style: {
       width: "62rem",
       margin: "1rem auto 2rem"
     }
   }, children);
 }
-
-// relative:/workspaces/monorepo/source/lib/react-ex/src/components/flex.js
-var import_react7 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/core/src/index.js
 var src_exports = {};
@@ -34306,7 +34309,7 @@ function uuid() {
 
 // builtin:./__app.js
 function app_default() {
-  return /* @__PURE__ */ import_react8.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react8.default.createElement("h3", null, "Format"), /* @__PURE__ */ import_react8.default.createElement("h4", null, "formatNumber"), /* @__PURE__ */ import_react8.default.createElement(CodeExample, {
+  return /* @__PURE__ */ import_react9.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react9.default.createElement("h3", null, "Format"), /* @__PURE__ */ import_react9.default.createElement("h4", null, "formatNumber"), /* @__PURE__ */ import_react9.default.createElement(CodeExample, {
     example: `
 formatNumber = core.formatNumber;
 formatNumber(3)
@@ -34327,14 +34330,14 @@ formatNumber(0.000000003)
 // Whole multiples of \u03C0 are special-cased
 formatNumber(2 * Math.PI)
     `
-  }), /* @__PURE__ */ import_react8.default.createElement("h3", null, "RNG"), /* @__PURE__ */ import_react8.default.createElement("h4", null, "sign"), /* @__PURE__ */ import_react8.default.createElement(CodeExample, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h3", null, "RNG"), /* @__PURE__ */ import_react9.default.createElement("h4", null, "sign"), /* @__PURE__ */ import_react9.default.createElement(CodeExample, {
     example: `
 rng = core.makeRNG();
 rng.sign()
 rng.sign()
 rng.sign()
     `
-  }), /* @__PURE__ */ import_react8.default.createElement("h4", null, "int31"), /* @__PURE__ */ import_react8.default.createElement(CodeExample, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h4", null, "int31"), /* @__PURE__ */ import_react9.default.createElement(CodeExample, {
     example: `
 rng = core.makeRNG();
 rng.int31()
@@ -34344,7 +34347,7 @@ rng.int31()
 rng.int31()
 rng.int31()
     `
-  }), /* @__PURE__ */ import_react8.default.createElement("h4", null, "shuffle"), /* @__PURE__ */ import_react8.default.createElement(CodeExample, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h4", null, "shuffle"), /* @__PURE__ */ import_react9.default.createElement(CodeExample, {
     example: `
 arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 rng = core.makeRNG();
@@ -34357,13 +34360,13 @@ arr
 rng.shuffle(arr)
 rng.shuffle(arr)
     `
-  }), /* @__PURE__ */ import_react8.default.createElement("h3", null, "Distributions"), /* @__PURE__ */ import_react8.default.createElement("h4", null, "Math.random"), /* @__PURE__ */ import_react8.default.createElement(SamplerChart, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h3", null, "Distributions"), /* @__PURE__ */ import_react9.default.createElement("h4", null, "Math.random"), /* @__PURE__ */ import_react9.default.createElement(SamplerChart, {
     f: Math.random,
     range: [0, 1]
-  }), /* @__PURE__ */ import_react8.default.createElement("h4", null, "Math.sin"), /* @__PURE__ */ import_react8.default.createElement(SamplerChart, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h4", null, "Math.sin"), /* @__PURE__ */ import_react9.default.createElement(SamplerChart, {
     f: () => Math.sin(2 * Math.PI * Math.random()),
     range: [-1, 1]
-  }), /* @__PURE__ */ import_react8.default.createElement("h4", null, "Custom"), /* @__PURE__ */ import_react8.default.createElement(SamplerChart, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h4", null, "Custom"), /* @__PURE__ */ import_react9.default.createElement(SamplerChart, {
     f: () => {
       let v;
       let prob;
@@ -34375,7 +34378,7 @@ rng.shuffle(arr)
       return v;
     },
     range: [0, 1]
-  }), /* @__PURE__ */ import_react8.default.createElement("h4", null, "core.makeRNG"), /* @__PURE__ */ import_react8.default.createElement(SamplerChart, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h4", null, "core.makeRNG"), /* @__PURE__ */ import_react9.default.createElement(SamplerChart, {
     f: (() => {
       const rng = makeRNG();
       return () => {
@@ -34383,7 +34386,7 @@ rng.shuffle(arr)
       };
     })(),
     range: [0, 1]
-  }), /* @__PURE__ */ import_react8.default.createElement("h4", null, "Simplex noise2D"), /* @__PURE__ */ import_react8.default.createElement(SamplerChart, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h4", null, "Simplex noise2D"), /* @__PURE__ */ import_react9.default.createElement(SamplerChart, {
     f: (() => {
       const simplex = makeSimplexNoise(Math.random());
       return () => {
@@ -34393,7 +34396,7 @@ rng.shuffle(arr)
       };
     })(),
     range: [-1, 1]
-  }), /* @__PURE__ */ import_react8.default.createElement("h4", null, "Simplex noise3D"), /* @__PURE__ */ import_react8.default.createElement(SamplerChart, {
+  }), /* @__PURE__ */ import_react9.default.createElement("h4", null, "Simplex noise3D"), /* @__PURE__ */ import_react9.default.createElement(SamplerChart, {
     f: (() => {
       const simplex = makeSimplexNoise(Math.random());
       return () => {
@@ -34407,12 +34410,12 @@ rng.shuffle(arr)
   }));
 }
 function SamplerChart({ f, range }) {
-  const [min, setMin] = import_react8.default.useState(0);
-  const [max, setMax] = import_react8.default.useState(0);
-  const [outOfRange, setOutOfRange] = import_react8.default.useState(0);
-  const [bucketMax, setBucketMax] = import_react8.default.useState(0);
-  const [buckets, setBuckets] = import_react8.default.useState([]);
-  import_react8.default.useEffect(() => {
+  const [min, setMin] = import_react9.default.useState(0);
+  const [max, setMax] = import_react9.default.useState(0);
+  const [outOfRange, setOutOfRange] = import_react9.default.useState(0);
+  const [bucketMax, setBucketMax] = import_react9.default.useState(0);
+  const [buckets, setBuckets] = import_react9.default.useState([]);
+  import_react9.default.useEffect(() => {
     const buckets2 = new Array(100);
     buckets2.fill(0);
     let bucketMax2 = 0;
@@ -34451,12 +34454,12 @@ function SamplerChart({ f, range }) {
       state.stop = true;
     };
   }, []);
-  return /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("div", null, "Max: ", max), /* @__PURE__ */ import_react8.default.createElement("div", {
+  return /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("div", null, "Max: ", max), /* @__PURE__ */ import_react9.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "row"
     }
-  }, buckets.map((bucket, index4) => /* @__PURE__ */ import_react8.default.createElement("div", {
+  }, buckets.map((bucket, index4) => /* @__PURE__ */ import_react9.default.createElement("div", {
     key: index4,
     style: {
       position: "relative",
@@ -34465,7 +34468,7 @@ function SamplerChart({ f, range }) {
       backgroundColor: "white",
       borderBottom: "solid 2px #AAA"
     }
-  }, /* @__PURE__ */ import_react8.default.createElement("div", {
+  }, /* @__PURE__ */ import_react9.default.createElement("div", {
     key: index4,
     style: {
       position: "absolute",
@@ -34474,10 +34477,10 @@ function SamplerChart({ f, range }) {
       height: `${Math.floor(100 * bucket / bucketMax)}px`,
       backgroundColor: index4 % 2 ? "#CCE" : "#BBB"
     }
-  })))), /* @__PURE__ */ import_react8.default.createElement("div", null, "Min: ", min), /* @__PURE__ */ import_react8.default.createElement("div", null, "Out of range: ", outOfRange, " [", range[0], ", ", range[1], "]"));
+  })))), /* @__PURE__ */ import_react9.default.createElement("div", null, "Min: ", min), /* @__PURE__ */ import_react9.default.createElement("div", null, "Out of range: ", outOfRange, " [", range[0], ", ", range[1], "]"));
 }
 function CodeExample({ example }) {
-  const [results, setResults] = import_react8.default.useState([]);
+  const [results, setResults] = import_react9.default.useState([]);
   const _state = {};
   const context = {
     _state,
@@ -34498,7 +34501,7 @@ function CodeExample({ example }) {
     }
     return result2;
   };
-  import_react8.default.useEffect(() => {
+  import_react9.default.useEffect(() => {
     for (let line of example.trim().split("\n")) {
       let node = {
         type: "generic",
@@ -34525,17 +34528,17 @@ function CodeExample({ example }) {
       setResults((results2) => [...results2, node]);
     }
   }, []);
-  return /* @__PURE__ */ import_react8.default.createElement("div", {
+  return /* @__PURE__ */ import_react9.default.createElement("div", {
     style: {
       padding: 8,
       border: "solid 1px #CCC",
       borderRadius: 4,
       backgroundColor: "rgba(0,0,0,.02)"
     }
-  }, results.map((node, index4) => /* @__PURE__ */ import_react8.default.createElement("div", {
+  }, results.map((node, index4) => /* @__PURE__ */ import_react9.default.createElement("div", {
     key: index4,
     style: { minHeight: "1rem" }
-  }, /* @__PURE__ */ import_react8.default.createElement("div", {
+  }, /* @__PURE__ */ import_react9.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "row",
@@ -34544,37 +34547,37 @@ function CodeExample({ example }) {
       borderRadius: node.type === "expression" ? 4 : 0,
       backgroundColor: node.type === "expression" ? "rgba(80,160,255,.10)" : "transparent"
     }
-  }, /* @__PURE__ */ import_react8.default.createElement("div", {
+  }, /* @__PURE__ */ import_react9.default.createElement("div", {
     style: {
       color: "#999",
       padding: "0 0 0 0.25rem"
     }
-  }, /* @__PURE__ */ import_react8.default.createElement("code", null, `${index4 + 1}`.padStart(3, "0"))), /* @__PURE__ */ import_react8.default.createElement("div", {
+  }, /* @__PURE__ */ import_react9.default.createElement("code", null, `${index4 + 1}`.padStart(3, "0"))), /* @__PURE__ */ import_react9.default.createElement("div", {
     style: { flex: "0 0 1rem" }
-  }), /* @__PURE__ */ import_react8.default.createElement("div", {
+  }), /* @__PURE__ */ import_react9.default.createElement("div", {
     style: { flex: "1 0 8rem" }
-  }, node.type === "blank" ? null : node.type === "comment" ? /* @__PURE__ */ import_react8.default.createElement("code", {
+  }, node.type === "blank" ? null : node.type === "comment" ? /* @__PURE__ */ import_react9.default.createElement("code", {
     style: { color: "#151" }
-  }, node.input) : /* @__PURE__ */ import_react8.default.createElement("div", null, /* @__PURE__ */ import_react8.default.createElement("code", {
+  }, node.input) : /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("code", {
     style: { whiteSpace: "nowrap" }
-  }, `${node.input}`))), /* @__PURE__ */ import_react8.default.createElement("div", {
+  }, `${node.input}`))), /* @__PURE__ */ import_react9.default.createElement("div", {
     style: { flex: "0 0 1rem" }
-  }), /* @__PURE__ */ import_react8.default.createElement("div", {
+  }), /* @__PURE__ */ import_react9.default.createElement("div", {
     style: { flex: `${node.type === "expression" ? 8 : 0} 0 0` }
-  }, node.type === "expression" && /* @__PURE__ */ import_react8.default.createElement(Result, {
+  }, node.type === "expression" && /* @__PURE__ */ import_react9.default.createElement(Result, {
     result: node.result
   }))))));
 }
 function Result({ result: result2 }) {
-  return /* @__PURE__ */ import_react8.default.createElement("div", {
+  return /* @__PURE__ */ import_react9.default.createElement("div", {
     style: { color: "#33C" }
-  }, /* @__PURE__ */ import_react8.default.createElement("code", null, "\u2192 ", Array.isArray(result2.value) ? `[ ${result2.value.join(", ")} ]` : result2.value));
+  }, /* @__PURE__ */ import_react9.default.createElement("code", null, "\u2192 ", Array.isArray(result2.value) ? `[ ${result2.value.join(", ")} ]` : result2.value));
 }
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");
 var root2 = import_client.default.createRoot(container);
-root2.render(/* @__PURE__ */ import_react9.default.createElement(app_default, null));
+root2.render(/* @__PURE__ */ import_react10.default.createElement(app_default, null));
 /*
 object-assign
 (c) Sindre Sorhus

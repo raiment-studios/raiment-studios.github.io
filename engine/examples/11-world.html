@@ -2302,9 +2302,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React16 = require_react();
+        var React17 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React16.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React17.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3705,7 +3705,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React16.Children.forEach(props.children, function(child) {
+                React17.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -11277,7 +11277,7 @@ var require_react_dom_development = __commonJS({
           }
         }
         var fakeInternalInstance = {};
-        var emptyRefsObject = new React16.Component().refs;
+        var emptyRefsObject = new React17.Component().refs;
         var didWarnAboutStateAssignmentForComponent;
         var didWarnAboutUninitializedState;
         var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -32074,11 +32074,11 @@ var require_chroma = __commonJS({
 });
 
 // builtin:./__bootstrap.js
-var import_react17 = __toESM(require_react());
+var import_react18 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // builtin:./__app.js
-var import_react16 = __toESM(require_react());
+var import_react17 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@babel/runtime/helpers/esm/extends.js
 function _extends() {
@@ -35847,20 +35847,8 @@ function useCommonStyles() {
 // relative:/workspaces/monorepo/source/lib/react-ex/src/hooks/use_local_storage.js
 var import_react5 = __toESM(require_react());
 
-// relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
-var import_react6 = __toESM(require_react());
-function ReadingFrame({ children }) {
-  useCommonStyles();
-  return /* @__PURE__ */ import_react6.default.createElement("div", {
-    style: {
-      width: "62rem",
-      margin: "1rem auto 2rem"
-    }
-  }, children);
-}
-
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/flex.js
-var import_react7 = __toESM(require_react());
+var import_react6 = __toESM(require_react());
 function Flex({
   className,
   style,
@@ -35870,12 +35858,54 @@ function Flex({
   dir
 }) {
   direction = direction || dir;
-  return /* @__PURE__ */ import_react7.default.createElement("div", {
+  return /* @__PURE__ */ import_react6.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: direction,
       alignItems: align,
       ...style
+    }
+  }, children);
+}
+
+// relative:/workspaces/monorepo/source/lib/react-ex/src/components/pixelated_image.js
+var import_react7 = __toESM(require_react());
+function PixelatedImage({ src, scale = 6 }) {
+  const [image, setImage] = import_react7.default.useState(null);
+  useAsyncEffect(async (token) => {
+    const img = await loadImage(src);
+    token.check();
+    setImage(img);
+  }, []);
+  return image && /* @__PURE__ */ import_react7.default.createElement("img", {
+    style: {
+      width: image.width * scale,
+      height: image.height * scale,
+      imageRendering: "pixelated"
+    },
+    src: image.src
+  });
+}
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    let img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = (err) => {
+      console.error(err);
+      reject(err);
+    };
+    img.src = src;
+  });
+}
+
+// relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
+var import_react8 = __toESM(require_react());
+function ReadingFrame({ children }) {
+  useCommonStyles();
+  return /* @__PURE__ */ import_react8.default.createElement("div", {
+    style: {
+      width: "62rem",
+      margin: "1rem auto 2rem"
     }
   }, children);
 }
@@ -35943,6 +35973,117 @@ var EventEmitter = class {
 
 // relative:/workspaces/monorepo/source/lib/core/src/math/rng.js
 var import_mersenne_twister = __toESM(require_mersenne_twister());
+function makeRNG(...args) {
+  return new RNG(...args);
+}
+var RNG = class {
+  constructor(seed = Math.random() * 1e9) {
+    this._rng = new import_mersenne_twister.default(seed);
+    this._seed = seed;
+  }
+  get seed() {
+    return this._seed;
+  }
+  reset() {
+    this._rng = new import_mersenne_twister.default(this._seed);
+  }
+  fork(offset = 0) {
+    return new RNG(this.uint31() + offset);
+  }
+  random() {
+    return this._rng.random();
+  }
+  sign() {
+    return this._rng.random() < 0.5 ? -1 : 1;
+  }
+  bool() {
+    return this._rng.random() < 0.5 ? false : true;
+  }
+  int31() {
+    return this.sign() * this.uint31();
+  }
+  uint31() {
+    return this._rng.random_int31();
+  }
+  range(minValue, maxValue) {
+    const a = this._rng.random();
+    return minValue + a * (maxValue - minValue);
+  }
+  rangei(minValue, maxValue) {
+    const a = this._rng.random();
+    return Math.floor(minValue + a * (maxValue - minValue));
+  }
+  _s4() {
+    return Math.floor(this.random() * 65536).toString(16).substring(1);
+  }
+  uuid() {
+    const s42 = () => this._s4();
+    return `${s42() + s42()}-${s42()}-${s42()}-${s42()}-${s42()}${s42()}${s42()}`;
+  }
+  shuffle(arr) {
+    const temp = [...arr];
+    const dst = [];
+    while (temp.length) {
+      const i = Math.floor(this.random() * temp.length);
+      dst.push(temp[i]);
+      temp[i] = temp[temp.length - 1];
+      temp.pop();
+    }
+    return dst;
+  }
+  select(arr, count, weightFunc) {
+    if (arguments.length === 1) {
+      count = 1;
+    } else if (arguments.length === 2) {
+      if (typeof count === "function") {
+        weightFunc = count;
+        count = 1;
+      }
+    }
+    if (count === 1) {
+      if (!weightFunc) {
+        const i = Math.floor(this.random() * arr.length);
+        return arr[i];
+      } else {
+        const i = this._selectWeightedIndex(arr, weightFunc);
+        return arr[i];
+      }
+    } else {
+      const b = [...arr];
+      const results = [];
+      while (count > 0 && b.length > 0) {
+        let i;
+        if (!weightFunc) {
+          i = Math.floor(this.random() * b.length);
+        } else {
+          i = this._selectWeightedIndex(b, weightFunc);
+        }
+        const t = b[i];
+        b[i] = b[b.length - 1];
+        b.pop();
+        results.push(t);
+      }
+      return results;
+    }
+  }
+  _selectWeightedIndex(arr, cb) {
+    let sum = 0;
+    let tally = new Array(arr.length);
+    for (let i = 0; i < arr.length; i++) {
+      const entry = arr[i];
+      const weight = cb(entry);
+      sum += weight;
+      tally[i] = sum;
+    }
+    const roll = this.range(0, sum);
+    for (let i = 0; i < arr.length; i++) {
+      if (roll < tally[i]) {
+        return i;
+      }
+    }
+    throw new Error("RUNTIME_ERROR: Index out of range");
+  }
+};
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/simplex-noise/dist/esm/simplex-noise.js
 var F2 = 0.5 * (Math.sqrt(3) - 1);
@@ -36119,6 +36260,359 @@ var grad4 = new Float32Array([
   -1,
   0
 ]);
+var SimplexNoise = class {
+  constructor(randomOrSeed = Math.random) {
+    const random = typeof randomOrSeed == "function" ? randomOrSeed : alea(randomOrSeed);
+    this.p = buildPermutationTable(random);
+    this.perm = new Uint8Array(512);
+    this.permMod12 = new Uint8Array(512);
+    for (let i = 0; i < 512; i++) {
+      this.perm[i] = this.p[i & 255];
+      this.permMod12[i] = this.perm[i] % 12;
+    }
+  }
+  noise2D(x, y) {
+    const permMod12 = this.permMod12;
+    const perm = this.perm;
+    let n0 = 0;
+    let n1 = 0;
+    let n2 = 0;
+    const s = (x + y) * F2;
+    const i = Math.floor(x + s);
+    const j = Math.floor(y + s);
+    const t = (i + j) * G2;
+    const X0 = i - t;
+    const Y0 = j - t;
+    const x0 = x - X0;
+    const y0 = y - Y0;
+    let i1, j1;
+    if (x0 > y0) {
+      i1 = 1;
+      j1 = 0;
+    } else {
+      i1 = 0;
+      j1 = 1;
+    }
+    const x1 = x0 - i1 + G2;
+    const y1 = y0 - j1 + G2;
+    const x2 = x0 - 1 + 2 * G2;
+    const y2 = y0 - 1 + 2 * G2;
+    const ii = i & 255;
+    const jj = j & 255;
+    let t0 = 0.5 - x0 * x0 - y0 * y0;
+    if (t0 >= 0) {
+      const gi0 = permMod12[ii + perm[jj]] * 3;
+      t0 *= t0;
+      n0 = t0 * t0 * (grad3[gi0] * x0 + grad3[gi0 + 1] * y0);
+    }
+    let t1 = 0.5 - x1 * x1 - y1 * y1;
+    if (t1 >= 0) {
+      const gi1 = permMod12[ii + i1 + perm[jj + j1]] * 3;
+      t1 *= t1;
+      n1 = t1 * t1 * (grad3[gi1] * x1 + grad3[gi1 + 1] * y1);
+    }
+    let t2 = 0.5 - x2 * x2 - y2 * y2;
+    if (t2 >= 0) {
+      const gi2 = permMod12[ii + 1 + perm[jj + 1]] * 3;
+      t2 *= t2;
+      n2 = t2 * t2 * (grad3[gi2] * x2 + grad3[gi2 + 1] * y2);
+    }
+    return 70 * (n0 + n1 + n2);
+  }
+  noise3D(x, y, z) {
+    const permMod12 = this.permMod12;
+    const perm = this.perm;
+    let n0, n1, n2, n3;
+    const s = (x + y + z) * F3;
+    const i = Math.floor(x + s);
+    const j = Math.floor(y + s);
+    const k = Math.floor(z + s);
+    const t = (i + j + k) * G3;
+    const X0 = i - t;
+    const Y0 = j - t;
+    const Z0 = k - t;
+    const x0 = x - X0;
+    const y0 = y - Y0;
+    const z0 = z - Z0;
+    let i1, j1, k1;
+    let i2, j2, k2;
+    if (x0 >= y0) {
+      if (y0 >= z0) {
+        i1 = 1;
+        j1 = 0;
+        k1 = 0;
+        i2 = 1;
+        j2 = 1;
+        k2 = 0;
+      } else if (x0 >= z0) {
+        i1 = 1;
+        j1 = 0;
+        k1 = 0;
+        i2 = 1;
+        j2 = 0;
+        k2 = 1;
+      } else {
+        i1 = 0;
+        j1 = 0;
+        k1 = 1;
+        i2 = 1;
+        j2 = 0;
+        k2 = 1;
+      }
+    } else {
+      if (y0 < z0) {
+        i1 = 0;
+        j1 = 0;
+        k1 = 1;
+        i2 = 0;
+        j2 = 1;
+        k2 = 1;
+      } else if (x0 < z0) {
+        i1 = 0;
+        j1 = 1;
+        k1 = 0;
+        i2 = 0;
+        j2 = 1;
+        k2 = 1;
+      } else {
+        i1 = 0;
+        j1 = 1;
+        k1 = 0;
+        i2 = 1;
+        j2 = 1;
+        k2 = 0;
+      }
+    }
+    const x1 = x0 - i1 + G3;
+    const y1 = y0 - j1 + G3;
+    const z1 = z0 - k1 + G3;
+    const x2 = x0 - i2 + 2 * G3;
+    const y2 = y0 - j2 + 2 * G3;
+    const z2 = z0 - k2 + 2 * G3;
+    const x3 = x0 - 1 + 3 * G3;
+    const y3 = y0 - 1 + 3 * G3;
+    const z3 = z0 - 1 + 3 * G3;
+    const ii = i & 255;
+    const jj = j & 255;
+    const kk = k & 255;
+    let t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
+    if (t0 < 0)
+      n0 = 0;
+    else {
+      const gi0 = permMod12[ii + perm[jj + perm[kk]]] * 3;
+      t0 *= t0;
+      n0 = t0 * t0 * (grad3[gi0] * x0 + grad3[gi0 + 1] * y0 + grad3[gi0 + 2] * z0);
+    }
+    let t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
+    if (t1 < 0)
+      n1 = 0;
+    else {
+      const gi1 = permMod12[ii + i1 + perm[jj + j1 + perm[kk + k1]]] * 3;
+      t1 *= t1;
+      n1 = t1 * t1 * (grad3[gi1] * x1 + grad3[gi1 + 1] * y1 + grad3[gi1 + 2] * z1);
+    }
+    let t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
+    if (t2 < 0)
+      n2 = 0;
+    else {
+      const gi2 = permMod12[ii + i2 + perm[jj + j2 + perm[kk + k2]]] * 3;
+      t2 *= t2;
+      n2 = t2 * t2 * (grad3[gi2] * x2 + grad3[gi2 + 1] * y2 + grad3[gi2 + 2] * z2);
+    }
+    let t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
+    if (t3 < 0)
+      n3 = 0;
+    else {
+      const gi3 = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]]] * 3;
+      t3 *= t3;
+      n3 = t3 * t3 * (grad3[gi3] * x3 + grad3[gi3 + 1] * y3 + grad3[gi3 + 2] * z3);
+    }
+    return 32 * (n0 + n1 + n2 + n3);
+  }
+  noise4D(x, y, z, w) {
+    const perm = this.perm;
+    let n0, n1, n2, n3, n4;
+    const s = (x + y + z + w) * F4;
+    const i = Math.floor(x + s);
+    const j = Math.floor(y + s);
+    const k = Math.floor(z + s);
+    const l = Math.floor(w + s);
+    const t = (i + j + k + l) * G4;
+    const X0 = i - t;
+    const Y0 = j - t;
+    const Z0 = k - t;
+    const W0 = l - t;
+    const x0 = x - X0;
+    const y0 = y - Y0;
+    const z0 = z - Z0;
+    const w0 = w - W0;
+    let rankx = 0;
+    let ranky = 0;
+    let rankz = 0;
+    let rankw = 0;
+    if (x0 > y0)
+      rankx++;
+    else
+      ranky++;
+    if (x0 > z0)
+      rankx++;
+    else
+      rankz++;
+    if (x0 > w0)
+      rankx++;
+    else
+      rankw++;
+    if (y0 > z0)
+      ranky++;
+    else
+      rankz++;
+    if (y0 > w0)
+      ranky++;
+    else
+      rankw++;
+    if (z0 > w0)
+      rankz++;
+    else
+      rankw++;
+    const i1 = rankx >= 3 ? 1 : 0;
+    const j1 = ranky >= 3 ? 1 : 0;
+    const k1 = rankz >= 3 ? 1 : 0;
+    const l1 = rankw >= 3 ? 1 : 0;
+    const i2 = rankx >= 2 ? 1 : 0;
+    const j2 = ranky >= 2 ? 1 : 0;
+    const k2 = rankz >= 2 ? 1 : 0;
+    const l2 = rankw >= 2 ? 1 : 0;
+    const i3 = rankx >= 1 ? 1 : 0;
+    const j3 = ranky >= 1 ? 1 : 0;
+    const k3 = rankz >= 1 ? 1 : 0;
+    const l3 = rankw >= 1 ? 1 : 0;
+    const x1 = x0 - i1 + G4;
+    const y1 = y0 - j1 + G4;
+    const z1 = z0 - k1 + G4;
+    const w1 = w0 - l1 + G4;
+    const x2 = x0 - i2 + 2 * G4;
+    const y2 = y0 - j2 + 2 * G4;
+    const z2 = z0 - k2 + 2 * G4;
+    const w2 = w0 - l2 + 2 * G4;
+    const x3 = x0 - i3 + 3 * G4;
+    const y3 = y0 - j3 + 3 * G4;
+    const z3 = z0 - k3 + 3 * G4;
+    const w3 = w0 - l3 + 3 * G4;
+    const x4 = x0 - 1 + 4 * G4;
+    const y4 = y0 - 1 + 4 * G4;
+    const z4 = z0 - 1 + 4 * G4;
+    const w4 = w0 - 1 + 4 * G4;
+    const ii = i & 255;
+    const jj = j & 255;
+    const kk = k & 255;
+    const ll = l & 255;
+    let t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+    if (t0 < 0)
+      n0 = 0;
+    else {
+      const gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]] % 32 * 4;
+      t0 *= t0;
+      n0 = t0 * t0 * (grad4[gi0] * x0 + grad4[gi0 + 1] * y0 + grad4[gi0 + 2] * z0 + grad4[gi0 + 3] * w0);
+    }
+    let t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+    if (t1 < 0)
+      n1 = 0;
+    else {
+      const gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]] % 32 * 4;
+      t1 *= t1;
+      n1 = t1 * t1 * (grad4[gi1] * x1 + grad4[gi1 + 1] * y1 + grad4[gi1 + 2] * z1 + grad4[gi1 + 3] * w1);
+    }
+    let t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+    if (t2 < 0)
+      n2 = 0;
+    else {
+      const gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]] % 32 * 4;
+      t2 *= t2;
+      n2 = t2 * t2 * (grad4[gi2] * x2 + grad4[gi2 + 1] * y2 + grad4[gi2 + 2] * z2 + grad4[gi2 + 3] * w2);
+    }
+    let t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+    if (t3 < 0)
+      n3 = 0;
+    else {
+      const gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]] % 32 * 4;
+      t3 *= t3;
+      n3 = t3 * t3 * (grad4[gi3] * x3 + grad4[gi3 + 1] * y3 + grad4[gi3 + 2] * z3 + grad4[gi3 + 3] * w3);
+    }
+    let t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+    if (t4 < 0)
+      n4 = 0;
+    else {
+      const gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32 * 4;
+      t4 *= t4;
+      n4 = t4 * t4 * (grad4[gi4] * x4 + grad4[gi4 + 1] * y4 + grad4[gi4 + 2] * z4 + grad4[gi4 + 3] * w4);
+    }
+    return 27 * (n0 + n1 + n2 + n3 + n4);
+  }
+};
+var simplex_noise_default = SimplexNoise;
+function buildPermutationTable(random) {
+  const p = new Uint8Array(256);
+  for (let i = 0; i < 256; i++) {
+    p[i] = i;
+  }
+  for (let i = 0; i < 255; i++) {
+    const r = i + ~~(random() * (256 - i));
+    const aux = p[i];
+    p[i] = p[r];
+    p[r] = aux;
+  }
+  return p;
+}
+function alea(seed) {
+  let s0 = 0;
+  let s1 = 0;
+  let s2 = 0;
+  let c = 1;
+  const mash = masher();
+  s0 = mash(" ");
+  s1 = mash(" ");
+  s2 = mash(" ");
+  s0 -= mash(seed);
+  if (s0 < 0) {
+    s0 += 1;
+  }
+  s1 -= mash(seed);
+  if (s1 < 0) {
+    s1 += 1;
+  }
+  s2 -= mash(seed);
+  if (s2 < 0) {
+    s2 += 1;
+  }
+  return function() {
+    const t = 2091639 * s0 + c * 23283064365386963e-26;
+    s0 = s1;
+    s1 = s2;
+    return s2 = t - (c = t | 0);
+  };
+}
+function masher() {
+  let n = 4022871197;
+  return function(data) {
+    data = data.toString();
+    for (let i = 0; i < data.length; i++) {
+      n += data.charCodeAt(i);
+      let h = 0.02519603282416938 * n;
+      n = h >>> 0;
+      h -= n;
+      h *= n;
+      n = h >>> 0;
+      h -= n;
+      n += h * 4294967296;
+    }
+    return (n >>> 0) * 23283064365386963e-26;
+  };
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/math/simplex_noise.js
+function makeSimplexNoise(seed) {
+  return new simplex_noise_default(seed);
+}
 
 // relative:/workspaces/monorepo/source/lib/core/src/strings/nearest_overlap.js
 var import_js_levenshtein = __toESM(require_js_levenshtein());
@@ -42257,272 +42751,6 @@ function s4() {
 function uuid() {
   return `${s4() + s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
 }
-
-// relative:/workspaces/monorepo/source/lib/engine/src/engine/actor_list.js
-var ActorList = class {
-  constructor() {
-    this._list = [];
-    this._added = [];
-    this._removed = [];
-    this._idCache = {};
-    this[Symbol.iterator] = function* () {
-      for (let actor of this._list) {
-        yield actor;
-      }
-    };
-  }
-  push(...actors) {
-    for (let actor of actors) {
-      this._added.push(actor);
-      this._list.push(actor);
-    }
-  }
-  filter(cb) {
-    return this._list.filter(cb);
-  }
-  selectByID(id) {
-    let actor = this._idCache[id];
-    if (actor) {
-      return actor;
-    }
-    for (let actor2 of this._list) {
-      if (actor2.id === id) {
-        this._idCache[id] = actor2;
-        return actor2;
-      }
-    }
-    return null;
-  }
-};
-
-// relative:/workspaces/monorepo/source/lib/engine/src/frame_loop.js
-var FrameLoop = class {
-  constructor(cb, {
-    maxFPS = 200,
-    slowFrameMs = 200,
-    onSlowFrame = function({ frameDurationMS, frameNumber }) {
-      console.log(`Slow frame: ${frameDurationMS} milliseconds (frame=${frameNumber})`);
-    }
-  } = {}) {
-    this._frameRequest = null;
-    this._timeoutRequest = null;
-    this._callback = cb;
-    this._frameLoopBeginMS = 0;
-    const targetDurationMs = 1e3 / maxFPS;
-    const beginTimeBuffer = new RingBuffer(60);
-    beginTimeBuffer.fill(window.performance.now());
-    const ctx = {
-      frameNumber: 0,
-      frameTimeMS: 0,
-      frameDurationMS: 0,
-      frameBeginMS: 0,
-      frameEndMS: 0,
-      frameSkipCount: 0,
-      frameLoopBeginMS: 0,
-      frameLoopTimeMS: 0,
-      frameFPS: 0,
-      frameAverageFPS: 0
-    };
-    const asyncFrame = async () => {
-      const t0 = window.performance.now();
-      const dtPrevious = t0 - ctx.frameBeginMS;
-      const spareMs = targetDurationMs - dtPrevious;
-      if (spareMs <= 1) {
-        ctx.frameLoopBeginMS = this._frameLoopBeginMS;
-        ctx.frameLoopTimeMS = t0 - this._frameLoopBeginMS;
-        ctx.frameNumber++;
-        ctx.frameBeginMS = t0;
-        await cb(ctx);
-        const t1 = window.performance.now();
-        const dt = t1 - t0;
-        ctx.frameTimeMS += dt;
-        ctx.frameEndMS = t1;
-        ctx.frameDurationMS = dt;
-        const start = beginTimeBuffer.first();
-        beginTimeBuffer.push(t0);
-        ctx.frameFPS = 1e3 * beginTimeBuffer.length / (t1 - start);
-        ctx.frameAverageFPS = 1e3 * ctx.frameNumber / (t1 - ctx.frameLoopBeginMS);
-        if (t1 - t0 > slowFrameMs) {
-          onSlowFrame(ctx);
-        }
-        this._frameRequest = requestAnimationFrame(this._runFrame);
-      } else {
-        ctx.frameSkipCount++;
-        if (spareMs < 3) {
-          this._frameRequest = requestAnimationFrame(this._runFrame);
-        } else {
-          this._timeoutRequest = setTimeout(this._runFrame, 2);
-        }
-      }
-    };
-    this._runFrame = () => {
-      asyncFrame();
-    };
-  }
-  start() {
-    if (this._frameRequest || this._timeoutRequest) {
-      return;
-    }
-    this._frameLoopBeginMS = window.performance.now();
-    this._frameRequest = requestAnimationFrame(this._runFrame);
-  }
-  stop() {
-    clearTimeout(this._timeoutRequest);
-    cancelAnimationFrame(this._frameRequest);
-    this._frameRequest = null;
-    this._timeoutRequest = null;
-  }
-  dispose() {
-    this.stop();
-    this._callback = null;
-  }
-};
-var RingBuffer = class {
-  constructor(len) {
-    this._buffer = new Array(len);
-    this._index = 0;
-  }
-  get length() {
-    return this._buffer.length;
-  }
-  fill(value2) {
-    this._buffer.fill(value2);
-  }
-  first() {
-    return this._buffer[this._index];
-  }
-  last() {
-    const i = (this._index + this.buffer.length - 1) % this._buffer.length;
-    return this._buffer[i];
-  }
-  push(value2) {
-    this._buffer[this._index] = value2;
-    this._index = (this._index + 1) % this._buffer.length;
-  }
-};
-
-// relative:/workspaces/monorepo/source/lib/engine/src/engine/world.js
-var World = class {
-};
-
-// relative:/workspaces/monorepo/source/lib/engine/src/state_machine.js
-var StateMachine = class {
-  constructor(states) {
-    this._self = states._bind;
-    this._states = states;
-    this._activeState = states._start.call(this._self);
-    this._waitCycles = 0;
-  }
-  update() {
-    if (!this._activeState) {
-      return;
-    }
-    if (this._waitCycles > 0) {
-      this._waitCycles--;
-      return;
-    }
-    const result2 = this._activeState.next();
-    if (result2.done) {
-      let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
-      const generator = this._states[nextState];
-      this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
-    } else if (typeof result2.value === "number") {
-      this._waitCycles = result2.value;
-    }
-  }
-};
-
-// relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
-var Engine = class {
-  constructor() {
-    EventEmitter.composeInto(this);
-    this._uuid = uuid();
-    this._frameLoop = new FrameLoop(this.runFrame.bind(this));
-    this._context = {
-      engine: this,
-      timeMS: 0,
-      frameNumber: 0,
-      frameFPS: 0
-    };
-    this._renderers = {};
-    this._cache = {};
-    this._actors = new ActorList();
-    this._world = new World();
-  }
-  dispose() {
-    this.stop();
-    for (let renderer of Object.values(this._renderers)) {
-      renderer.dispose();
-    }
-  }
-  get uuid() {
-    return this._uuid;
-  }
-  get renderers() {
-    return this._renderers;
-  }
-  get cache() {
-    return this._cache;
-  }
-  get actors() {
-    return this._actors;
-  }
-  get world() {
-    return this._world;
-  }
-  start() {
-    this._frameLoop.start();
-  }
-  stop() {
-    this._frameLoop.stop();
-  }
-  runFrame({ frameNumber, frameFPS }) {
-    const ctx = this._context;
-    ctx.timeMS = window.performance.now();
-    ctx.frameNumber = frameNumber;
-    ctx.frameFPS = frameFPS;
-    ctx.actors = this._actors;
-    if (this._actors._added.length > 0) {
-      for (let actor of this._actors._added) {
-        if (actor.init) {
-          actor.init(ctx);
-        }
-        if (actor.stateMachine) {
-          actor.__stateMachine = new StateMachine(actor.stateMachine(ctx));
-        }
-        for (let renderer of Object.values(this._renderers)) {
-          if (!renderer.addActor) {
-            break;
-          }
-          renderer.addActor(ctx, actor);
-        }
-      }
-    }
-    this._actors._added = [];
-    for (let actor of this._actors) {
-      if (actor.__stateMachine) {
-        actor.__stateMachine.update(ctx);
-      }
-    }
-    for (let actor of this._actors) {
-      if (actor.update) {
-        actor.update(ctx);
-      }
-    }
-    for (let renderer of Object.values(this._renderers)) {
-      renderer.renderFrame(ctx);
-    }
-  }
-};
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/math/rng.js
-var import_mersenne_twister2 = __toESM(require_mersenne_twister(), 1);
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
-var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
-
-// relative:/workspaces/monorepo/source/lib/engine/src/texture_atlas.js
-var import_lodash = __toESM(require_lodash());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/three/build/three.module.js
 var three_module_exports = {};
@@ -66964,7 +67192,7 @@ var ObjectLoader = class extends Loader {
     const scope = this;
     const images = {};
     let loader;
-    function loadImage2(url) {
+    function loadImage3(url) {
       scope.manager.itemStart(url);
       return loader.load(url, function() {
         scope.manager.itemEnd(url);
@@ -66977,7 +67205,7 @@ var ObjectLoader = class extends Loader {
       if (typeof image === "string") {
         const url = image;
         const path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test(url) ? url : scope.resourcePath + url;
-        return loadImage2(path);
+        return loadImage3(path);
       } else {
         if (image.data) {
           return {
@@ -71783,6 +72011,366 @@ if (typeof window !== "undefined") {
   }
 }
 
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/actor_list.js
+var ActorList = class {
+  constructor() {
+    this._list = [];
+    this._added = [];
+    this._removed = [];
+    this._idCache = {};
+    this[Symbol.iterator] = function* () {
+      for (let actor of this._list) {
+        yield actor;
+      }
+    };
+  }
+  push(...actors) {
+    for (let actor of actors) {
+      this._added.push(actor);
+      this._list.push(actor);
+    }
+  }
+  filter(cb) {
+    return this._list.filter(cb);
+  }
+  selectByID(id) {
+    let actor = this._idCache[id];
+    if (actor) {
+      return actor;
+    }
+    for (let actor2 of this._list) {
+      if (actor2.id === id) {
+        this._idCache[id] = actor2;
+        return actor2;
+      }
+    }
+    return null;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/frame_loop.js
+var FrameLoop = class {
+  constructor(cb, {
+    maxFPS = 200,
+    slowFrameMs = 200,
+    onSlowFrame = function({ frameDurationMS, frameNumber }) {
+      console.log(`Slow frame: ${frameDurationMS} milliseconds (frame=${frameNumber})`);
+    }
+  } = {}) {
+    this._frameRequest = null;
+    this._timeoutRequest = null;
+    this._callback = cb;
+    this._frameLoopBeginMS = 0;
+    const targetDurationMs = 1e3 / maxFPS;
+    const beginTimeBuffer = new RingBuffer(60);
+    beginTimeBuffer.fill(window.performance.now());
+    const ctx = {
+      frameNumber: 0,
+      frameTimeMS: 0,
+      frameDurationMS: 0,
+      frameBeginMS: 0,
+      frameEndMS: 0,
+      frameSkipCount: 0,
+      frameLoopBeginMS: 0,
+      frameLoopTimeMS: 0,
+      frameFPS: 0,
+      frameAverageFPS: 0
+    };
+    const asyncFrame = async () => {
+      const t0 = window.performance.now();
+      const dtPrevious = t0 - ctx.frameBeginMS;
+      const spareMs = targetDurationMs - dtPrevious;
+      if (spareMs <= 1) {
+        ctx.frameLoopBeginMS = this._frameLoopBeginMS;
+        ctx.frameLoopTimeMS = t0 - this._frameLoopBeginMS;
+        ctx.frameNumber++;
+        ctx.frameBeginMS = t0;
+        await cb(ctx);
+        const t1 = window.performance.now();
+        const dt = t1 - t0;
+        ctx.frameTimeMS += dt;
+        ctx.frameEndMS = t1;
+        ctx.frameDurationMS = dt;
+        const start = beginTimeBuffer.first();
+        beginTimeBuffer.push(t0);
+        ctx.frameFPS = 1e3 * beginTimeBuffer.length / (t1 - start);
+        ctx.frameAverageFPS = 1e3 * ctx.frameNumber / (t1 - ctx.frameLoopBeginMS);
+        if (t1 - t0 > slowFrameMs) {
+          onSlowFrame(ctx);
+        }
+        this._frameRequest = requestAnimationFrame(this._runFrame);
+      } else {
+        ctx.frameSkipCount++;
+        if (spareMs < 3) {
+          this._frameRequest = requestAnimationFrame(this._runFrame);
+        } else {
+          this._timeoutRequest = setTimeout(this._runFrame, 2);
+        }
+      }
+    };
+    this._runFrame = () => {
+      asyncFrame();
+    };
+  }
+  start() {
+    if (this._frameRequest || this._timeoutRequest) {
+      return;
+    }
+    this._frameLoopBeginMS = window.performance.now();
+    this._frameRequest = requestAnimationFrame(this._runFrame);
+  }
+  stop() {
+    clearTimeout(this._timeoutRequest);
+    cancelAnimationFrame(this._frameRequest);
+    this._frameRequest = null;
+    this._timeoutRequest = null;
+  }
+  dispose() {
+    this.stop();
+    this._callback = null;
+  }
+};
+var RingBuffer = class {
+  constructor(len) {
+    this._buffer = new Array(len);
+    this._index = 0;
+  }
+  get length() {
+    return this._buffer.length;
+  }
+  fill(value2) {
+    this._buffer.fill(value2);
+  }
+  first() {
+    return this._buffer[this._index];
+  }
+  last() {
+    const i = (this._index + this.buffer.length - 1) % this._buffer.length;
+    return this._buffer[i];
+  }
+  push(value2) {
+    this._buffer[this._index] = value2;
+    this._index = (this._index + 1) % this._buffer.length;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/world.js
+var World = class {
+  constructor(engine) {
+    this._engine = engine;
+  }
+  get engine() {
+    return this._engine;
+  }
+  groundHeight(wx, wy) {
+    let max = -Infinity;
+    for (let actor of this.engine.actors) {
+      if (!actor.worldGroundHeight) {
+        continue;
+      }
+      const z = actor.worldGroundHeight(wx, wy);
+      if (z > max) {
+        max = z;
+      }
+    }
+    return max;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/state_machine.js
+var StateMachine = class {
+  constructor(states) {
+    this._self = states._bind;
+    this._states = states;
+    this._activeState = states._start.call(this._self);
+    this._waitCycles = 0;
+  }
+  bind(obj) {
+    this._self = obj;
+  }
+  update() {
+    if (!this._activeState) {
+      return;
+    }
+    if (this._waitCycles > 0) {
+      this._waitCycles--;
+      return;
+    }
+    const result2 = this._activeState.next();
+    if (result2.done) {
+      let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
+      const generator = this._states[nextState];
+      this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
+    } else if (typeof result2.value === "number") {
+      this._waitCycles = result2.value;
+    }
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/behaviors/register_pin_to_world_ground.js
+function registerPinToWorldGround(engine) {
+  engine.events.on("actor.postinit", ({ actor }) => {
+    if (!actor.flags?.pinToWorldGround) {
+      return;
+    }
+    if (!actor.position) {
+      const err = `Actor must define the position property to use the pinToWorldGround flag`;
+      console.error(err, { actor });
+      throw new Error(err);
+    }
+  });
+  engine.events.on("actor.postupdate", ({ engine: engine2, actor }) => {
+    if (!actor.flags?.pinToWorldGround) {
+      return;
+    }
+    const pos = actor.position;
+    const z = engine2.world.groundHeight(pos.x, pos.y);
+    if (z > -Infinity) {
+      actor.position.set(pos.x, pos.y, z);
+    }
+  });
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/behaviors/register_billboard.js
+function registerBillboard(engine) {
+  const state = {
+    angle: 0,
+    zAxis: new Vector3(0, 0, 1)
+  };
+  engine.events.on("engine.preupdate", ({ engine: engine2 }) => {
+    const viewVector = new Vector3(0, 0, -1);
+    viewVector.applyQuaternion(engine2.renderers.three.camera.quaternion);
+    state.angle = Math.atan2(-viewVector.y, -viewVector.x);
+  });
+  engine.events.on("actor.postupdate", ({ engine: engine2, actor }) => {
+    if (!actor.flags?.billboard) {
+      return;
+    }
+    const mesh = actor.__mesh;
+    mesh?.setRotationFromAxisAngle(state.zAxis, state.angle + Math.PI / 2);
+  });
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
+var Engine = class {
+  constructor() {
+    EventEmitter.composeInto(this);
+    this._uuid = uuid();
+    this._frameLoop = new FrameLoop(this.runFrame.bind(this));
+    this._context = {
+      engine: this,
+      timeMS: 0,
+      frameNumber: 0,
+      frameFPS: 0,
+      actors: null,
+      actor: null
+    };
+    this._renderers = {};
+    this._cache = {};
+    this._actors = new ActorList();
+    this._world = new World(this);
+    registerPinToWorldGround(this);
+    registerBillboard(this);
+  }
+  dispose() {
+    this.stop();
+    for (let renderer of Object.values(this._renderers)) {
+      renderer.dispose();
+    }
+  }
+  get uuid() {
+    return this._uuid;
+  }
+  get renderers() {
+    return this._renderers;
+  }
+  get cache() {
+    return this._cache;
+  }
+  get actors() {
+    return this._actors;
+  }
+  get world() {
+    return this._world;
+  }
+  start() {
+    this._frameLoop.start();
+  }
+  stop() {
+    this._frameLoop.stop();
+  }
+  runFrame({ frameNumber, frameFPS }) {
+    const ctx = this._context;
+    ctx.timeMS = window.performance.now();
+    ctx.frameNumber = frameNumber;
+    ctx.frameFPS = frameFPS;
+    ctx.actors = this._actors;
+    if (this._actors._added.length > 0) {
+      for (let actor of this._actors._added) {
+        ctx.actor = actor;
+        if (actor.init) {
+          actor.init(ctx);
+        }
+        this.events.fire("actor.postinit", ctx);
+        if (actor.stateMachine) {
+          const desc = actor.stateMachine(ctx);
+          if (desc) {
+            actor.__stateMachine = new StateMachine(desc);
+          }
+        }
+        for (let renderer of Object.values(this._renderers)) {
+          if (!renderer.addActor) {
+            break;
+          }
+          renderer.addActor(ctx, actor);
+        }
+      }
+    }
+    this._actors._added = [];
+    this.events.fire("engine.preupdate", ctx);
+    for (let actor of this._actors) {
+      ctx.actor = actor;
+      this.events.fire("actor.preupdate", ctx);
+      if (actor.__stateMachine) {
+        actor.__stateMachine.update(ctx);
+      }
+    }
+    for (let actor of this._actors) {
+      ctx.actor = actor;
+      if (actor.update) {
+        actor.update(ctx);
+      }
+      this.events.fire("actor.postupdate", ctx);
+    }
+    this.events.fire("engine.preupdate", ctx);
+    ctx.actor = null;
+    for (let renderer of Object.values(this._renderers)) {
+      renderer.renderFrame(ctx);
+    }
+  }
+};
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/flow/assert.js
+function assert(condition, ...msg) {
+  if (condition) {
+    return;
+  }
+  if (msg && msg.length) {
+    console.error("core.assert failture details:");
+    console.error(...msg);
+  }
+  throw new Error(`core.assert failure`);
+}
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/math/rng.js
+var import_mersenne_twister2 = __toESM(require_mersenne_twister(), 1);
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
+var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
+
+// relative:/workspaces/monorepo/source/lib/engine/src/texture_atlas.js
+var import_lodash = __toESM(require_lodash());
+
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/basic_lighting.js
 var import_chroma_js = __toESM(require_chroma());
 var BasicLighting = class {
@@ -71865,11 +72453,238 @@ var GroundPlane = class {
   }
 };
 
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/height_map.js
+var HeightMap = class {
+  constructor({
+    offset = [0, 0, 0],
+    scale = 1,
+    segments = 16,
+    heightFunc = null,
+    colorFunc = (x, y, u, v) => [1, 0, 0.5],
+    opacity = 1
+  } = {}) {
+    this._offset = offset;
+    this._scale = scale;
+    this._segments = segments;
+    this._opacity = opacity;
+    this._layers = {
+      height: new Float32Array(segments * segments)
+    };
+    this._layers.height.fill(0);
+    this._colorFunc = colorFunc;
+    this._heightFunc = heightFunc;
+    this._mesh = null;
+    for (let y = 0; y < segments; y++) {
+      for (let x = 0; x < segments; x++) {
+        const u = (x + 0.5) / (segments - 1);
+        const v = (y + 0.5) / (segments - 1);
+        const i = y * segments + x;
+        this._layers.height[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
+      }
+    }
+    assert(this._layers.height.length === this._segments * this._segments);
+  }
+  get offset() {
+    return this._offset;
+  }
+  get scale() {
+    return this._scale;
+  }
+  get segments() {
+    return this._segments;
+  }
+  worldGroundHeight(wx, wy) {
+    return this.getLayerWC("height", wx, wy);
+  }
+  coordW2S(wx, wy) {
+    const s = this._segments / this._scale;
+    const sx = Math.floor((wx - this._offset[0]) * s);
+    const sy = Math.floor((wy - this._offset[1]) * s);
+    if (sx >= 0 && sx < this._segments && sy >= 0 && sy < this._segments) {
+      return [sx, sy, sy * this._segments + sx];
+    }
+    return [-1, -1, -1];
+  }
+  coordS2W(sx, sy) {
+    const wx = (sx + 0.5) * this._scale / this._segments + this._offset[0];
+    const wy = (sy + 0.5) * this._scale / this._segments + this._offset[1];
+    return [wx, wy];
+  }
+  coordValidS(sx, sy) {
+    return sx >= 0 && sx < this._segments && sy >= 0 && sy < this._segments;
+  }
+  getLayerWC(layerName, wx, wy) {
+    const [sx, sy] = this.coordW2S(wx, wy);
+    return this.getLayerSC(layerName, sx, sy);
+  }
+  setLayerWC(layerName, wx, wy, value2, updateMesh = true) {
+    const [sx, sy] = this.coordW2S(wx, wy);
+    this.setLayerSC(layerName, sx, sy, value2, updateMesh);
+  }
+  getLayerSC(layerName, sx, sy) {
+    const i = sy * this._segments + sx;
+    return this._layers[layerName][i];
+  }
+  setLayerSC(layerName, sx, sy, value2, updateMesh = true) {
+    const index4 = sy * this._segments + sx;
+    if (index4 === -1) {
+      return;
+    }
+    this._layers[layerName][index4] = value2;
+    if (updateMesh) {
+      for (let y = sy - 1; y <= sy + 1; y++) {
+        for (let x = sx - 1; x <= sx + 1; x++) {
+          if (x >= 0 && x < this._segments && y >= 0 && y < this._segments) {
+            this._recomputeVertexAttrs(x, y, false);
+          }
+        }
+      }
+    }
+  }
+  updateSegment(sx, sy) {
+    this._recomputeVertexAttrs(sx, sy, false);
+  }
+  updateMesh() {
+    const segs = this._segments;
+    for (let sy = 0; sy < segs; sy++) {
+      for (let sx = 0; sx < segs; sx++) {
+        this._recomputeVertexAttrs(sx, sy, false);
+      }
+    }
+  }
+  mesh({ engine }) {
+    const segs = this._segments;
+    const arrays = {
+      position: new Float32Array(5 * 4 * 3 * segs * segs),
+      normal: new Float32Array(5 * 4 * 3 * segs * segs),
+      color: new Float32Array(5 * 4 * 3 * segs * segs),
+      index: new Uint32Array(5 * 6 * segs * segs)
+    };
+    let geometry = new BufferGeometry();
+    geometry.setAttribute("position", new Float32BufferAttribute(arrays.position, 3));
+    geometry.setAttribute("normal", new Float32BufferAttribute(arrays.normal, 3));
+    geometry.setAttribute("color", new Float32BufferAttribute(arrays.color, 3));
+    geometry.setIndex(new BufferAttribute(arrays.index, 1));
+    geometry.computeBoundingBox();
+    const materialOptions = {
+      color: 16777215,
+      shininess: 10
+    };
+    if (this._opacity < 1) {
+      materialOptions.opacity = this._opacity;
+      materialOptions.transparent = true;
+    }
+    let material = new MeshPhongMaterial(materialOptions);
+    this._mesh = new Mesh(geometry, material);
+    this._mesh.position.set(...this._offset);
+    this._mesh.castShadow = false;
+    this._mesh.receiveShadow = true;
+    for (let sy = 0; sy < segs; sy++) {
+      for (let sx = 0; sx < segs; sx++) {
+        this._recomputeVertexAttrs(sx, sy, true);
+      }
+    }
+    geometry.computeBoundingBox();
+    material.vertexColors = true;
+    material.needsUpdate = true;
+    return this._mesh;
+  }
+  _recomputeVertexAttrs(sx, sy, init = false) {
+    const segments = this._segments;
+    sx = Math.floor(sx);
+    sy = Math.floor(sy);
+    if (sx < 0 || sx >= segments || sy < 0 || sy >= segments) {
+      return;
+    }
+    if (!this._mesh) {
+      return;
+    }
+    const i = sy * segments + sx;
+    console.assert(i >= 0 && i < segments * segments, "Index out of range");
+    const heights = this._layers.height;
+    const indexAttr = this._mesh.geometry.index;
+    const indexArr = indexAttr.array;
+    const positionAttr = this._mesh.geometry.attributes.position;
+    const positionArr = positionAttr.array;
+    const normalAttr = this._mesh.geometry.attributes.normal;
+    const normalArr = normalAttr.array;
+    const colorAttr = this._mesh.geometry.attributes.color;
+    const colorArr = colorAttr.array;
+    assert(indexArr.length === 5 * 6 * segments * segments);
+    assert(positionArr.length === 5 * 4 * 3 * segments * segments);
+    assert(colorArr.length === 5 * 4 * 3 * segments * segments);
+    function sort2(a, b) {
+      return a < b ? [a, b] : [b, a];
+    }
+    function copy3(dst, index4, src) {
+      dst[index4 + 0] = src[0];
+      dst[index4 + 1] = src[1];
+      dst[index4 + 2] = src[2];
+    }
+    function quad(vi2, fi2, p0, p1, p2, p3, normal, color2, shade) {
+      copy3(positionArr, vi2 + 0, p0);
+      copy3(positionArr, vi2 + 3, p1);
+      copy3(positionArr, vi2 + 6, p2);
+      copy3(positionArr, vi2 + 9, p3);
+      copy3(normalArr, vi2 + 0, normal);
+      copy3(normalArr, vi2 + 3, normal);
+      copy3(normalArr, vi2 + 6, normal);
+      copy3(normalArr, vi2 + 9, normal);
+      const c = [
+        color2[0] * shade,
+        color2[1] * shade,
+        color2[2] * shade
+      ];
+      copy3(colorArr, vi2 + 0, c);
+      copy3(colorArr, vi2 + 3, c);
+      copy3(colorArr, vi2 + 6, c);
+      copy3(colorArr, vi2 + 9, c);
+      if (init) {
+        indexArr[fi2 + 0] = vi2 / 3 + 0;
+        indexArr[fi2 + 1] = vi2 / 3 + 1;
+        indexArr[fi2 + 2] = vi2 / 3 + 2;
+        indexArr[fi2 + 3] = vi2 / 3 + 2;
+        indexArr[fi2 + 4] = vi2 / 3 + 3;
+        indexArr[fi2 + 5] = vi2 / 3 + 0;
+      }
+    }
+    const color = this._colorFunc(sx, sy, heights[i]);
+    const scale0 = this._scale / this._segments;
+    const x0 = sx * scale0;
+    const x1 = (sx + 1) * scale0;
+    const y0 = sy * scale0;
+    const y1 = (sy + 1) * scale0;
+    let [z0, z1] = [0, heights[i]];
+    let vi = 5 * 4 * 3 * i;
+    let fi = 5 * 6 * i;
+    quad(vi, fi, [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], [0, 0, 1], color, 1);
+    [z0, z1] = sort2(sx > 0 ? heights[i - 1] : 0, heights[i]);
+    quad(vi + 12, fi + 6, [x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [-1, 0, 0], color, 0.95);
+    [z0, z1] = sort2(sx + 1 < segments ? heights[i + 1] : 0, heights[i]);
+    quad(vi + 24, fi + 12, [x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1], [1, 0, 0], color, 0.95);
+    [z0, z1] = sort2(sy > 0 ? heights[i - segments] : 0, heights[i]);
+    quad(vi + 3 * 12, fi + 3 * 6, [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1], [-1, 0, 0], color, 0.9);
+    [z0, z1] = sort2(sy + 1 < segments ? heights[i + segments] : 0, heights[i]);
+    quad(vi + 4 * 12, fi + 4 * 6, [x0, y1, z0], [x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [0, 1, 0], color, 0.9);
+    positionAttr.needsUpdate = true;
+    normalArr.needsUpdate = true;
+    colorAttr.needsUpdate = true;
+    if (init) {
+      indexAttr.needsUpdate = true;
+    }
+  }
+};
+
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/orbit_camera.js
 var OrbitCamera = class {
-  constructor({ radius = 192, periodMS = 1e4 } = {}) {
+  constructor({
+    radius = 192,
+    periodMS = 1e4,
+    offsetZ = 0
+  } = {}) {
     this._radius = radius;
     this._periodMS = periodMS;
+    this._offsetZ = offsetZ;
   }
   update({ engine, timeMS }) {
     const worldUp = new Vector3(0, 0, 1);
@@ -71879,7 +72694,7 @@ var OrbitCamera = class {
     const ang2 = timeMS * Math.PI / (this._periodMS * 1.802);
     const cx = radius * Math.cos(ang);
     const cy = radius * Math.sin(ang);
-    const cz = radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
+    const cz = this._offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
     camera.position.set(cx, cy, cz);
     camera.up = worldUp;
     camera.lookAt(0, 0, radius / 10);
@@ -71905,15 +72720,40 @@ var OrbitCamera = class {
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/voxel_sprite.js
 var VoxelSprite = class {
-  constructor({ url = null, scale = 1, depth = 1 } = {}) {
+  constructor({
+    url = null,
+    scale = 1,
+    depth = 1,
+    flags = {},
+    worldX = 0,
+    worldY = 0,
+    stateMachine = null
+  } = {}) {
     if (!url) {
       throw new Error(`url must be defined`);
     }
     this._url = url;
-    this._position = new Vector3(0, 0, 0);
+    this._position = new Vector3(worldX, worldY, 0);
     this._offset = new Vector3(0, 0, 0);
     this._scale = scale;
     this._depth = 1;
+    this._flags = Object.assign({}, flags);
+    this._mesh = null;
+    this._stateMachine = stateMachine;
+  }
+  get flags() {
+    return this._flags;
+  }
+  get position() {
+    return this._position;
+  }
+  stateMachine(ctx) {
+    if (!this._stateMachine) {
+      return;
+    }
+    const stateMachine = this._stateMachine(ctx);
+    stateMachine._bind = this;
+    return stateMachine;
   }
   async mesh({ engine }) {
     const geometry = await engine.cache.imageGeometry.get(this._url, this._scale, this._depth, this._offset);
@@ -71927,7 +72767,8 @@ var VoxelSprite = class {
     const group = new Group();
     group.position.copy(this._position);
     group.add(mesh);
-    return group;
+    this._mesh = group;
+    return this._mesh;
   }
 };
 
@@ -71947,7 +72788,7 @@ function getImagePixelData(img) {
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/image/load_image.js
-function loadImage(src) {
+function loadImage2(src) {
   return new Promise((resolve, reject) => {
     let img = new Image();
     img.onload = () => resolve(img);
@@ -71959,11 +72800,33 @@ function loadImage(src) {
   });
 }
 
+// relative:/workspaces/monorepo/source/lib/engine/src/physics/update_position.js
+function updatePosition(actor, dt) {
+  actor.velocity.addScaledVector(actor.acceleration, dt);
+  actor.position.addScaledVector(actor.velocity, dt);
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/physics/update_box_collision.js
+function updateBoxCollision(actor, box) {
+  const dimensions = ["x", "y", "z"];
+  const epsilon = 1e-6;
+  for (let dim of dimensions) {
+    if (actor.position[dim] <= box.min[dim]) {
+      actor.position[dim] = box.min[dim] + epsilon;
+      actor.velocity[dim] = Math.abs(actor.velocity[dim]);
+    }
+    if (actor.position[dim] >= box.max[dim]) {
+      actor.position[dim] = box.max[dim] - epsilon;
+      actor.velocity[dim] = -Math.abs(actor.velocity[dim]);
+    }
+  }
+}
+
 // relative:/workspaces/monorepo/source/lib/engine/src/react/use_engine.js
-var import_react8 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 function useEngine(initCb = noop) {
-  const [engine] = (0, import_react8.useState)(new Engine());
-  (0, import_react8.useEffect)(() => {
+  const [engine] = (0, import_react9.useState)(new Engine());
+  (0, import_react9.useEffect)(() => {
     initCb({ engine });
     return () => {
       engine.stop();
@@ -71976,7 +72839,7 @@ function noop() {
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-var import_react15 = __toESM(require_react());
+var import_react16 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/caches/image_geometry_cache.js
 var ImageGeometryCache = class {
@@ -71987,7 +72850,7 @@ var ImageGeometryCache = class {
     const key = [url, scale, density, offset].join("|");
     let geometry = this._cache[key];
     if (!geometry) {
-      const img = await loadImage(url);
+      const img = await loadImage2(url);
       const image = getImagePixelData(img);
       geometry = makeGeometry(image);
       const maxDim = Math.max(img.width, img.height);
@@ -72147,13 +73010,20 @@ var RendererThree = class {
     const ret = actor.mesh(ctx);
     if (typeof ret.then === "function") {
       ret.then((mesh) => {
+        actor.__mesh = mesh;
         scene.add(mesh);
       });
     } else {
+      actor.__mesh = ret;
       scene.add(ret);
     }
   }
-  renderFrame() {
+  renderFrame({ engine }) {
+    for (let actor of engine.actors) {
+      if (actor.position && actor.__mesh) {
+        actor.__mesh.position.copy(actor.position);
+      }
+    }
     this._renderer.render(this._scene, this._camera);
   }
 };
@@ -72212,14 +73082,14 @@ var RendererTwo = class {
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_recorder.js
-var import_react14 = __toESM(require_react());
+var import_react15 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_async_effect.js
-var import_react9 = __toESM(require_react(), 1);
+var import_react10 = __toESM(require_react(), 1);
 var INTERRUPTED2 = Symbol();
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_google_font.js
-var import_react10 = __toESM(require_react(), 1);
+var import_react11 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_common_styles.js
 var styles2 = {
@@ -72255,20 +73125,20 @@ var useCommonStyles22 = createUseStyles({
 });
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_local_storage.js
-var import_react11 = __toESM(require_react(), 1);
-
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/reading_frame.js
 var import_react12 = __toESM(require_react(), 1);
 
-// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/flex.js
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/reading_frame.js
 var import_react13 = __toESM(require_react(), 1);
+
+// ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/flex.js
+var import_react14 = __toESM(require_react(), 1);
 function Flex2({
   className,
   style,
   children,
   align = "center"
 }) {
-  return /* @__PURE__ */ import_react13.default.createElement("div", {
+  return /* @__PURE__ */ import_react14.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "row",
@@ -72285,7 +73155,7 @@ function EngineRecorder({
   duration = 16600,
   autoStart = false
 }) {
-  const [recording, setRecording] = import_react14.default.useState({
+  const [recording, setRecording] = import_react15.default.useState({
     active: false,
     ready: false,
     dataURI: null,
@@ -72332,51 +73202,51 @@ function EngineRecorder({
       dataURI
     });
   };
-  import_react14.default.useEffect(() => {
+  import_react15.default.useEffect(() => {
     if (autoStart) {
       setTimeout(() => handleRecord(), 100);
     }
   }, []);
-  return /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement(Flex2, {
+  return /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement(Flex2, {
     style: {
       padding: "4px 0"
     }
-  }, /* @__PURE__ */ import_react14.default.createElement("button", {
+  }, /* @__PURE__ */ import_react15.default.createElement("button", {
     style: {
       width: "8rem"
     },
     disabled: recording.active,
     onClick: () => handleRecord(duration)
-  }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+  }), /* @__PURE__ */ import_react15.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(8e3)
-  }, "8"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, "8"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+  }), /* @__PURE__ */ import_react15.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(12e3)
-  }, "12"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, "12"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+  }), /* @__PURE__ */ import_react15.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(3e4)
-  }, "30"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, "30"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("button", {
+  }), /* @__PURE__ */ import_react15.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(6e4)
-  }, "60"), /* @__PURE__ */ import_react14.default.createElement("div", {
+  }, "60"), /* @__PURE__ */ import_react15.default.createElement("div", {
     style: { width: "1rem" }
-  }), /* @__PURE__ */ import_react14.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react14.default.createElement("a", {
+  }), /* @__PURE__ */ import_react15.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react15.default.createElement("a", {
     href: recording.dataURI,
     target: "_blank"
   }, "download"))));
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-var EngineFrame = import_react15.default.memo(function({
+var EngineFrame = import_react16.default.memo(function({
   engine = new Engine(),
   actors = [],
   recorder = null,
@@ -72384,8 +73254,8 @@ var EngineFrame = import_react15.default.memo(function({
   recorderDuration = void 0,
   style = {}
 }) {
-  const refElem = import_react15.default.useRef(null);
-  import_react15.default.useEffect(() => {
+  const refElem = import_react16.default.useRef(null);
+  import_react16.default.useEffect(() => {
     engine._renderers["three"] = new RendererThree(refElem.current);
     engine._renderers["two"] = new RendererTwo(refElem.current);
     engine._renderers["hud"] = new RendererHUD(refElem.current);
@@ -72397,7 +73267,7 @@ var EngineFrame = import_react15.default.memo(function({
       engine.dispose();
     };
   }, [refElem.current]);
-  return /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("div", {
+  return /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, /* @__PURE__ */ import_react16.default.createElement("div", {
     ref: refElem,
     style: {
       width: "100%",
@@ -72406,7 +73276,7 @@ var EngineFrame = import_react15.default.memo(function({
       margin: 0,
       ...style
     }
-  }), recorder && /* @__PURE__ */ import_react15.default.createElement(EngineRecorder, {
+  }), recorder && /* @__PURE__ */ import_react16.default.createElement(EngineRecorder, {
     engine,
     rendererName: recorder,
     autoStart: autoRecord,
@@ -72415,56 +73285,228 @@ var EngineFrame = import_react15.default.memo(function({
 });
 
 // glob:glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}
-var matches = [{ url: "assets/proto/sprites/kestrel.png" }, { url: "assets/proto/sprites/kestrel.png.asset.yaml" }];
+var matches = [{ url: "assets/proto/sprites/kestrel.png" }, { url: "assets/proto/sprites/kestrel.png.asset.yaml" }, { url: "assets/proto/sprites/ranger.png" }, { url: "assets/proto/sprites/ranger.png.asset.yaml" }, { url: "assets/proto/sprites/ranger2.png" }, { url: "assets/proto/sprites/ranger2.png.asset.yaml" }, { url: "assets/proto/sprites/wizard.png" }, { url: "assets/proto/sprites/wizard.png.asset.yaml" }];
 var png_asset_default = { matches };
 
 // builtin:./__app.js
 var assetURL = Object.fromEntries(png_asset_default.matches.map(({ url }) => [url.split("/").pop(), url]));
 function app_default() {
-  const [data, setData] = import_react16.default.useState("");
-  useAsyncEffect(async (token) => {
-    const resp = await fetch(assetURL["kestrel.png.asset.yaml"]);
-    const text = await resp.text();
-    token.check();
-    setData(parseYAML(text));
-  }, []);
-  console.log(assetURL);
-  return /* @__PURE__ */ import_react16.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react16.default.createElement("h1", null, "VoxelSprite"), /* @__PURE__ */ import_react16.default.createElement("div", {
+  return /* @__PURE__ */ import_react17.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react17.default.createElement("h1", null, "World"), /* @__PURE__ */ import_react17.default.createElement("div", {
     style: { margin: "6px 0" }
-  }, /* @__PURE__ */ import_react16.default.createElement(EngineView, null)), /* @__PURE__ */ import_react16.default.createElement(Flex, {
-    dir: "row"
-  }, /* @__PURE__ */ import_react16.default.createElement("div", {
-    style: { flex: "1 0 0" }
-  }), /* @__PURE__ */ import_react16.default.createElement(PixelatedImage, {
-    src: assetURL["kestrel.png"]
-  }), /* @__PURE__ */ import_react16.default.createElement("div", {
-    style: { flex: "1 0 0" }
-  }), /* @__PURE__ */ import_react16.default.createElement("div", null, /* @__PURE__ */ import_react16.default.createElement("h3", null, "Image license"), /* @__PURE__ */ import_react16.default.createElement("pre", null, textToReact(data.license)))));
+  }, /* @__PURE__ */ import_react17.default.createElement(EngineView, null)), Object.entries(assetURL).filter(([key]) => key.endsWith(".png")).map(([key, value2]) => /* @__PURE__ */ import_react17.default.createElement(ImageInfo, {
+    key,
+    url: value2
+  })));
 }
 function EngineView() {
   const engine = useEngine(() => {
-    engine.actors.push(new Grid(), new OrbitCamera({ radius: 12, periodMS: 9e3 }), new BasicLighting(), new GroundPlane(), new VoxelSprite({ url: assetURL["kestrel.png"] }));
+    const rng = makeRNG();
+    let sprites = [];
+    for (let i = 0; i < 8; i++) {
+      const radius = rng.range(0, 32);
+      const ang = rng.range(0, 2 * Math.PI);
+      const worldX = radius * Math.cos(ang);
+      const worldY = radius * Math.sin(ang);
+      const RANGE = 96;
+      const sprite = new VoxelSprite({
+        url: assetURL[i == 0 ? "kestrel.png" : rng.select(["wizard.png", "ranger.png", "ranger2.png"])],
+        flags: {
+          billboard: true,
+          pinToWorldGround: true
+        },
+        worldX,
+        worldY,
+        stateMachine: function() {
+          return {
+            _start: function* () {
+              this.position.x = rng.rangei(-RANGE, RANGE);
+              this.position.y = rng.rangei(-RANGE, RANGE);
+              return "target";
+            },
+            target: function* () {
+              const thinking = 60 * rng.range(0.5, 4);
+              yield thinking;
+              const dest = [rng.rangei(-RANGE, RANGE), rng.rangei(-RANGE, RANGE)];
+              return ["move", dest];
+            },
+            move: function* (dest) {
+              const step = 0.1;
+              do {
+                const dx = dest[0] - this.position.x;
+                const dy = dest[1] - this.position.y;
+                let count = 0;
+                if (dx < -step) {
+                  this.position.x -= step;
+                } else if (dx > step) {
+                  this.position.x += step;
+                } else {
+                  this.position.x = dest[0];
+                  count++;
+                }
+                if (dy < -step) {
+                  this.position.y -= step;
+                } else if (dy > step) {
+                  this.position.y += step;
+                } else {
+                  this.position.y = dest[1];
+                  count++;
+                }
+                if (count > 1) {
+                  return "target";
+                }
+                yield;
+              } while (true);
+            }
+          };
+        }
+      });
+      sprites.push(sprite);
+    }
+    const simplex2 = makeSimplexNoise();
+    const simplex3 = makeSimplexNoise();
+    const heightMap = new HeightMap({
+      offset: [-256 / 2, -256 / 2, 0],
+      scale: 256,
+      segments: 256,
+      heightFunc: (sx, sy) => {
+        const a = (1 + simplex3.noise2D(sx / 96, sy / 96)) / 2;
+        return 0.1 * a;
+      },
+      colorFunc: (sx, sy) => {
+        const rgb = [146 / 255, 201 / 255, 117 / 255];
+        const a = (1 + simplex3.noise2D(sx, sy)) / 2;
+        const b = (1 + simplex2.noise2D(sx / 100, sy / 100)) / 2;
+        const t = 0.5 * b + 0.5;
+        const s = t + a * (1 - t);
+        return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
+      }
+    });
+    engine.actors.push(new Grid(), new OrbitCamera({ radius: 48, periodMS: 9e3, offsetZ: 16 }), new BasicLighting(), new GroundPlane(), ...sprites, heightMap, new Updater(heightMap));
   });
-  return /* @__PURE__ */ import_react16.default.createElement(EngineFrame, {
+  return /* @__PURE__ */ import_react17.default.createElement(EngineFrame, {
     engine,
     recorder: "three"
   });
 }
-function PixelatedImage({ src, scale = 6 }) {
-  const [image, setImage] = import_react16.default.useState(null);
+var Updater = class {
+  constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
+    this._heightMap = heightMap;
+    this._rng = makeRNG();
+    this._heightFunc = null;
+    this._makeHeightFunc = makeHeightFunc;
+    this._heightScale = heightScale;
+    this._position = new Vector3(0, 0, 0);
+    this._velocity = new Vector3(0, 0, 0);
+    this._acceleration = new Vector3(0, 0, 0);
+    const S = this._heightMap.segments;
+    this._collider = new Box3(new Vector3(0, 0, 0), new Vector3(S, S, S));
+  }
+  get position() {
+    return this._position;
+  }
+  get velocity() {
+    return this._velocity;
+  }
+  get acceleration() {
+    return this._acceleration;
+  }
+  update() {
+    const rng = this._rng;
+    updatePosition(this, 1);
+    updateBoxCollision(this, this._collider);
+    const K = 0.25;
+    const MV = 2;
+    this._velocity.x += K * rng.range(-1, 1);
+    this._velocity.y += K * rng.range(-1, 1);
+    this._velocity.clampScalar(-MV, MV);
+  }
+  stateMachine() {
+    const rng = this._rng;
+    let offsetX = 0;
+    let offsetZ = 0;
+    return {
+      _bind: this,
+      _start: function* () {
+        this._position.x = rng.range(0, this._heightMap.segments);
+        this._position.y = rng.range(0, this._heightMap.segments);
+        this._velocity.x = rng.sign() * rng.range(0.2, 2);
+        this._velocity.y = rng.sign() * rng.range(0.2, 2);
+        return "changeTerrain";
+      },
+      changeTerrain: function* () {
+        if (this._makeHeightFunc) {
+          this._heightFunc = this._makeHeightFunc({ heightMap: this._heightMap });
+        } else {
+          const simplex = makeSimplexNoise(4342);
+          const amplitude = 0.01 * rng.range(0.4, 3);
+          const s = 1 / this._heightMap.segments;
+          offsetX += 1;
+          offsetZ = 0.5 + 0.5 * Math.sin(offsetX / 10);
+          this._heightFunc = (x, y) => amplitude * (offsetZ + (0.5 + 0.5 * simplex.noise2D(offsetX + x * s, y * s)));
+        }
+        return "update";
+      },
+      update: function* () {
+        const D = 32;
+        const MAX_DIST = Math.sqrt(2 * D * D);
+        const heightMap = this._heightMap;
+        const frames = rng.rangei(10, 100);
+        for (let i = 0; i < frames; i++) {
+          const centerSX = Math.floor(this._position.x);
+          const centerSY = Math.floor(this._position.y);
+          for (let sy = centerSY - D, lsy = -D; sy <= centerSY + D; lsy++, sy++) {
+            for (let sx = centerSX - D, lsx = -D; sx <= centerSX + D; lsx++, sx++) {
+              if (!heightMap.coordValidS(sx, sy)) {
+                continue;
+              }
+              const [wx, wy] = heightMap.coordS2W(sx, sy);
+              const wz = heightMap.getLayerSC("height", sx, sy);
+              const tz = this._heightScale * this._heightFunc(wx, wy);
+              let dz = tz - wz;
+              if (Math.abs(dz) < 1e-3) {
+                continue;
+              }
+              dz /= 20;
+              const normalizedDist = Math.sqrt(lsx * lsx + lsy * lsy) / MAX_DIST;
+              const k = 0.01;
+              dz *= k + (1 - k) * (1 - normalizedDist);
+              const nz = wz + dz;
+              heightMap.setLayerWC("height", wx, wy, nz, false);
+            }
+          }
+          const K = D + 1;
+          for (let sy = centerSY - K; sy <= centerSY + K; sy++) {
+            for (let sx = centerSX - K; sx <= centerSX + K; sx++) {
+              if (!heightMap.coordValidS(sx, sy)) {
+                continue;
+              }
+              heightMap.updateSegment(sx, sy);
+            }
+          }
+          yield;
+        }
+        return "changeTerrain";
+      }
+    };
+  }
+};
+function ImageInfo({ url }) {
+  const [data, setData] = import_react17.default.useState(null);
   useAsyncEffect(async (token) => {
-    const img = await loadImage(src);
+    const resp = await fetch(`${url}.asset.yaml`);
+    const text = await resp.text();
     token.check();
-    setImage(img);
+    setData(parseYAML(text));
   }, []);
-  return image && /* @__PURE__ */ import_react16.default.createElement("img", {
-    style: {
-      width: image.width * scale,
-      height: image.height * scale,
-      imageRendering: "pixelated"
-    },
-    src: image.src
-  });
+  return /* @__PURE__ */ import_react17.default.createElement(Flex, {
+    dir: "row"
+  }, /* @__PURE__ */ import_react17.default.createElement("div", {
+    style: { flex: "1 0 0" }
+  }), /* @__PURE__ */ import_react17.default.createElement(PixelatedImage, {
+    src: url
+  }), /* @__PURE__ */ import_react17.default.createElement("div", {
+    style: { flex: "1 0 0" }
+  }), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("h3", null, url), /* @__PURE__ */ import_react17.default.createElement("h3", null, "License"), /* @__PURE__ */ import_react17.default.createElement("pre", null, textToReact(data?.license))));
 }
 function textToReact(s) {
   if (!s) {
@@ -72483,22 +73525,22 @@ function textToReact(s) {
     const match = m[0];
     const post = t.substring(m.index + match.length);
     const url = match.match(/^[a-z]+:\/\//) ? match : `https://${match}`;
-    parts.push(/* @__PURE__ */ import_react16.default.createElement("span", null, pre), /* @__PURE__ */ import_react16.default.createElement("a", {
+    parts.push(/* @__PURE__ */ import_react17.default.createElement("span", null, pre), /* @__PURE__ */ import_react17.default.createElement("a", {
       href: url,
       target: "_blank"
     }, match));
     t = post;
   }
   if (t.length > 0) {
-    parts.push(/* @__PURE__ */ import_react16.default.createElement("span", null, t));
+    parts.push(/* @__PURE__ */ import_react17.default.createElement("span", null, t));
   }
-  return /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, parts);
+  return /* @__PURE__ */ import_react17.default.createElement(import_react17.default.Fragment, null, parts);
 }
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");
 var root2 = import_client.default.createRoot(container);
-root2.render(/* @__PURE__ */ import_react17.default.createElement(app_default, null));
+root2.render(/* @__PURE__ */ import_react18.default.createElement(app_default, null));
 /*
 object-assign
 (c) Sindre Sorhus
