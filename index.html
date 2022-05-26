@@ -27148,17 +27148,22 @@ function Flex({
   style,
   children,
   align = "center",
-  direction = "row",
-  dir
+  direction,
+  dir,
+  onClick
 }) {
-  direction = direction || dir;
+  direction = direction || dir || "row";
+  if (direction === "col") {
+    direction = "column";
+  }
   return /* @__PURE__ */ import_react6.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: direction,
       alignItems: align,
       ...style
-    }
+    },
+    onClick
   }, children);
 }
 
@@ -27199,7 +27204,9 @@ function app_default() {
     key: folder
   }, /* @__PURE__ */ import_react9.default.createElement("a", {
     href: `engine/examples/${folder}`
-  }, folder))), /* @__PURE__ */ import_react9.default.createElement("h3", null, "Press kit"), /* @__PURE__ */ import_react9.default.createElement("p", null, "\u{1F6A7} TODO"), /* @__PURE__ */ import_react9.default.createElement("h3", null, "Support and contact"), /* @__PURE__ */ import_react9.default.createElement("p", null, "\u{1F6A7} TODO")));
+  }, folder))), /* @__PURE__ */ import_react9.default.createElement("h3", null, "Assets"), /* @__PURE__ */ import_react9.default.createElement("p", null, /* @__PURE__ */ import_react9.default.createElement("a", {
+    href: "assets"
+  }, "Asset library")), /* @__PURE__ */ import_react9.default.createElement("h3", null, "Press kit"), /* @__PURE__ */ import_react9.default.createElement("p", null, "\u{1F6A7} TODO"), /* @__PURE__ */ import_react9.default.createElement("h3", null, "Support and contact"), /* @__PURE__ */ import_react9.default.createElement("p", null, "\u{1F6A7} TODO")));
 }
 
 // builtin:./__bootstrap.js
