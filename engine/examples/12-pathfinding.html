@@ -36266,16 +36266,20 @@ var EventEmitter = class {
   }
 };
 
-// relative:/workspaces/monorepo/source/lib/core/src/flow/assert.js
-function assert(condition, ...msg) {
-  if (condition) {
-    return;
+// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_border2d.js
+function iterateBorder2D(cx, cy, width, cb) {
+  for (let dy = -width; dy <= width; dy++) {
+    for (let dx = -width; dx <= width; dx++) {
+      cb(cx + dx, cy + dy);
+    }
   }
-  if (msg && msg.length) {
-    console.error("core.assert failture details:");
-    console.error(...msg);
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_count.js
+function iterateCount(c, cb) {
+  for (let i = 0; i < c; i++) {
+    cb(i);
   }
-  throw new Error(`core.assert failure`);
 }
 
 // relative:/workspaces/monorepo/source/lib/core/src/math/rng.js
@@ -67467,7 +67471,7 @@ var Engine = class {
 };
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/flow/assert.js
-function assert2(condition, ...msg) {
+function assert(condition, ...msg) {
   if (condition) {
     return;
   }
@@ -67576,7 +67580,7 @@ var HeightMap = class {
     scale = 1,
     segments = 16,
     heightFunc = null,
-    colorFunc = (x, y, u, v) => [1, 0, 0.5],
+    colorFunc = (sx, sy, si, worldHeight) => [1, 0, 0.5],
     opacity = 1,
     layers = {}
   } = {}) {
@@ -67606,7 +67610,7 @@ var HeightMap = class {
         this._layers.height[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
       }
     }
-    assert2(this._layers.height.length === this._segments * this._segments);
+    assert(this._layers.height.length === this._segments * this._segments);
   }
   get offset() {
     return this._offset;
@@ -67616,6 +67620,12 @@ var HeightMap = class {
   }
   get segments() {
     return this._segments;
+  }
+  get colorFunc() {
+    return this._colorFunc;
+  }
+  set colorFunc(value2) {
+    this._colorFunc = value2;
   }
   worldGroundHeight(wx, wy) {
     return this.getLayerWC("height", wx, wy);
@@ -67763,9 +67773,9 @@ var HeightMap = class {
     const normalArr = normalAttr.array;
     const colorAttr = this._mesh.geometry.attributes.color;
     const colorArr = colorAttr.array;
-    assert2(indexArr.length === 5 * 6 * segments * segments);
-    assert2(positionArr.length === 5 * 4 * 3 * segments * segments);
-    assert2(colorArr.length === 5 * 4 * 3 * segments * segments);
+    assert(indexArr.length === 5 * 6 * segments * segments);
+    assert(positionArr.length === 5 * 4 * 3 * segments * segments);
+    assert(colorArr.length === 5 * 4 * 3 * segments * segments);
     function sort2(a, b) {
       return a < b ? [a, b] : [b, a];
     }
@@ -67801,7 +67811,7 @@ var HeightMap = class {
         indexArr[fi2 + 5] = vi2 / 3 + 0;
       }
     }
-    const color = this._colorFunc(sx, sy, heights[i]);
+    const color = this._colorFunc(sx, sy, heights[i], i);
     const scale0 = this._scale / this._segments;
     const x0 = sx * scale0;
     const x1 = (sx + 1) * scale0;
@@ -67870,6 +67880,149 @@ var OrbitCamera = class {
     return new Box3();
   }
 };
+
+// relative:/workspaces/monorepo/source/lib/engine/src/ai/pathfinder_graph.js
+var import_heap = __toESM(require_heap2());
+var PathfinderGraph = class {
+  constructor({
+    width = 0,
+    height = 0,
+    baseCost = (node) => 0,
+    edgeCost = (nodeFrom, nodeTo) => 0
+  } = {}) {
+    this._baseWeightFunc = baseCost;
+    this._edgeCostFunc = edgeCost;
+    this._pool = [];
+    this._nodeMap = new Map2DI(() => {
+      if (this._pool.length > 0) {
+        return this._pool.pop();
+      }
+      return new Node2();
+    });
+    this.width = width;
+    this.height = height;
+  }
+  async pathfind(x0, y0, x1, y1) {
+    this.reset();
+    let node = await astarSearch(this, [x0, y0], [x1, y1]);
+    return pathTo(node);
+  }
+  nodeAt(x, y) {
+    let node = this._nodeMap.ensure(x, y);
+    if (node.x !== x || node.y !== y) {
+      node.x = x;
+      node.y = y;
+    }
+    return node;
+  }
+  transitionCost(node0, node1) {
+    const dist = nodeDistance(node0, node1);
+    const base = this._baseWeightFunc(node1);
+    const edge = this._edgeCostFunc(node0, node1);
+    return dist + Math.max(0, base + edge);
+  }
+  reset() {
+    const nodes = this._nodeMap.values();
+    this._nodeMap.clear();
+    for (let node of nodes) {
+      node.reset();
+    }
+    this._pool.push(...nodes);
+  }
+};
+async function astarSearch(graph, startXY, endXY) {
+  graph.reset();
+  const heuristic = nodeDistance;
+  const startNode = graph.nodeAt(startXY[0], startXY[1]);
+  const endNode = graph.nodeAt(endXY[0], endXY[1]);
+  let openHeap = new import_heap.default((a, b) => a.estimate() - b.estimate());
+  let closestNode = startNode;
+  startNode.remainder = heuristic(startNode, endNode);
+  openHeap.push(startNode);
+  const neighborBuffer = new Array(8);
+  while (openHeap.size() > 0) {
+    let currentNode = openHeap.pop();
+    if (currentNode === endNode) {
+      return currentNode;
+    }
+    currentNode.closed = true;
+    for (let neighbor of currentNode.neighbors(graph, neighborBuffer)) {
+      if (neighbor.closed) {
+        continue;
+      }
+      let cost = currentNode.cost + graph.transitionCost(currentNode, neighbor);
+      let beenVisited = neighbor.visited;
+      if (!beenVisited || cost < neighbor.cost) {
+        neighbor.visited = true;
+        neighbor.parent = currentNode;
+        neighbor.remainder = heuristic(neighbor, endNode);
+        neighbor.cost = cost;
+        const delta = neighbor.estimate() - closestNode.estimate();
+        if (delta < 0 || delta === 0 && neighbor.cost < closestNode.cost) {
+          closestNode = neighbor;
+        }
+        if (!beenVisited) {
+          openHeap.push(neighbor);
+        } else {
+          openHeap.updateItem(neighbor);
+        }
+      }
+    }
+  }
+  return closestNode;
+}
+var Node2 = class {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.cost = 0;
+    this.remainder = 0;
+    this.visited = false;
+    this.closed = false;
+    this.parent = null;
+  }
+  estimate() {
+    return this.cost + this.remainder;
+  }
+  reset() {
+    this.cost = 0;
+    this.remainder = 0;
+    this.visited = false;
+    this.closed = false;
+    this.parent = null;
+  }
+  neighbors(graph, n) {
+    let i = 0;
+    if (this.x > 0) {
+      n[i++] = graph.nodeAt(this.x - 1, this.y);
+    }
+    if (this.x + 1 < graph.width) {
+      n[i++] = graph.nodeAt(this.x + 1, this.y);
+    }
+    if (this.y > 0) {
+      n[i++] = graph.nodeAt(this.x, this.y - 1);
+    }
+    if (this.y + 1 < graph.width) {
+      n[i++] = graph.nodeAt(this.x, this.y + 1);
+    }
+    n.length = i;
+    return n;
+  }
+};
+function nodeDistance(node0, node1) {
+  const dx = node1.x - node0.x;
+  const dy = node1.y - node0.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+function pathTo(node) {
+  let curr = node;
+  let path = [];
+  while (curr.parent) {
+    path.unshift([curr.x, curr.y]);
+    curr = curr.parent;
+  }
+  return path;
+}
 
 // relative:/workspaces/monorepo/source/lib/engine/src/image/get_image_pixel_data.js
 function getImagePixelData(img) {
@@ -68372,156 +68525,6 @@ var EngineFrame = import_react16.default.memo(function({
   }));
 });
 
-// relative:/workspaces/monorepo/source/lib/engine/examples/12-pathfinding/pathfinder_graph.js
-var import_heap = __toESM(require_heap2());
-var PathfinderGraph = class {
-  constructor(width, height, baseWeightFunc, edgeCostFunc) {
-    this._baseWeightFunc = baseWeightFunc;
-    this._edgeCostFunc = edgeCostFunc;
-    this._pool = [];
-    this._nodeMap = new Map2DI(() => {
-      if (this._pool.length > 0) {
-        return this._pool.pop();
-      }
-      return new Node2();
-    });
-    this.width = width;
-    this.height = height;
-  }
-  async pathfind(x0, y0, x1, y1) {
-    this.reset();
-    let node = await astarSearch(this, [x0, y0], [x1, y1]);
-    return pathTo(node);
-  }
-  async pathfindSegmented(x0, y0, x1, y1, maxDist) {
-    const dx = x1 - x0;
-    const dy = y1 - y0;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const m = dist / maxDist;
-    if (m > 1) {
-      const xi = Math.ceil(x0 + dx / m);
-      const yi = Math.ceil(y0 + dy / m);
-      return this.pathfind(x0, y0, xi, yi);
-    }
-    return this.pathfind(x0, y0, x1, y1);
-  }
-  nodeAt(x, y) {
-    let node = this._nodeMap.ensure(x, y);
-    if (node.x !== x || node.y !== y) {
-      node.x = x;
-      node.y = y;
-    }
-    return node;
-  }
-  transitionCost(node0, node1) {
-    const dist = nodeDistance(node0, node1);
-    const base = this._baseWeightFunc(node1);
-    const edge = this._edgeCostFunc(node0, node1);
-    return dist + Math.max(0, base + edge);
-  }
-  reset() {
-    const nodes = this._nodeMap.values();
-    this._nodeMap.clear();
-    for (let node of nodes) {
-      node.reset();
-    }
-    this._pool.push(...nodes);
-  }
-};
-async function astarSearch(graph, startXY, endXY) {
-  graph.reset();
-  const heuristic = nodeDistance;
-  const startNode = graph.nodeAt(startXY[0], startXY[1]);
-  const endNode = graph.nodeAt(endXY[0], endXY[1]);
-  let openHeap = new import_heap.default((a, b) => a.estimate() - b.estimate());
-  let closestNode = startNode;
-  startNode.remainder = heuristic(startNode, endNode);
-  openHeap.push(startNode);
-  const neighborBuffer = new Array(8);
-  while (openHeap.size() > 0) {
-    let currentNode = openHeap.pop();
-    if (currentNode === endNode) {
-      return currentNode;
-    }
-    currentNode.closed = true;
-    for (let neighbor of currentNode.neighbors(graph, neighborBuffer)) {
-      if (neighbor.closed) {
-        continue;
-      }
-      let cost = currentNode.cost + graph.transitionCost(currentNode, neighbor);
-      let beenVisited = neighbor.visited;
-      if (!beenVisited || cost < neighbor.cost) {
-        neighbor.visited = true;
-        neighbor.parent = currentNode;
-        neighbor.remainder = heuristic(neighbor, endNode);
-        neighbor.cost = cost;
-        const delta = neighbor.estimate() - closestNode.estimate();
-        if (delta < 0 || delta === 0 && neighbor.cost < closestNode.cost) {
-          closestNode = neighbor;
-        }
-        if (!beenVisited) {
-          openHeap.push(neighbor);
-        } else {
-          openHeap.updateItem(neighbor);
-        }
-      }
-    }
-  }
-  return closestNode;
-}
-var Node2 = class {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.cost = 0;
-    this.remainder = 0;
-    this.visited = false;
-    this.closed = false;
-    this.parent = null;
-  }
-  estimate() {
-    return this.cost + this.remainder;
-  }
-  reset() {
-    this.cost = 0;
-    this.remainder = 0;
-    this.visited = false;
-    this.closed = false;
-    this.parent = null;
-  }
-  neighbors(graph, n) {
-    let i = 0;
-    if (this.x > 0) {
-      n[i++] = graph.nodeAt(this.x - 1, this.y);
-    }
-    if (this.x + 1 < graph.width) {
-      n[i++] = graph.nodeAt(this.x + 1, this.y);
-    }
-    if (this.y > 0) {
-      n[i++] = graph.nodeAt(this.x, this.y - 1);
-    }
-    if (this.y + 1 < graph.width) {
-      n[i++] = graph.nodeAt(this.x, this.y + 1);
-    }
-    n.length = i;
-    return n;
-  }
-};
-function nodeDistance(node0, node1) {
-  const dx = node1.x - node0.x;
-  const dy = node1.y - node0.y;
-  return Math.sqrt(dx * dx + dy * dy);
-}
-function pathTo(node) {
-  let curr = node;
-  let path = [];
-  while (curr.parent) {
-    path.unshift([curr.x, curr.y]);
-    curr = curr.parent;
-  }
-  return path;
-}
-
 // builtin:./__app.js
 function app_default() {
   return /* @__PURE__ */ import_react17.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react17.default.createElement("h1", null, "Pathfinding"), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement(EngineView, null)));
@@ -68533,82 +68536,133 @@ function makeGrassColorFunc(segments) {
   return function(sx, sy) {
     const rgb = [146 / 255, 201 / 255, 117 / 255];
     const a = (1 + simplex3.noise2D(sx, sy)) / 2;
-    const b = (1 + simplex2.noise2D(sx * scale, sy * 100)) / 2;
+    const b = (1 + simplex2.noise2D(sx * scale, sy * scale)) / 2;
     const t = 0.5 * b + 0.5;
     const s = t + a * (1 - t);
     return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
   };
 }
+var ObjectTable = class {
+  constructor({ transform: transform2 = (obj) => obj } = {}) {
+    this._list = [];
+    this._transform = transform2;
+  }
+  add(obj) {
+    const i = this._list.length;
+    this._list.push(this._transform(obj));
+    return i;
+  }
+  get(index4) {
+    return this._list[index4];
+  }
+};
+var db = {
+  colors: new ObjectTable(),
+  tiles: new ObjectTable({
+    transform: (obj) => {
+      return obj;
+    }
+  })
+};
+var COLOR_DEFAULT = db.colors.add({});
+var COLOR_YELLOW = db.colors.add({
+  rgb: [1, 1, 0.2]
+});
+var COLOR_ORANGE = db.colors.add({
+  rgb: [235 / 255, 143 / 255, 52 / 255]
+});
+var TILE_GRASS = db.tiles.add({
+  walkable: true,
+  colorFunc: makeGrassColorFunc(256)
+});
+var TILE_BLACK = db.tiles.add({
+  walkable: false,
+  colorFunc: () => [0.3, 0.3, 0.3]
+});
+var TILE_BLUE = db.tiles.add({
+  walkable: false,
+  colorFunc: () => [0.1, 0.5, 0.9]
+});
+function makeHeightMap(rng) {
+  const S = 96;
+  const simplex3 = makeSimplexNoise();
+  const heightMap = new HeightMap({
+    offset: [-256 / 2, -256 / 2, 0],
+    scale: 256,
+    segments: 256,
+    layers: {
+      tile: Int8Array,
+      color: Int8Array
+    },
+    heightFunc: (sx, sy) => {
+      const a = (1 + simplex3.noise2D(sx / S, sy / S)) / 2;
+      return 0.1 * a;
+    }
+  });
+  const tileArray = heightMap.getLayerArray("tile");
+  const colorArray = heightMap.getLayerArray("color");
+  tileArray.fill(TILE_GRASS);
+  colorArray.fill(COLOR_DEFAULT);
+  heightMap.colorFunc = function(sx, sy, wz, si) {
+    const tile = tileArray[si];
+    const color = colorArray[si];
+    switch (color) {
+      case COLOR_DEFAULT:
+        return db.tiles.get(tile).colorFunc(sx, sy);
+      default: {
+        const obj = db.colors.get(color);
+        return obj.rgb;
+      }
+    }
+  };
+  iterateCount(400, (i) => {
+    const cx = rng.rangei(0, heightMap.segments);
+    const cy = rng.rangei(0, heightMap.segments);
+    const tile = i < 40 ? TILE_BLACK : TILE_BLUE;
+    const count = i < 40 ? 8 : 4;
+    iterateBorder2D(cx, cy, count, (sx, sy) => {
+      const si = heightMap.coordS2I(sx, sy);
+      if (si !== -1) {
+        colorArray[si] = COLOR_DEFAULT;
+        tileArray[si] = tile;
+      }
+    });
+  });
+  heightMap.updateMesh();
+  return heightMap;
+}
 function EngineView() {
   const engine = useEngine(() => {
     const rng = makeRNG();
-    const S = 96;
-    const simplex3 = makeSimplexNoise();
-    const grassColor = makeGrassColorFunc(256);
-    const heightMap = new HeightMap({
-      offset: [-256 / 2, -256 / 2, 0],
-      scale: 256,
-      segments: 256,
-      layers: { type: Int32Array },
-      heightFunc: (sx, sy) => {
-        const a = (1 + simplex3.noise2D(sx / S, sy / S)) / 2;
-        return 0.1 * a;
-      },
-      colorFunc: function(sx, sy) {
-        const type = this.getLayerSC("type", sx, sy);
-        const a = (1 + simplex3.noise2D(sx / S, sy / S)) / 2;
-        return type === 0 ? grassColor(sx, sy) : type === 1 ? [1, 1, 0.2] : type === 2 ? [0, 0, 1] : type === 3 ? [0.1, 0, 0] : [0, 0, 1];
-      }
-    });
-    const typeArray = heightMap.getLayerArray("type");
-    iterateCount(400, (i) => {
-      const cx = rng.rangei(0, heightMap.segments);
-      const cy = rng.rangei(0, heightMap.segments);
-      const type = i < 40 ? 3 : 2;
-      const count = i < 40 ? 8 : 4;
-      iterateBorder2D(cx, cy, count, (sx, sy) => {
-        const si = heightMap.coordS2I(sx, sy);
-        if (si !== -1) {
-          typeArray[si] = type;
-        }
-      });
-    });
-    heightMap.updateMesh();
-    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 64e3, offsetZ: 128 }), new BasicLighting(), new GroundPlane(), heightMap, ...generate(60, () => new Updater(heightMap)));
+    const heightMap = makeHeightMap(rng);
+    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 64e3, offsetZ: 96 }), new BasicLighting(), new GroundPlane(), heightMap, ...generate(60, () => new Updater(heightMap)));
   });
   return /* @__PURE__ */ import_react17.default.createElement(EngineFrame, {
     engine,
     recorder: "three"
   });
 }
-function iterateCount(c, cb) {
-  for (let i = 0; i < c; i++) {
-    cb(i);
-  }
-}
-function iterateBorder2D(cx, cy, width, cb) {
-  for (let dy = -width; dy <= width; dy++) {
-    for (let dx = -width; dx <= width; dx++) {
-      cb(cx + dx, cy + dy);
-    }
-  }
-}
 function pathFindBehavior(heightmap) {
+  const MAX_SEARCH_DISTANCE = 60;
   const rng = makeRNG();
-  const typeArray = heightmap.getLayerArray("type");
-  const pathfinder = new PathfinderGraph(heightmap.segments, heightmap.segments, (a) => {
-    const type = heightmap.getLayerSC("type", a.x, a.y);
-    if (type == 2) {
-      return 500;
+  const SEGMENTS = heightmap.segments;
+  const tileArray = heightmap.getLayerArray("tile");
+  const colorArray = heightmap.getLayerArray("color");
+  const tileAt = (sx, sy) => {
+    if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
+      return null;
     }
-    if (type == 3) {
-      return 1e20;
+    return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
+  };
+  const pathfinder = new PathfinderGraph({
+    width: heightmap.segments,
+    height: heightmap.segments,
+    baseCost: (a) => tileAt(a.x, a.y)?.walkable ? 0 : 1e10,
+    edgeCost: (a, b) => {
+      const hb = heightmap.getLayerSC("height", a.x, a.y);
+      const ha = heightmap.getLayerSC("height", b.x, b.y);
+      return Math.max(0, hb - ha);
     }
-    return 0;
-  }, (a, b) => {
-    const hb = heightmap.getLayerSC("height", a.x, a.y);
-    const ha = heightmap.getLayerSC("height", b.x, b.y);
-    return Math.max(0, hb - ha);
   });
   return {
     _start: function* () {
@@ -68616,16 +68670,16 @@ function pathFindBehavior(heightmap) {
     },
     target: function* () {
       yield rng.rangei(5, 10);
-      const posA = new Vector2(rng.rangei(-192, 192), rng.rangei(-192, 192));
-      const posB = new Vector2(rng.rangei(-192, 192), rng.rangei(-192, 192));
-      const [sx, sy, si] = heightmap.coordW2S(posA.x, posA.y);
-      const [ex, ey, ei] = heightmap.coordW2S(posB.x, posB.y);
+      const sx = rng.rangei(0, heightmap.segments);
+      const sy = rng.rangei(0, heightmap.segments);
+      const si = sy * heightmap.segments + sx;
+      const ex = rng.rangei(0, heightmap.segments);
+      const ey = rng.rangei(0, heightmap.segments);
+      const ei = ey * heightmap.segments + ex;
       if (si === -1 || ei === -1) {
         return "target";
       }
-      const stype = typeArray[si];
-      const etype = typeArray[ei];
-      if (stype > 1 || etype > 1) {
+      if (!tileAt(sx, sy).walkable || !tileAt(ex, ey).walkable) {
         return "target";
       }
       return ["moveLoop", sx, sy, ex, ey];
@@ -68634,51 +68688,42 @@ function pathFindBehavior(heightmap) {
       if (sx === ex && sy === ey) {
         return "target";
       }
-      const maxDist = 60;
       const dx = ex - sx;
       const dy = ey - sy;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      const m = dist / maxDist;
+      const m = dist / MAX_SEARCH_DISTANCE;
       let result2;
       if (m <= 1) {
         result2 = yield pathfinder.pathfind(sx, sy, ex, ey);
       } else {
-        const N = heightmap.segments;
-        const typeAt = (x, y) => {
-          if (!(x >= 0 && x < N && y >= 0 && y < N)) {
-            return -1;
-          }
-          return typeArray[y * N + x];
-        };
         const xi = Math.ceil(sx + dx / m);
         const yi = Math.ceil(sy + dy / m);
         let xg = xi;
         let yg = yi;
         let jitter = 1;
-        while (typeAt(xg, yg) < 0 || typeAt(xg, yg) > 1) {
+        let tile = tileAt(xg, yg);
+        while (!tile?.walkable) {
           xg = xi + Math.floor(rng.sign() + rng.range(1, jitter));
           yg = yi + Math.floor(rng.sign() + rng.range(1, jitter));
+          tile = tileAt(xg, yg);
           jitter += 0.2;
         }
-        assert(typeAt(sx, sy) <= 1 && typeAt(xg, yg) <= 1, `Runtime error`);
         result2 = yield pathfinder.pathfind(sx, sy, xg, yg);
       }
       const path = result2.map((g) => ({ x: g[0], y: g[1] }));
-      return ["move", path, ex, ey];
+      const colorIndex = rng.select([COLOR_YELLOW, COLOR_ORANGE]);
+      return ["move", path, ex, ey, colorIndex];
     },
-    move: function* (path, ex, ey) {
+    move: function* (path, ex, ey, colorIndex) {
+      let x, y;
       while (path.length) {
-        const { x, y } = path.shift();
+        ({ x, y } = path.shift());
         const si = y * heightmap.segments + x;
-        if (si !== -1) {
-          typeArray[si] = 1;
-          heightmap.updateSegment(x, y);
-        }
-        if (path.length === 0) {
-          return ["moveLoop", x, y, ex, ey];
-        }
+        colorArray[si] = colorIndex;
+        heightmap.updateSegment(x, y);
         yield;
       }
+      return ["moveLoop", x, y, ex, ey];
     }
   };
 }

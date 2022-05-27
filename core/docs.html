@@ -27408,6 +27408,8 @@ __export(src_exports, {
   clamp: () => clamp,
   formatNumber: () => formatNumber,
   generate: () => generate,
+  iterateBorder2D: () => iterateBorder2D,
+  iterateCount: () => iterateCount,
   makeRNG: () => makeRNG,
   makeSimplexNoise: () => makeSimplexNoise,
   nearestOverlap: () => nearestOverlap,
@@ -27603,6 +27605,22 @@ function assert(condition, ...msg) {
     console.error(...msg);
   }
   throw new Error(`core.assert failure`);
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_border2d.js
+function iterateBorder2D(cx, cy, width, cb) {
+  for (let dy = -width; dy <= width; dy++) {
+    for (let dx = -width; dx <= width; dx++) {
+      cb(cx + dx, cy + dy);
+    }
+  }
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_count.js
+function iterateCount(c, cb) {
+  for (let i = 0; i < c; i++) {
+    cb(i);
+  }
 }
 
 // relative:/workspaces/monorepo/source/lib/core/src/format/format_number.js
