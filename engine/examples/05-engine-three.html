@@ -64025,6 +64025,50 @@ var import_react5 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/flex.js
 var import_react6 = __toESM(require_react());
+var import_prop_types2 = __toESM(require_prop_types());
+function Flex({
+  className,
+  style,
+  children,
+  onClick,
+  align = "center",
+  direction,
+  dir,
+  ...rest
+}) {
+  assertNoUnknownProps(Flex, rest);
+  direction = direction || dir || "row";
+  if (direction === "col") {
+    direction = "column";
+  }
+  return /* @__PURE__ */ import_react6.default.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: direction,
+      alignItems: align,
+      ...style
+    },
+    onClick
+  }, children);
+}
+Flex.propTypes = {
+  className: import_prop_types2.default.string,
+  style: import_prop_types2.default.object,
+  onClick: import_prop_types2.default.func,
+  align: import_prop_types2.default.string,
+  direction: import_prop_types2.default.string,
+  dir: import_prop_types2.default.string
+};
+function assertNoUnknownProps(Component, rest) {
+  const entries = Object.entries(rest);
+  if (entries.length === 0) {
+    return;
+  }
+  for (let [name, value2] of entries) {
+    console.error(`Unknown property '${name}' with value`, value2);
+  }
+  throw new Error(`Unknown properties on Component ${Component.name}: ${Object.keys(rest).map((s) => `'${s}'`).join(", ")}.  See console for details.`);
+}
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/pixelated_image.js
 var import_react7 = __toESM(require_react());
@@ -64041,9 +64085,13 @@ function ReadingFrame({ children }) {
   }, children);
 }
 
-// relative:/workspaces/monorepo/source/lib/core/src/collections/map_3d.js
-var SPAN = 1 << 8;
+// relative:/workspaces/monorepo/source/lib/core/src/collections/map_2di.js
+var SPAN = 1 << 26;
 var HALF = SPAN >> 1;
+
+// relative:/workspaces/monorepo/source/lib/core/src/collections/map_3di.js
+var SPAN2 = 1 << 8;
+var HALF2 = SPAN2 >> 1;
 
 // relative:/workspaces/monorepo/source/lib/core/src/controllers/event_emitter.js
 var EventEmitter = class {
@@ -66538,7 +66586,8 @@ var StateMachine = class {
     this._states = states;
     this._activeState = states._start.call(this._self);
     this._waitCycles = 0;
-    this._busyWait = true;
+    this._waitOnPromise = false;
+    this._nextValue = void 0;
   }
   bind(obj) {
     this._self = obj;
@@ -66551,20 +66600,22 @@ var StateMachine = class {
       this._waitCycles--;
       return;
     }
-    if (this._busyWait) {
+    if (this._waitOnPromise) {
       return;
     }
-    const result2 = this._activeState.next();
+    const result2 = this._activeState.next(this._nextValue);
+    this._nextValue = void 0;
     if (result2.done) {
       let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
       const generator = this._states[nextState];
       this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
     } else if (typeof result2.value === "number") {
       this._waitCycles = result2.value;
-    } else if (result2.value.then) {
-      this._busyWait = true;
-      result2.value.then(() => {
-        this._busyWait = false;
+    } else if (result2.value?.then) {
+      this._waitOnPromise = true;
+      result2.value.then((arg) => {
+        this._nextValue = arg;
+        this._waitOnPromise = false;
       });
     }
   }
@@ -67116,7 +67167,7 @@ var import_react13 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/flex.js
 var import_react14 = __toESM(require_react(), 1);
-function Flex({
+function Flex2({
   className,
   style,
   children,
@@ -67191,7 +67242,7 @@ function EngineRecorder({
       setTimeout(() => handleRecord(), 100);
     }
   }, []);
-  return /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement(Flex, {
+  return /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement(Flex2, {
     style: {
       padding: "4px 0"
     }

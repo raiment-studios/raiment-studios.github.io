@@ -123,8 +123,8 @@ var require_react_development = __commonJS({
         function warn2(format) {
           {
             {
-              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key2 = 1; _key2 < _len; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key3 = 1; _key3 < _len; _key3++) {
+                args[_key3 - 1] = arguments[_key3];
               }
               printWarning("warn", format, args);
             }
@@ -133,8 +133,8 @@ var require_react_development = __commonJS({
         function error(format) {
           {
             {
-              for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+              for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key22 = 1; _key22 < _len2; _key22++) {
+                args[_key22 - 1] = arguments[_key22];
               }
               printWarning("error", format, args);
             }
@@ -2314,8 +2314,8 @@ var require_react_dom_development = __commonJS({
         function warn2(format) {
           {
             if (!suppressWarning) {
-              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key2 = 1; _key2 < _len; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key3 = 1; _key3 < _len; _key3++) {
+                args[_key3 - 1] = arguments[_key3];
               }
               printWarning("warn", format, args);
             }
@@ -2324,8 +2324,8 @@ var require_react_dom_development = __commonJS({
         function error(format) {
           {
             if (!suppressWarning) {
-              for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+              for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key22 = 1; _key22 < _len2; _key22++) {
+                args[_key22 - 1] = arguments[_key22];
               }
               printWarning("error", format, args);
             }
@@ -23731,8 +23731,8 @@ function createThemeProvider(context) {
     _inheritsLoose(ThemeProvider3, _React$Component);
     function ThemeProvider3() {
       var _this;
-      for (var _len = arguments.length, args = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len = arguments.length, args = new Array(_len), _key3 = 0; _key3 < _len; _key3++) {
+        args[_key3] = arguments[_key3];
       }
       _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "cachedTheme", void 0);
@@ -25261,8 +25261,8 @@ var Jss = /* @__PURE__ */ function() {
   };
   _proto.use = function use() {
     var _this = this;
-    for (var _len = arguments.length, plugins3 = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
-      plugins3[_key2] = arguments[_key2];
+    for (var _len = arguments.length, plugins3 = new Array(_len), _key3 = 0; _key3 < _len; _key3++) {
+      plugins3[_key3] = arguments[_key3];
     }
     plugins3.forEach(function(plugin) {
       _this.plugins.use(plugin);
@@ -25726,8 +25726,8 @@ function jssExtend() {
       return null;
     }
     if (typeof value2 === "object") {
-      for (var _key2 in value2) {
-        rule.prop(_key2, value2[_key2]);
+      for (var _key3 in value2) {
+        rule.prop(_key3, value2[_key3]);
       }
       rule[valueNs] = value2;
     }
@@ -27338,6 +27338,50 @@ var import_react5 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/flex.js
 var import_react6 = __toESM(require_react());
+var import_prop_types2 = __toESM(require_prop_types());
+function Flex({
+  className,
+  style,
+  children,
+  onClick,
+  align = "center",
+  direction,
+  dir,
+  ...rest
+}) {
+  assertNoUnknownProps(Flex, rest);
+  direction = direction || dir || "row";
+  if (direction === "col") {
+    direction = "column";
+  }
+  return /* @__PURE__ */ import_react6.default.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: direction,
+      alignItems: align,
+      ...style
+    },
+    onClick
+  }, children);
+}
+Flex.propTypes = {
+  className: import_prop_types2.default.string,
+  style: import_prop_types2.default.object,
+  onClick: import_prop_types2.default.func,
+  align: import_prop_types2.default.string,
+  direction: import_prop_types2.default.string,
+  dir: import_prop_types2.default.string
+};
+function assertNoUnknownProps(Component, rest) {
+  const entries = Object.entries(rest);
+  if (entries.length === 0) {
+    return;
+  }
+  for (let [name, value2] of entries) {
+    console.error(`Unknown property '${name}' with value`, value2);
+  }
+  throw new Error(`Unknown properties on Component ${Component.name}: ${Object.keys(rest).map((s) => `'${s}'`).join(", ")}.  See console for details.`);
+}
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/pixelated_image.js
 var import_react7 = __toESM(require_react());
@@ -27358,7 +27402,8 @@ function ReadingFrame({ children }) {
 var src_exports = {};
 __export(src_exports, {
   EventEmitter: () => EventEmitter,
-  Map3D: () => Map3D,
+  Map2DI: () => Map2DI,
+  Map3DI: () => Map3DI,
   assert: () => assert,
   clamp: () => clamp,
   formatNumber: () => formatNumber,
@@ -27381,25 +27426,80 @@ function generate(count, cb) {
   return arr;
 }
 
-// relative:/workspaces/monorepo/source/lib/core/src/collections/map_3d.js
-var SPAN = 1 << 8;
+// relative:/workspaces/monorepo/source/lib/core/src/collections/map_2di.js
+var SPAN = 1 << 26;
 var HALF = SPAN >> 1;
-var Map3D = class {
+var Map2DI = class {
+  constructor(options = {}) {
+    if (typeof options === "function") {
+      options = {
+        defaultCallback: options
+      };
+    }
+    this._map = /* @__PURE__ */ new Map();
+    this._defaultCallback = options.defaultCallback;
+  }
+  key(x, y) {
+    return _key(x, y);
+  }
+  get(x, y) {
+    return this._map.get(_key(x, y));
+  }
+  set(x, y, value2) {
+    return this._map.set(_key(x, y), value2);
+  }
+  ensure(x, y, defaultCallback) {
+    const k = _key(x, y);
+    let value2 = this._map.get(k);
+    if (value2 === void 0) {
+      const cb = defaultCallback || this._defaultCallback;
+      value2 = cb();
+      this._map.set(k, value2);
+    }
+    return value2;
+  }
+  clear() {
+    this._map.clear();
+  }
+  delete(x, y) {
+    this._map.delete(_key(x, y));
+  }
+  entries() {
+    const e = [];
+    for (let [k, v] of this._map.entries()) {
+      const x = k % SPAN - HALF;
+      const y = Math.floor(k / SPAN) - HALF;
+      e.push([x, y, v]);
+    }
+    return e;
+  }
+  values() {
+    return this._map.values();
+  }
+};
+function _key(x, y) {
+  return (y + HALF) * SPAN + (x + HALF);
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/collections/map_3di.js
+var SPAN2 = 1 << 8;
+var HALF2 = SPAN2 >> 1;
+var Map3DI = class {
   constructor(options = {}) {
     this._map = /* @__PURE__ */ new Map();
     this._defaultCallback = options.defaultCallback;
   }
   key(x, y, z) {
-    return _key(x, y, z);
+    return _key2(x, y, z);
   }
   get(x, y, z) {
-    return this._map.get(_key(x, y, z));
+    return this._map.get(_key2(x, y, z));
   }
   set(x, y, z, value2) {
-    return this._map.set(_key(x, y, z), value2);
+    return this._map.set(_key2(x, y, z), value2);
   }
   ensure(x, y, z, defaultCallback) {
-    const k = _key(x, y, z);
+    const k = _key2(x, y, z);
     let value2 = this._map.get(k);
     if (value2 === void 0) {
       const cb = defaultCallback || this._defaultCallback;
@@ -27409,14 +27509,14 @@ var Map3D = class {
     return value2;
   }
   delete(x, y, z) {
-    this._map.delete(_key(x, y, z));
+    this._map.delete(_key2(x, y, z));
   }
   entries() {
     const e = [];
     for (let [k, v] of this._map.entries()) {
-      const x = (k >> 0 & 255) - HALF;
-      const y = (k >> 8 & 255) - HALF;
-      const z = (k >> 16 & 255) - HALF;
+      const x = (k >> 0 & 255) - HALF2;
+      const y = (k >> 8 & 255) - HALF2;
+      const z = (k >> 16 & 255) - HALF2;
       e.push([x, y, z, v]);
     }
     return e;
@@ -27425,10 +27525,10 @@ var Map3D = class {
     return this._map.values();
   }
 };
-function _key(x, y, z) {
-  const px2 = x + HALF;
-  const py = y + HALF;
-  const pz = z + HALF;
+function _key2(x, y, z) {
+  const px2 = x + HALF2;
+  const py = y + HALF2;
+  const pz = z + HALF2;
   return pz << 16 | py << 8 | px2;
 }
 
@@ -28562,7 +28662,7 @@ var Directives = class {
     let tagNames;
     if (doc && tagEntries.length > 0 && isNode(doc.contents)) {
       const tags = {};
-      visit(doc.contents, (_key2, node) => {
+      visit(doc.contents, (_key3, node) => {
         if (isNode(node) && node.tag)
           tags[node.tag] = true;
       });
@@ -28593,7 +28693,7 @@ function anchorIsValid(anchor) {
 function anchorNames(root3) {
   const anchors = /* @__PURE__ */ new Set();
   visit(root3, {
-    Value(_key2, node) {
+    Value(_key3, node) {
       if (node.anchor)
         anchors.add(node.anchor);
     }
@@ -28650,7 +28750,7 @@ var Alias = class extends NodeBase {
   resolve(doc) {
     let found = void 0;
     visit(doc, {
-      Node: (_key2, node) => {
+      Node: (_key3, node) => {
         if (node === this)
           return visit.BREAK;
         if (node.anchor === this.source)

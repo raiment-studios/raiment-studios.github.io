@@ -32076,9 +32076,13 @@ var import_client = __toESM(require_client());
 // builtin:./__app.js
 var import_react11 = __toESM(require_react());
 
-// relative:/workspaces/monorepo/source/lib/core/src/collections/map_3d.js
-var SPAN = 1 << 8;
+// relative:/workspaces/monorepo/source/lib/core/src/collections/map_2di.js
+var SPAN = 1 << 26;
 var HALF = SPAN >> 1;
+
+// relative:/workspaces/monorepo/source/lib/core/src/collections/map_3di.js
+var SPAN2 = 1 << 8;
+var HALF2 = SPAN2 >> 1;
 
 // relative:/workspaces/monorepo/source/lib/core/src/controllers/event_emitter.js
 var EventEmitter = class {
@@ -34573,7 +34577,8 @@ var StateMachine = class {
     this._states = states;
     this._activeState = states._start.call(this._self);
     this._waitCycles = 0;
-    this._busyWait = true;
+    this._waitOnPromise = false;
+    this._nextValue = void 0;
   }
   bind(obj) {
     this._self = obj;
@@ -34586,20 +34591,22 @@ var StateMachine = class {
       this._waitCycles--;
       return;
     }
-    if (this._busyWait) {
+    if (this._waitOnPromise) {
       return;
     }
-    const result2 = this._activeState.next();
+    const result2 = this._activeState.next(this._nextValue);
+    this._nextValue = void 0;
     if (result2.done) {
       let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
       const generator = this._states[nextState];
       this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
     } else if (typeof result2.value === "number") {
       this._waitCycles = result2.value;
-    } else if (result2.value.then) {
-      this._busyWait = true;
-      result2.value.then(() => {
-        this._busyWait = false;
+    } else if (result2.value?.then) {
+      this._waitOnPromise = true;
+      result2.value.then((arg) => {
+        this._nextValue = arg;
+        this._waitOnPromise = false;
       });
     }
   }
