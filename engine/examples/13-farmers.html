@@ -25797,31 +25797,31 @@ ${indent}${str}`;
         if (isEmptyPath(path))
           this.add(value2);
         else {
-          const [key, ...rest] = path;
+          const [key, ...rest2] = path;
           const node = this.get(key, true);
           if (node instanceof Collection)
-            node.addIn(rest, value2);
+            node.addIn(rest2, value2);
           else if (node === void 0 && this.schema)
-            this.set(key, collectionFromPath(this.schema, rest, value2));
+            this.set(key, collectionFromPath(this.schema, rest2, value2));
           else
-            throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+            throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest2}`);
         }
       }
-      deleteIn([key, ...rest]) {
-        if (rest.length === 0)
+      deleteIn([key, ...rest2]) {
+        if (rest2.length === 0)
           return this.delete(key);
         const node = this.get(key, true);
         if (node instanceof Collection)
-          return node.deleteIn(rest);
+          return node.deleteIn(rest2);
         else
-          throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+          throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest2}`);
       }
-      getIn([key, ...rest], keepScalar) {
+      getIn([key, ...rest2], keepScalar) {
         const node = this.get(key, true);
-        if (rest.length === 0)
+        if (rest2.length === 0)
           return !keepScalar && node instanceof Scalar ? node.value : node;
         else
-          return node instanceof Collection ? node.getIn(rest, keepScalar) : void 0;
+          return node instanceof Collection ? node.getIn(rest2, keepScalar) : void 0;
       }
       hasAllNullValues() {
         return this.items.every((node) => {
@@ -25831,23 +25831,23 @@ ${indent}${str}`;
           return n == null || n instanceof Scalar && n.value == null && !n.commentBefore && !n.comment && !n.tag;
         });
       }
-      hasIn([key, ...rest]) {
-        if (rest.length === 0)
+      hasIn([key, ...rest2]) {
+        if (rest2.length === 0)
           return this.has(key);
         const node = this.get(key, true);
-        return node instanceof Collection ? node.hasIn(rest) : false;
+        return node instanceof Collection ? node.hasIn(rest2) : false;
       }
-      setIn([key, ...rest], value2) {
-        if (rest.length === 0) {
+      setIn([key, ...rest2], value2) {
+        if (rest2.length === 0) {
           this.set(key, value2);
         } else {
           const node = this.get(key, true);
           if (node instanceof Collection)
-            node.setIn(rest, value2);
+            node.setIn(rest2, value2);
           else if (node === void 0 && this.schema)
-            this.set(key, collectionFromPath(this.schema, rest, value2));
+            this.set(key, collectionFromPath(this.schema, rest2, value2));
           else
-            throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+            throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest2}`);
         }
       }
       toJSON() {
@@ -33151,7 +33151,7 @@ var require_lodash = __commonJS({
         var rearg = flatRest(function(func, indexes) {
           return createWrap(func, WRAP_REARG_FLAG, undefined2, undefined2, undefined2, indexes);
         });
-        function rest(func, start) {
+        function rest2(func, start) {
           if (typeof func != "function") {
             throw new TypeError2(FUNC_ERROR_TEXT);
           }
@@ -34267,7 +34267,7 @@ var require_lodash = __commonJS({
         lodash.rearg = rearg;
         lodash.reject = reject;
         lodash.remove = remove;
-        lodash.rest = rest;
+        lodash.rest = rest2;
         lodash.reverse = reverse;
         lodash.sampleSize = sampleSize;
         lodash.set = set;
@@ -35091,10 +35091,10 @@ var require_chroma = __commonJS({
       input$e.autodetect.push({
         p: 5,
         test: function(h) {
-          var rest = [], len = arguments.length - 1;
+          var rest2 = [], len = arguments.length - 1;
           while (len-- > 0)
-            rest[len] = arguments[len + 1];
-          if (!rest.length && type$k(h) === "string" && css2rgb.test(h)) {
+            rest2[len] = arguments[len + 1];
+          if (!rest2.length && type$k(h) === "string" && css2rgb.test(h)) {
             return "css";
           }
         }
@@ -35333,10 +35333,10 @@ var require_chroma = __commonJS({
       input$b.autodetect.push({
         p: 4,
         test: function(h) {
-          var rest = [], len = arguments.length - 1;
+          var rest2 = [], len = arguments.length - 1;
           while (len-- > 0)
-            rest[len] = arguments[len + 1];
-          if (!rest.length && type$i(h) === "string" && [3, 4, 5, 6, 7, 8, 9].indexOf(h.length) >= 0) {
+            rest2[len] = arguments[len + 1];
+          if (!rest2.length && type$i(h) === "string" && [3, 4, 5, 6, 7, 8, 9].indexOf(h.length) >= 0) {
             return "hex";
           }
         }
@@ -36022,10 +36022,10 @@ var require_chroma = __commonJS({
       input$5.autodetect.push({
         p: 5,
         test: function(h) {
-          var rest = [], len = arguments.length - 1;
+          var rest2 = [], len = arguments.length - 1;
           while (len-- > 0)
-            rest[len] = arguments[len + 1];
-          if (!rest.length && type$c(h) === "string" && w3cx11[h.toLowerCase()]) {
+            rest2[len] = arguments[len + 1];
+          if (!rest2.length && type$c(h) === "string" && w3cx11[h.toLowerCase()]) {
             return "named";
           }
         }
@@ -36438,11 +36438,11 @@ var require_chroma = __commonJS({
       var mix$1 = function(col1, col2, f) {
         if (f === void 0)
           f = 0.5;
-        var rest = [], len = arguments.length - 3;
+        var rest2 = [], len = arguments.length - 3;
         while (len-- > 0)
-          rest[len] = arguments[len + 3];
-        var mode = rest[0] || "lrgb";
-        if (!interpolator[mode] && !rest.length) {
+          rest2[len] = arguments[len + 3];
+        var mode = rest2[0] || "lrgb";
+        if (!interpolator[mode] && !rest2.length) {
           mode = Object.keys(interpolator)[0];
         }
         if (!interpolator[mode]) {
@@ -36461,10 +36461,10 @@ var require_chroma = __commonJS({
       Color$g.prototype.mix = Color$g.prototype.interpolate = function(col2, f) {
         if (f === void 0)
           f = 0.5;
-        var rest = [], len = arguments.length - 2;
+        var rest2 = [], len = arguments.length - 2;
         while (len-- > 0)
-          rest[len] = arguments[len + 2];
-        return mix.apply(void 0, [this, col2, f].concat(rest));
+          rest2[len] = arguments[len + 2];
+        return mix.apply(void 0, [this, col2, f].concat(rest2));
       };
       var Color$f = Color_1;
       Color$f.prototype.premultiply = function(mutate) {
@@ -41718,9 +41718,9 @@ function Flex({
   align = "center",
   direction,
   dir,
-  ...rest
+  ...rest2
 }) {
-  assertNoUnknownProps(Flex, rest);
+  assertNoUnknownProps(Flex, rest2);
   direction = direction || dir || "row";
   if (direction === "col") {
     direction = "column";
@@ -41743,15 +41743,15 @@ Flex.propTypes = {
   direction: import_prop_types2.default.string,
   dir: import_prop_types2.default.string
 };
-function assertNoUnknownProps(Component, rest) {
-  const entries = Object.entries(rest);
+function assertNoUnknownProps(Component, rest2) {
+  const entries = Object.entries(rest2);
   if (entries.length === 0) {
     return;
   }
   for (let [name, value2] of entries) {
     console.error(`Unknown property '${name}' with value`, value2);
   }
-  throw new Error(`Unknown properties on Component ${Component.name}: ${Object.keys(rest).map((s) => `'${s}'`).join(", ")}.  See console for details.`);
+  throw new Error(`Unknown properties on Component ${Component.name}: ${Object.keys(rest2).map((s) => `'${s}'`).join(", ")}.  See console for details.`);
 }
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/pixelated_image.js
@@ -41955,6 +41955,15 @@ function assert(condition, ...msg) {
     console.error(...msg);
   }
   throw new Error(`core.assert failure`);
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_border2d.js
+function iterateBorder2D(cx, cy, width, cb) {
+  for (let dy = -width; dy <= width; dy++) {
+    for (let dx = -width; dx <= width; dx++) {
+      cb(cx + dx, cy + dy);
+    }
+  }
 }
 
 // relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_circle2d.js
@@ -73046,7 +73055,10 @@ var db = {
   colors: new ObjectTable(),
   tiles: new ObjectTable({
     transform: (obj) => {
-      return obj;
+      return {
+        walkCost: obj.walkable ? 0 : 1e10,
+        ...obj
+      };
     }
   })
 };
@@ -73073,6 +73085,7 @@ var TILE_GRASS_UNWALKABLE = db.tiles.add({
 });
 var TILE_DIRT_WALKABLE = db.tiles.add({
   walkable: true,
+  walkCost: 10,
   colorFunc: (sx, sy) => {
     const base = grassColorFunc(sx, sy);
     base[0] *= 1.25;
@@ -73216,6 +73229,8 @@ function EngineView() {
 var Farmer = class {
   constructor() {
     this._sprite = null;
+    this._plotFailures = 0;
+    this._plotSuccesses = 0;
   }
   init({ engine }) {
     let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
@@ -73233,7 +73248,6 @@ var Farmer = class {
   stateMachine({ engine }) {
     const rng = makeRNG();
     const pathfindingBehavior = engine.opt.generatePathfindingBehavior(this._sprite);
-    console.log(this._sprite);
     return {
       _bind: this,
       _start: function* () {
@@ -73251,6 +73265,7 @@ var Farmer = class {
       },
       findPlot: function* () {
         const heightMap = engine.opt.heightMap;
+        const heightArray = heightMap.getLayerArray("height");
         let attempts = 0;
         let region = null;
         while (!region && attempts < 20) {
@@ -73259,43 +73274,69 @@ var Farmer = class {
           const rx0 = rng.rangei(0, heightMap.segments - width);
           const ry0 = rng.rangei(0, heightMap.segments - height);
           let valid = true;
+          let heightSum = 0;
+          let heightMin = Infinity;
+          let heightMax = -Infinity;
           for (let sy = ry0; valid && sy < ry0 + height; sy++) {
             for (let sx = rx0; valid && sx < rx0 + width; sx++) {
+              const si = sy * heightMap.segments + sx;
+              const h = heightArray[si];
+              heightSum += h;
+              if (h < heightMin)
+                heightMin = h;
+              if (h > heightMax)
+                heightMax = h;
               valid &= engine.opt.walkableS(sx, sy);
             }
           }
+          valid &= heightMax - heightMin <= 15;
           if (valid) {
-            region = [rx0, ry0, rx0 + width, ry0 + height];
+            const avgHeight = heightSum / (width * height);
+            region = [rx0, ry0, rx0 + width, ry0 + height, avgHeight];
+          } else {
+            yield 5;
           }
           attempts++;
         }
-        return region ? ["moveToPlot", region] : "rest";
+        if (region) {
+          this._plotSuccesses++;
+          return ["moveToPlot", region];
+        }
+        this._plotFailures++;
+        return rest;
       },
       moveToPlot: function* (plot) {
         return ["pathfind.moveLoop", plot[0], plot[1], ["tillPlot", plot]];
       },
-      tillPlot: function* ([rx0, ry0, rx1, ry1]) {
+      tillPlot: function* ([rx0, ry0, rx1, ry1, height]) {
         const heightMap = engine.opt.heightMap;
         const tileArray = heightMap.getLayerArray("tile");
+        const heightArray = heightMap.getLayerArray("height");
         const till = (sx, sy) => {
           const [wx, wy] = heightMap.coordS2W(sx, sy);
           this._sprite.position.x = wx;
           this._sprite.position.y = wy;
           const si = sy * heightMap.segments + sx;
           tileArray[si] = TILE_DIRT_WALKABLE;
-          heightMap.updateSegment(sx, sy);
+          heightArray[si] = 0.75 * heightArray[si] + 0.25 * height;
+          iterateBorder2D(sx, sy, 1, (x, y) => {
+            if (x >= 0 && x < heightMap.segments && y >= 0 && y < heightMap.segments) {
+              heightMap.updateSegment(x, y);
+            }
+          });
         };
         let parity = 0;
+        const WAIT = 0;
         for (let sy = ry0; sy < ry1; sy++) {
           if (parity === 0) {
             for (let sx = rx0; sx < rx1; sx++) {
               till(sx, sy);
-              yield 5;
+              yield WAIT;
             }
           } else {
             for (let sx = rx1 - 1; sx >= rx0; sx--) {
               till(sx, sy);
-              yield 5;
+              yield WAIT;
             }
           }
           yield 10;
@@ -73392,7 +73433,7 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
     width: SEGMENTS,
     height: SEGMENTS,
     walkable,
-    baseCost: (a) => tileAt(a.x, a.y)?.walkable ? 0 : 1e10,
+    baseCost: (a) => tileAt(a.x, a.y)?.walkCost,
     edgeCost: (a, b) => {
       const hb = heightArray[b.y * SEGMENTS + b.x];
       const ha = heightArray[a.y * SEGMENTS + a.x];
