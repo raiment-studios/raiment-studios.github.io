@@ -71998,6 +71998,28 @@ function loadImage(src) {
   });
 }
 
+// relative:/workspaces/monorepo/source/lib/engine/src/physics/update_position.js
+function updatePosition(actor, dt) {
+  actor.velocity.addScaledVector(actor.acceleration, dt);
+  actor.position.addScaledVector(actor.velocity, dt);
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/physics/update_box_collision.js
+function updateBoxCollision(actor, box) {
+  const dimensions = ["x", "y", "z"];
+  const epsilon = 1e-6;
+  for (let dim of dimensions) {
+    if (actor.position[dim] <= box.min[dim]) {
+      actor.position[dim] = box.min[dim] + epsilon;
+      actor.velocity[dim] = Math.abs(actor.velocity[dim]);
+    }
+    if (actor.position[dim] >= box.max[dim]) {
+      actor.position[dim] = box.max[dim] - epsilon;
+      actor.velocity[dim] = -Math.abs(actor.velocity[dim]);
+    }
+  }
+}
+
 // relative:/workspaces/monorepo/source/lib/engine/src/react/use_engine.js
 var import_react9 = __toESM(require_react());
 function useEngine(initCb = noop) {
@@ -73057,6 +73079,7 @@ var db = {
     transform: (obj) => {
       return {
         walkCost: obj.walkable ? 0 : 1e10,
+        tillable: true,
         ...obj
       };
     }
@@ -73081,6 +73104,12 @@ var TILE_GRASS = db.tiles.add({
 });
 var TILE_GRASS_UNWALKABLE = db.tiles.add({
   walkable: false,
+  colorFunc: grassColorFunc
+});
+var TILE_GRASS_UNTILLABLE = db.tiles.add({
+  walkable: true,
+  walkCost: 20,
+  tillable: false,
   colorFunc: grassColorFunc
 });
 var TILE_DIRT_WALKABLE = db.tiles.add({
@@ -73153,7 +73182,7 @@ function EngineView() {
         }
       });
     });
-    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 72e3, offsetZ: 48 }), new BasicLighting(), new GroundPlane(), heightMap);
+    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 72e3, offsetZ: 32 }), new BasicLighting(), new GroundPlane(), heightMap);
     engine.opt.heightMap = heightMap;
     engine.opt.walkableS = function(sx, sy) {
       const si = sy * heightMap.segments + sx;
@@ -73171,8 +73200,7 @@ function EngineView() {
           return false;
         }
         const tileIndex = tileArray[si];
-        const tile = db.tiles.get(tileIndex);
-        return tile.walkable;
+        return tileIndex === TILE_GRASS;
       };
       let worldX, worldY;
       do {
@@ -73219,6 +73247,8 @@ function EngineView() {
           }
         });
       }), ...generate(6, () => new Farmer()));
+      yield;
+      engine.actors.push(new Updater(heightMap));
       return;
     });
   });
@@ -73268,6 +73298,7 @@ var Farmer = class {
       findPlot: function* () {
         const heightMap = engine.opt.heightMap;
         const heightArray = heightMap.getLayerArray("height");
+        const tileArray = heightMap.getLayerArray("tile");
         let attempts = 0;
         let region = null;
         while (!region && attempts < 20) {
@@ -73288,13 +73319,25 @@ var Farmer = class {
                 heightMin = h;
               if (h > heightMax)
                 heightMax = h;
-              valid &= engine.opt.walkableS(sx, sy);
+              const tile = db.tiles.get(tileArray[si]);
+              valid &= tile.walkable && tile.tillable;
             }
           }
           valid &= heightMax - heightMin <= 15;
           if (valid) {
+            const R = 0;
+            for (let sy = ry0; sy < ry0 + height; sy++) {
+              for (let sx = rx0; sx < rx0 + width; sx++) {
+                if (!(sx >= 0 && sx < heightMap.segments && sy >= 0 && sy < heightMap.segments)) {
+                  continue;
+                }
+                const si = sy * heightMap.segments + sx;
+                tileArray[si] = TILE_GRASS_UNTILLABLE;
+                heightMap.updateSegment(sx, sy);
+              }
+            }
             const avgHeight = heightSum / (width * height);
-            region = [rx0, ry0, rx0 + width, ry0 + height, avgHeight];
+            region = [rx0 + 2, ry0 + 2, rx0 + width - 2, ry0 + height - 2, avgHeight];
           } else {
             yield 5;
           }
@@ -73328,7 +73371,7 @@ var Farmer = class {
           });
         };
         let parity = 0;
-        const WAIT = 0;
+        const WAIT = 5;
         for (let sy = ry0; sy < ry1; sy++) {
           if (parity === 0) {
             for (let sx = rx0; sx < rx1; sx++) {
@@ -73455,6 +73498,109 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
     }
   });
 }
+var Updater = class {
+  constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
+    this._heightMap = heightMap;
+    this._rng = makeRNG();
+    this._heightFunc = null;
+    this._makeHeightFunc = makeHeightFunc;
+    this._heightScale = heightScale;
+    this._position = new Vector3(0, 0, 0);
+    this._velocity = new Vector3(0, 0, 0);
+    this._acceleration = new Vector3(0, 0, 0);
+    const S = this._heightMap.segments;
+    this._collider = new Box3(new Vector3(0, 0, 0), new Vector3(S, S, S));
+  }
+  get position() {
+    return this._position;
+  }
+  get velocity() {
+    return this._velocity;
+  }
+  get acceleration() {
+    return this._acceleration;
+  }
+  update() {
+    const rng = this._rng;
+    updatePosition(this, 1);
+    updateBoxCollision(this, this._collider);
+    const K = 0.25;
+    const MV = 2;
+    this._velocity.x += K * rng.range(-1, 1);
+    this._velocity.y += K * rng.range(-1, 1);
+    this._velocity.clampScalar(-MV, MV);
+  }
+  stateMachine() {
+    const rng = this._rng;
+    return {
+      _bind: this,
+      _start: function* () {
+        this._position.x = rng.range(0, this._heightMap.segments);
+        this._position.y = rng.range(0, this._heightMap.segments);
+        this._velocity.x = rng.sign() * rng.range(0.2, 2);
+        this._velocity.y = rng.sign() * rng.range(0.2, 2);
+        return "changeTerrain";
+      },
+      changeTerrain: function* () {
+        if (this._makeHeightFunc) {
+          this._heightFunc = this._makeHeightFunc({ heightMap: this._heightMap });
+        } else {
+          const simplex = makeSimplexNoise(4342);
+          const amplitude = 0.04 * rng.range(0.4, 5);
+          const ox = rng.range(-1e3, 1e3);
+          const oy = rng.range(-1e3, 1e3);
+          const s = 1 / (rng.range(0.5, 2) * this._heightMap.segments);
+          const base = rng.range(0, 0.02);
+          this._heightFunc = (x, y) => base + amplitude * (0.5 + 0.5 * simplex.noise2D(ox + x * s, oy + y * s));
+        }
+        return "update";
+      },
+      update: function* () {
+        const D = 32;
+        const MAX_DIST = Math.sqrt(2 * D * D);
+        const heightMap = this._heightMap;
+        const tileArray = heightMap.getLayerArray("tile");
+        const frames = rng.rangei(10, 100);
+        for (let i = 0; i < frames; i++) {
+          const centerSX = Math.floor(this._position.x);
+          const centerSY = Math.floor(this._position.y);
+          for (let sy = centerSY - D, lsy = -D; sy <= centerSY + D; lsy++, sy++) {
+            for (let sx = centerSX - D, lsx = -D; sx <= centerSX + D; lsx++, sx++) {
+              if (!heightMap.coordValidS(sx, sy)) {
+                continue;
+              }
+              const [wx, wy] = heightMap.coordS2W(sx, sy);
+              const wz = heightMap.getLayerSC("height", sx, sy);
+              const tz = this._heightScale * this._heightFunc(wx, wy);
+              let dz = tz - wz;
+              if (Math.abs(dz) < 1e-3) {
+                continue;
+              }
+              dz /= 20;
+              const normalizedDist = Math.sqrt(lsx * lsx + lsy * lsy) / MAX_DIST;
+              const k = 0.01;
+              dz *= k + (1 - k) * (1 - normalizedDist);
+              dz *= 0.15;
+              const nz = wz + dz;
+              heightMap.setLayerWC("height", wx, wy, nz, false);
+            }
+          }
+          const K = D + 1;
+          for (let sy = centerSY - K; sy <= centerSY + K; sy++) {
+            for (let sx = centerSX - K; sx <= centerSX + K; sx++) {
+              if (!heightMap.coordValidS(sx, sy)) {
+                continue;
+              }
+              heightMap.updateSegment(sx, sy);
+            }
+          }
+          yield 10;
+        }
+        return "changeTerrain";
+      }
+    };
+  }
+};
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");
