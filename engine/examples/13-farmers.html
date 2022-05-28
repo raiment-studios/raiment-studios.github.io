@@ -33653,7 +33653,7 @@ var require_lodash = __commonJS({
         function valuesIn(object) {
           return object == null ? [] : baseValues(object, keysIn(object));
         }
-        function clamp3(number, lower, upper) {
+        function clamp2(number, lower, upper) {
           if (upper === undefined2) {
             upper = lower;
             lower = undefined2;
@@ -34327,7 +34327,7 @@ var require_lodash = __commonJS({
         lodash.camelCase = camelCase2;
         lodash.capitalize = capitalize;
         lodash.ceil = ceil;
-        lodash.clamp = clamp3;
+        lodash.clamp = clamp2;
         lodash.clone = clone;
         lodash.cloneDeep = cloneDeep;
         lodash.cloneDeepWith = cloneDeepWith;
@@ -41971,17 +41971,6 @@ function iterateCircle2D(cx, cy, radius, cb) {
   }
 }
 
-// relative:/workspaces/monorepo/source/lib/core/src/math/clamp.js
-function clamp(v, min, max) {
-  if (!(v > min)) {
-    return min;
-  }
-  if (!(v < max)) {
-    return max;
-  }
-  return v;
-}
-
 // relative:/workspaces/monorepo/source/lib/core/src/math/rng.js
 var import_mersenne_twister = __toESM(require_mersenne_twister());
 function makeRNG(...args) {
@@ -43291,7 +43280,7 @@ function generateUUID() {
   const uuid2 = _lut[d0 & 255] + _lut[d0 >> 8 & 255] + _lut[d0 >> 16 & 255] + _lut[d0 >> 24 & 255] + "-" + _lut[d1 & 255] + _lut[d1 >> 8 & 255] + "-" + _lut[d1 >> 16 & 15 | 64] + _lut[d1 >> 24 & 255] + "-" + _lut[d2 & 63 | 128] + _lut[d2 >> 8 & 255] + "-" + _lut[d2 >> 16 & 255] + _lut[d2 >> 24 & 255] + _lut[d3 & 255] + _lut[d3 >> 8 & 255] + _lut[d3 >> 16 & 255] + _lut[d3 >> 24 & 255];
   return uuid2.toLowerCase();
 }
-function clamp2(value2, min, max) {
+function clamp(value2, min, max) {
   return Math.max(min, Math.min(max, value2));
 }
 function euclideanModulo(n, m) {
@@ -43435,7 +43424,7 @@ var MathUtils = /* @__PURE__ */ Object.freeze({
   DEG2RAD,
   RAD2DEG,
   generateUUID,
-  clamp: clamp2,
+  clamp,
   euclideanModulo,
   mapLinear,
   inverseLerp,
@@ -44226,8 +44215,8 @@ var Color = class {
   }
   setHSL(h, s, l, colorSpace = LinearSRGBColorSpace) {
     h = euclideanModulo(h, 1);
-    s = clamp2(s, 0, 1);
-    l = clamp2(l, 0, 1);
+    s = clamp(s, 0, 1);
+    l = clamp(l, 0, 1);
     if (s === 0) {
       this.r = this.g = this.b = l;
     } else {
@@ -44346,7 +44335,7 @@ var Color = class {
   }
   getHex(colorSpace = SRGBColorSpace) {
     ColorManagement.fromWorkingColorSpace(toComponents(this, _rgb), colorSpace);
-    return clamp2(_rgb.r * 255, 0, 255) << 16 ^ clamp2(_rgb.g * 255, 0, 255) << 8 ^ clamp2(_rgb.b * 255, 0, 255) << 0;
+    return clamp(_rgb.r * 255, 0, 255) << 16 ^ clamp(_rgb.g * 255, 0, 255) << 8 ^ clamp(_rgb.b * 255, 0, 255) << 0;
   }
   getHexString(colorSpace = SRGBColorSpace) {
     return ("000000" + this.getHex(colorSpace).toString(16)).slice(-6);
@@ -45564,7 +45553,7 @@ var Quaternion = class {
     return this.normalize();
   }
   angleTo(q) {
-    return 2 * Math.acos(Math.abs(clamp2(this.dot(q), -1, 1)));
+    return 2 * Math.acos(Math.abs(clamp(this.dot(q), -1, 1)));
   }
   rotateTowards(q, step) {
     const angle = this.angleTo(q);
@@ -46054,7 +46043,7 @@ var Vector3 = class {
     if (denominator === 0)
       return Math.PI / 2;
     const theta = this.dot(v) / denominator;
-    return Math.acos(clamp2(theta, -1, 1));
+    return Math.acos(clamp(theta, -1, 1));
   }
   distanceTo(v) {
     return Math.sqrt(this.distanceToSquared(v));
@@ -47486,7 +47475,7 @@ var Euler = class {
     const m31 = te[2], m32 = te[6], m33 = te[10];
     switch (order) {
       case "XYZ":
-        this._y = Math.asin(clamp2(m13, -1, 1));
+        this._y = Math.asin(clamp(m13, -1, 1));
         if (Math.abs(m13) < 0.9999999) {
           this._x = Math.atan2(-m23, m33);
           this._z = Math.atan2(-m12, m11);
@@ -47496,7 +47485,7 @@ var Euler = class {
         }
         break;
       case "YXZ":
-        this._x = Math.asin(-clamp2(m23, -1, 1));
+        this._x = Math.asin(-clamp(m23, -1, 1));
         if (Math.abs(m23) < 0.9999999) {
           this._y = Math.atan2(m13, m33);
           this._z = Math.atan2(m21, m22);
@@ -47506,7 +47495,7 @@ var Euler = class {
         }
         break;
       case "ZXY":
-        this._x = Math.asin(clamp2(m32, -1, 1));
+        this._x = Math.asin(clamp(m32, -1, 1));
         if (Math.abs(m32) < 0.9999999) {
           this._y = Math.atan2(-m31, m33);
           this._z = Math.atan2(-m12, m22);
@@ -47516,7 +47505,7 @@ var Euler = class {
         }
         break;
       case "ZYX":
-        this._y = Math.asin(-clamp2(m31, -1, 1));
+        this._y = Math.asin(-clamp(m31, -1, 1));
         if (Math.abs(m31) < 0.9999999) {
           this._x = Math.atan2(m32, m33);
           this._z = Math.atan2(m21, m11);
@@ -47526,7 +47515,7 @@ var Euler = class {
         }
         break;
       case "YZX":
-        this._z = Math.asin(clamp2(m21, -1, 1));
+        this._z = Math.asin(clamp(m21, -1, 1));
         if (Math.abs(m21) < 0.9999999) {
           this._x = Math.atan2(-m23, m22);
           this._y = Math.atan2(-m31, m11);
@@ -47536,7 +47525,7 @@ var Euler = class {
         }
         break;
       case "XZY":
-        this._z = Math.asin(-clamp2(m12, -1, 1));
+        this._z = Math.asin(-clamp(m12, -1, 1));
         if (Math.abs(m12) < 0.9999999) {
           this._x = Math.atan2(m32, m22);
           this._y = Math.atan2(m13, m11);
@@ -60946,13 +60935,13 @@ var Curve = class {
       vec.crossVectors(tangents[i - 1], tangents[i]);
       if (vec.length() > Number.EPSILON) {
         vec.normalize();
-        const theta = Math.acos(clamp2(tangents[i - 1].dot(tangents[i]), -1, 1));
+        const theta = Math.acos(clamp(tangents[i - 1].dot(tangents[i]), -1, 1));
         normals[i].applyMatrix4(mat.makeRotationAxis(vec, theta));
       }
       binormals[i].crossVectors(tangents[i], normals[i]);
     }
     if (closed === true) {
-      let theta = Math.acos(clamp2(normals[0].dot(normals[segments]), -1, 1));
+      let theta = Math.acos(clamp(normals[0].dot(normals[segments]), -1, 1));
       theta /= segments;
       if (tangents[0].dot(vec.crossVectors(normals[0], normals[segments])) > 0) {
         theta = -theta;
@@ -61769,7 +61758,7 @@ var LatheGeometry = class extends BufferGeometry {
       phiLength
     };
     segments = Math.floor(segments);
-    phiLength = clamp2(phiLength, 0, Math.PI * 2);
+    phiLength = clamp(phiLength, 0, Math.PI * 2);
     const indices = [];
     const vertices = [];
     const uvs = [];
@@ -64259,7 +64248,7 @@ var MeshPhysicalMaterial = class extends MeshStandardMaterial {
     this.ior = 1.5;
     Object.defineProperty(this, "reflectivity", {
       get: function() {
-        return clamp2(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
+        return clamp(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
       },
       set: function(reflectivity) {
         this.ior = (1 + 0.4 * reflectivity) / (1 - 0.4 * reflectivity);
@@ -69697,7 +69686,7 @@ var Spherical = class {
       this.phi = 0;
     } else {
       this.theta = Math.atan2(x, z);
-      this.phi = Math.acos(clamp2(y / this.radius, -1, 1));
+      this.phi = Math.acos(clamp(y / this.radius, -1, 1));
     }
     return this;
   }
@@ -69876,7 +69865,7 @@ var Line3 = class {
     const startEnd_startP = _startEnd.dot(_startP);
     let t = startEnd_startP / startEnd2;
     if (clampToLine) {
-      t = clamp2(t, 0, 1);
+      t = clamp(t, 0, 1);
     }
     return t;
   }
@@ -70737,7 +70726,7 @@ var DataUtils = class {
   static toHalfFloat(val) {
     if (Math.abs(val) > 65504)
       console.warn("THREE.DataUtils.toHalfFloat(): Value out of range.");
-    val = clamp2(val, -65504, 65504);
+    val = clamp(val, -65504, 65504);
     _floatView[0] = val;
     const f = _uint32View[0];
     const e = f >> 23 & 511;
@@ -70882,6 +70871,10 @@ var ActorList = class {
   }
   push(...actors) {
     for (let actor of actors) {
+      if (!actor) {
+        console.error("Null or undefined actor added to actor list");
+        debugger;
+      }
       this._added.push(actor);
       this._list.push(actor);
     }
@@ -71137,6 +71130,7 @@ var Engine = class {
     this._cache = {};
     this._actors = new ActorList();
     this._world = new World(this);
+    this._opt = {};
     registerPinToGroundHeight(this);
     registerBillboard(this);
   }
@@ -71160,6 +71154,18 @@ var Engine = class {
   }
   get world() {
     return this._world;
+  }
+  get opt() {
+    return this._opt;
+  }
+  addSequence(generatorFunc) {
+    this.actors.push({
+      stateMachine() {
+        return {
+          _start: generatorFunc
+        };
+      }
+    });
   }
   start() {
     this._frameLoop.start();
@@ -73065,13 +73071,15 @@ var TILE_GRASS_UNWALKABLE = db.tiles.add({
   walkable: false,
   colorFunc: grassColorFunc
 });
-var TILE_BLACK = db.tiles.add({
-  walkable: false,
-  colorFunc: () => [0.3, 0.3, 0.3]
-});
-var TILE_BLUE = db.tiles.add({
-  walkable: false,
-  colorFunc: () => [0.1, 0.5, 0.9]
+var TILE_DIRT_WALKABLE = db.tiles.add({
+  walkable: true,
+  colorFunc: (sx, sy) => {
+    const base = grassColorFunc(sx, sy);
+    base[0] *= 1.25;
+    base[1] *= 0.5;
+    base[2] *= 0.5;
+    return base;
+  }
 });
 function makeHeightMap(rng) {
   const S = 192;
@@ -73104,11 +73112,6 @@ function makeHeightMap(rng) {
     switch (colorIndex) {
       case COLOR_DEFAULT: {
         const rgb = tile.colorFunc(sx, sy);
-        if (!tile.walkable) {
-          rgb[0] = clamp(rgb[0] * 2, 0, 1);
-          rgb[1] = clamp(rgb[1] * 0.5, 0, 1);
-          rgb[2] = clamp(rgb[2] * 0.5, 0, 1);
-        }
         return rgb;
       }
       default:
@@ -73123,7 +73126,6 @@ function EngineView() {
     const rng = makeRNG();
     const heightMap = makeHeightMap(rng);
     const tileArray = heightMap.getLayerArray("tile");
-    const colorArray = heightMap.getLayerArray("color");
     engine.events.on("actor.postinit", ({ actor }) => {
       const shape = actor.groundCollisionShape;
       if (!shape) {
@@ -73138,68 +73140,172 @@ function EngineView() {
         }
       });
     });
-    class Init {
-      stateMachine({ engine: engine2 }) {
-        return {
-          _start: function* () {
-            engine2.actors.push(new Forest({ count: 128 }));
-            yield;
-            engine2.actors.push(...generate(10, (i) => {
-              const walkable = (wx, wy) => {
-                const si = heightMap.coordW2I(wx, wy);
-                if (si === -1) {
-                  return false;
-                }
-                const tileIndex = tileArray[si];
-                const tile = db.tiles.get(tileIndex);
-                return tile.walkable;
-              };
-              let worldX, worldY;
-              do {
-                const radius = rng.range(10, 96);
-                const ang = rng.range(0, 2 * Math.PI);
-                worldX = Math.floor(radius * Math.cos(ang));
-                worldY = Math.floor(radius * Math.sin(ang));
-              } while (!walkable(worldX, worldY));
-              return new VoxelSprite({
-                url: assetURL[i == 0 ? "kestrel.png" : rng.select([
-                  "wizard.png",
-                  "ranger.png",
-                  "ranger.png",
-                  "ranger.png",
-                  "ranger2.png",
-                  "ranger2.png",
-                  "ranger2.png",
-                  "king.png"
-                ])],
-                flags: {
-                  billboard: true,
-                  pinToGroundHeight: true
-                },
-                worldX,
-                worldY,
-                stateMachine: function({ actor }) {
-                  return {
-                    _start: function* () {
-                      return "pathfind.start";
-                    },
-                    ...makePathfindBehaviorForHeightmap(heightMap, actor)
-                  };
-                }
-              });
-            }));
-            return;
-          }
-        };
+    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 72e3, offsetZ: 48 }), new BasicLighting(), new GroundPlane(), heightMap);
+    engine.opt.heightMap = heightMap;
+    engine.opt.walkableS = function(sx, sy) {
+      const si = sy * heightMap.segments + sx;
+      if (si === -1) {
+        return false;
       }
-    }
-    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 72e3, offsetZ: 24 }), new BasicLighting(), new GroundPlane(), heightMap, new Init());
+      const tileIndex = tileArray[si];
+      const tile = db.tiles.get(tileIndex);
+      return tile.walkable;
+    };
+    engine.opt.generateRandomWalkablePosition = function() {
+      const walkable = (wx, wy) => {
+        const si = heightMap.coordW2I(wx, wy);
+        if (si === -1) {
+          return false;
+        }
+        const tileIndex = tileArray[si];
+        const tile = db.tiles.get(tileIndex);
+        return tile.walkable;
+      };
+      let worldX, worldY;
+      do {
+        const radius = rng.range(10, 96);
+        const ang = rng.range(0, 2 * Math.PI);
+        worldX = Math.floor(radius * Math.cos(ang));
+        worldY = Math.floor(radius * Math.sin(ang));
+      } while (!walkable(worldX, worldY));
+      return [worldX, worldY];
+    };
+    engine.opt.generatePathfindingBehavior = function(actor) {
+      return makePathfindBehaviorForHeightmap(heightMap, actor);
+    };
+    engine.addSequence(function* () {
+      engine.actors.push(new Forest({ count: 40 }));
+      yield;
+      engine.actors.push(...generate(10, (i) => {
+        let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
+        return new VoxelSprite({
+          url: assetURL[rng.select([
+            "wizard.png",
+            "ranger.png",
+            "ranger.png",
+            "ranger.png",
+            "ranger2.png",
+            "ranger2.png",
+            "ranger2.png",
+            "king.png"
+          ])],
+          flags: {
+            billboard: true,
+            pinToGroundHeight: true
+          },
+          worldX,
+          worldY,
+          stateMachine: function({ actor }) {
+            return {
+              _start: function* () {
+                return "pathfind.target";
+              },
+              ...makePathfindBehaviorForHeightmap(heightMap, actor)
+            };
+          }
+        });
+      }), ...generate(6, () => new Farmer()));
+      return;
+    });
   });
   return /* @__PURE__ */ import_react17.default.createElement(EngineFrame, {
     engine,
     recorder: "three"
   });
 }
+var Farmer = class {
+  constructor() {
+    this._sprite = null;
+  }
+  init({ engine }) {
+    let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
+    this._sprite = new VoxelSprite({
+      url: assetURL["kestrel.png"],
+      flags: {
+        billboard: true,
+        pinToGroundHeight: true
+      },
+      worldX,
+      worldY
+    });
+    engine.actors.push(this._sprite);
+  }
+  stateMachine({ engine }) {
+    const rng = makeRNG();
+    const pathfindingBehavior = engine.opt.generatePathfindingBehavior(this._sprite);
+    console.log(this._sprite);
+    return {
+      _bind: this,
+      _start: function* () {
+        return "wander";
+      },
+      ...pathfindingBehavior,
+      wander: function* () {
+        let [wx, wy] = engine.opt.generateRandomWalkablePosition();
+        const [ex, ey] = engine.opt.heightMap.coordW2S(wx, wy);
+        return ["pathfind.moveLoop", ex, ey, "rest"];
+      },
+      rest: function* () {
+        yield rng.rangei(30, 5 * 60);
+        return rng.select(["wander", "wander", "findPlot"]);
+      },
+      findPlot: function* () {
+        const heightMap = engine.opt.heightMap;
+        let attempts = 0;
+        let region = null;
+        while (!region && attempts < 20) {
+          const width = rng.rangei(30, 50);
+          const height = rng.rangei(30, 50);
+          const rx0 = rng.rangei(0, heightMap.segments - width);
+          const ry0 = rng.rangei(0, heightMap.segments - height);
+          let valid = true;
+          for (let sy = ry0; valid && sy < ry0 + height; sy++) {
+            for (let sx = rx0; valid && sx < rx0 + width; sx++) {
+              valid &= engine.opt.walkableS(sx, sy);
+            }
+          }
+          if (valid) {
+            region = [rx0, ry0, rx0 + width, ry0 + height];
+          }
+          attempts++;
+        }
+        return region ? ["moveToPlot", region] : "rest";
+      },
+      moveToPlot: function* (plot) {
+        return ["pathfind.moveLoop", plot[0], plot[1], ["tillPlot", plot]];
+      },
+      tillPlot: function* ([rx0, ry0, rx1, ry1]) {
+        const heightMap = engine.opt.heightMap;
+        const tileArray = heightMap.getLayerArray("tile");
+        const till = (sx, sy) => {
+          const [wx, wy] = heightMap.coordS2W(sx, sy);
+          this._sprite.position.x = wx;
+          this._sprite.position.y = wy;
+          const si = sy * heightMap.segments + sx;
+          tileArray[si] = TILE_DIRT_WALKABLE;
+          heightMap.updateSegment(sx, sy);
+        };
+        let parity = 0;
+        for (let sy = ry0; sy < ry1; sy++) {
+          if (parity === 0) {
+            for (let sx = rx0; sx < rx1; sx++) {
+              till(sx, sy);
+              yield 5;
+            }
+          } else {
+            for (let sx = rx1 - 1; sx >= rx0; sx--) {
+              till(sx, sy);
+              yield 5;
+            }
+          }
+          yield 10;
+          parity = (parity + 1) % 2;
+        }
+        return "findPlot";
+      }
+    };
+  }
+};
 function makePathfindBehavior({
   pathfinder,
   positionFunc,
@@ -73210,31 +73316,27 @@ function makePathfindBehavior({
   moveDelay = 0
 }) {
   const prefixName = (s) => `${prefix2}${s}`;
-  const STATE_START = prefixName("start");
   const STATE_TARGET = prefixName("target");
   const STATE_MOVE = prefixName("move");
   const STATE_MOVELOOP = prefixName("moveLoop");
   return {
-    [STATE_START]: function* () {
-      return STATE_TARGET;
-    },
     [STATE_TARGET]: function* () {
       yield rng.rangei(5, 10);
-      const [sx, sy] = positionFunc();
-      if (!pathfinder.walkable(sx, sy)) {
-        console.error("starting on an unwalkable tile");
-        debugger;
-      }
       const ex = rng.rangei(0, pathfinder.width);
       const ey = rng.rangei(0, pathfinder.height);
       if (!pathfinder.walkable(ex, ey)) {
         return STATE_TARGET;
       }
-      return [STATE_MOVELOOP, sx, sy, ex, ey];
+      return [STATE_MOVELOOP, ex, ey];
     },
-    [STATE_MOVELOOP]: function* (sx, sy, ex, ey) {
+    [STATE_MOVELOOP]: function* (ex, ey, doneState = STATE_TARGET) {
+      const [sx, sy] = positionFunc();
+      if (!pathfinder.walkable(sx, sy)) {
+        console.error("starting on an unwalkable tile");
+        debugger;
+      }
       if (sx === ex && sy === ey) {
-        return STATE_TARGET;
+        return doneState;
       }
       const dx = ex - sx;
       const dy = ey - sy;
@@ -73257,16 +73359,16 @@ function makePathfindBehavior({
         result2 = yield pathfinder.pathfind(sx, sy, xg, yg);
       }
       const path = result2.map((g) => ({ x: g[0], y: g[1] }));
-      return [STATE_MOVE, path, ex, ey];
+      return [STATE_MOVE, path, ex, ey, doneState];
     },
-    [STATE_MOVE]: function* (path, ex, ey) {
+    [STATE_MOVE]: function* (path, ex, ey, doneState) {
       let x, y;
       while (path.length) {
         ({ x, y } = path.shift());
         onMove(x, y);
         yield moveDelay;
       }
-      return [STATE_MOVELOOP, x, y, ex, ey];
+      return [STATE_MOVELOOP, ex, ey, doneState];
     }
   };
 }
@@ -73286,7 +73388,6 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
     const tile = tileAt(sx, sy);
     return tile ? tile.walkable : false;
   };
-  const colorIndex = rng.select([COLOR_YELLOW, COLOR_ORANGE]);
   const pathfinder = new PathfinderGraph({
     width: SEGMENTS,
     height: SEGMENTS,
@@ -73305,9 +73406,6 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
       return heightMap.coordW2S(actor.position.x, actor.position.y);
     },
     onMove: (x, y) => {
-      const si = y * SEGMENTS + x;
-      colorArray[si] = colorIndex;
-      heightMap.updateSegment(x, y);
       const [wx, wy] = heightMap.coordS2W(x, y);
       actor.position.x = wx;
       actor.position.y = wy;

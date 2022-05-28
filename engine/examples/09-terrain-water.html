@@ -70738,6 +70738,10 @@ var ActorList = class {
   }
   push(...actors) {
     for (let actor of actors) {
+      if (!actor) {
+        console.error("Null or undefined actor added to actor list");
+        debugger;
+      }
       this._added.push(actor);
       this._list.push(actor);
     }
@@ -70993,6 +70997,7 @@ var Engine = class {
     this._cache = {};
     this._actors = new ActorList();
     this._world = new World(this);
+    this._opt = {};
     registerPinToGroundHeight(this);
     registerBillboard(this);
   }
@@ -71016,6 +71021,18 @@ var Engine = class {
   }
   get world() {
     return this._world;
+  }
+  get opt() {
+    return this._opt;
+  }
+  addSequence(generatorFunc) {
+    this.actors.push({
+      stateMachine() {
+        return {
+          _start: generatorFunc
+        };
+      }
+    });
   }
   start() {
     this._frameLoop.start();
