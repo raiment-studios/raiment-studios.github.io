@@ -123,8 +123,8 @@ var require_react_development = __commonJS({
         function warn(format) {
           {
             {
-              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key2 = 1; _key2 < _len; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key3 = 1; _key3 < _len; _key3++) {
+                args[_key3 - 1] = arguments[_key3];
               }
               printWarning("warn", format, args);
             }
@@ -133,8 +133,8 @@ var require_react_development = __commonJS({
         function error(format) {
           {
             {
-              for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+              for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key22 = 1; _key22 < _len2; _key22++) {
+                args[_key22 - 1] = arguments[_key22];
               }
               printWarning("error", format, args);
             }
@@ -2314,8 +2314,8 @@ var require_react_dom_development = __commonJS({
         function warn(format) {
           {
             if (!suppressWarning) {
-              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key2 = 1; _key2 < _len; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key3 = 1; _key3 < _len; _key3++) {
+                args[_key3 - 1] = arguments[_key3];
               }
               printWarning("warn", format, args);
             }
@@ -2324,8 +2324,8 @@ var require_react_dom_development = __commonJS({
         function error(format) {
           {
             if (!suppressWarning) {
-              for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+              for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key22 = 1; _key22 < _len2; _key22++) {
+                args[_key22 - 1] = arguments[_key22];
               }
               printWarning("error", format, args);
             }
@@ -33653,7 +33653,7 @@ var require_lodash = __commonJS({
         function valuesIn(object) {
           return object == null ? [] : baseValues(object, keysIn(object));
         }
-        function clamp2(number, lower, upper) {
+        function clamp3(number, lower, upper) {
           if (upper === undefined2) {
             upper = lower;
             lower = undefined2;
@@ -34020,7 +34020,7 @@ var require_lodash = __commonJS({
         function iteratee(func) {
           return baseIteratee(typeof func == "function" ? func : baseClone(func, CLONE_DEEP_FLAG));
         }
-        function matches(source) {
+        function matches2(source) {
           return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
         }
         function matchesProperty(path, srcValue) {
@@ -34232,7 +34232,7 @@ var require_lodash = __commonJS({
         lodash.map = map;
         lodash.mapKeys = mapKeys;
         lodash.mapValues = mapValues;
-        lodash.matches = matches;
+        lodash.matches = matches2;
         lodash.matchesProperty = matchesProperty;
         lodash.memoize = memoize4;
         lodash.merge = merge;
@@ -34327,7 +34327,7 @@ var require_lodash = __commonJS({
         lodash.camelCase = camelCase2;
         lodash.capitalize = capitalize;
         lodash.ceil = ceil;
-        lodash.clamp = clamp2;
+        lodash.clamp = clamp3;
         lodash.clone = clone;
         lodash.cloneDeep = cloneDeep;
         lodash.cloneDeepWith = cloneDeepWith;
@@ -37682,24 +37682,24 @@ var require_chroma = __commonJS({
         colorbrewer[key.toLowerCase()] = colorbrewer[key];
       }
       var colorbrewer_1 = colorbrewer;
-      var chroma2 = chroma_1;
-      chroma2.average = average;
-      chroma2.bezier = bezier_1;
-      chroma2.blend = blend_1;
-      chroma2.cubehelix = cubehelix;
-      chroma2.mix = chroma2.interpolate = mix$1;
-      chroma2.random = random_1;
-      chroma2.scale = scale$2;
-      chroma2.analyze = analyze_1.analyze;
-      chroma2.contrast = contrast;
-      chroma2.deltaE = deltaE;
-      chroma2.distance = distance;
-      chroma2.limits = analyze_1.limits;
-      chroma2.valid = valid;
-      chroma2.scales = scales;
-      chroma2.colors = w3cx11_1;
-      chroma2.brewer = colorbrewer_1;
-      var chroma_js = chroma2;
+      var chroma3 = chroma_1;
+      chroma3.average = average;
+      chroma3.bezier = bezier_1;
+      chroma3.blend = blend_1;
+      chroma3.cubehelix = cubehelix;
+      chroma3.mix = chroma3.interpolate = mix$1;
+      chroma3.random = random_1;
+      chroma3.scale = scale$2;
+      chroma3.analyze = analyze_1.analyze;
+      chroma3.contrast = contrast;
+      chroma3.deltaE = deltaE;
+      chroma3.distance = distance;
+      chroma3.limits = analyze_1.limits;
+      chroma3.valid = valid;
+      chroma3.scales = scales;
+      chroma3.colors = w3cx11_1;
+      chroma3.brewer = colorbrewer_1;
+      var chroma_js = chroma3;
       return chroma_js;
     });
   }
@@ -38102,8 +38102,8 @@ function createThemeProvider(context) {
     _inheritsLoose(ThemeProvider3, _React$Component);
     function ThemeProvider3() {
       var _this;
-      for (var _len = arguments.length, args = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len = arguments.length, args = new Array(_len), _key3 = 0; _key3 < _len; _key3++) {
+        args[_key3] = arguments[_key3];
       }
       _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "cachedTheme", void 0);
@@ -39632,8 +39632,8 @@ var Jss = /* @__PURE__ */ function() {
   };
   _proto.use = function use() {
     var _this = this;
-    for (var _len = arguments.length, plugins3 = new Array(_len), _key2 = 0; _key2 < _len; _key2++) {
-      plugins3[_key2] = arguments[_key2];
+    for (var _len = arguments.length, plugins3 = new Array(_len), _key3 = 0; _key3 < _len; _key3++) {
+      plugins3[_key3] = arguments[_key3];
     }
     plugins3.forEach(function(plugin) {
       _this.plugins.use(plugin);
@@ -40097,8 +40097,8 @@ function jssExtend() {
       return null;
     }
     if (typeof value2 === "object") {
-      for (var _key2 in value2) {
-        rule.prop(_key2, value2[_key2]);
+      for (var _key3 in value2) {
+        rule.prop(_key3, value2[_key3]);
       }
       rule[valueNs] = value2;
     }
@@ -41836,6 +41836,53 @@ function _key(x, y) {
 // relative:/workspaces/monorepo/source/lib/core/src/collections/map_3di.js
 var SPAN2 = 1 << 8;
 var HALF2 = SPAN2 >> 1;
+var Map3DI = class {
+  constructor(options = {}) {
+    this._map = /* @__PURE__ */ new Map();
+    this._defaultCallback = options.defaultCallback;
+  }
+  key(x, y, z) {
+    return _key2(x, y, z);
+  }
+  get(x, y, z) {
+    return this._map.get(_key2(x, y, z));
+  }
+  set(x, y, z, value2) {
+    return this._map.set(_key2(x, y, z), value2);
+  }
+  ensure(x, y, z, defaultCallback) {
+    const k = _key2(x, y, z);
+    let value2 = this._map.get(k);
+    if (value2 === void 0) {
+      const cb = defaultCallback || this._defaultCallback;
+      value2 = cb();
+      this._map.set(k, value2);
+    }
+    return value2;
+  }
+  delete(x, y, z) {
+    this._map.delete(_key2(x, y, z));
+  }
+  entries() {
+    const e = [];
+    for (let [k, v] of this._map.entries()) {
+      const x = (k >> 0 & 255) - HALF2;
+      const y = (k >> 8 & 255) - HALF2;
+      const z = (k >> 16 & 255) - HALF2;
+      e.push([x, y, z, v]);
+    }
+    return e;
+  }
+  values() {
+    return this._map.values();
+  }
+};
+function _key2(x, y, z) {
+  const px3 = x + HALF2;
+  const py2 = y + HALF2;
+  const pz2 = z + HALF2;
+  return pz2 << 16 | py2 << 8 | px3;
+}
 
 // relative:/workspaces/monorepo/source/lib/core/src/controllers/event_emitter.js
 var EventEmitter = class {
@@ -41898,20 +41945,41 @@ var EventEmitter = class {
   }
 };
 
-// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_border2d.js
-function iterateBorder2D(cx, cy, width, cb) {
-  for (let dy = -width; dy <= width; dy++) {
-    for (let dx = -width; dx <= width; dx++) {
+// relative:/workspaces/monorepo/source/lib/core/src/flow/assert.js
+function assert(condition, ...msg) {
+  if (condition) {
+    return;
+  }
+  if (msg && msg.length) {
+    console.error("core.assert failture details:");
+    console.error(...msg);
+  }
+  throw new Error(`core.assert failure`);
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_circle2d.js
+function iterateCircle2D(cx, cy, radius, cb) {
+  const R2 = radius * radius;
+  for (let dy = -radius; dy <= radius; dy++) {
+    for (let dx = -radius; dx <= radius; dx++) {
+      const d2 = dx * dx + dy * dy;
+      if (d2 >= R2) {
+        continue;
+      }
       cb(cx + dx, cy + dy);
     }
   }
 }
 
-// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_count.js
-function iterateCount(c, cb) {
-  for (let i = 0; i < c; i++) {
-    cb(i);
+// relative:/workspaces/monorepo/source/lib/core/src/math/clamp.js
+function clamp(v, min, max) {
+  if (!(v > min)) {
+    return min;
   }
+  if (!(v < max)) {
+    return max;
+  }
+  return v;
 }
 
 // relative:/workspaces/monorepo/source/lib/core/src/math/rng.js
@@ -43223,7 +43291,7 @@ function generateUUID() {
   const uuid2 = _lut[d0 & 255] + _lut[d0 >> 8 & 255] + _lut[d0 >> 16 & 255] + _lut[d0 >> 24 & 255] + "-" + _lut[d1 & 255] + _lut[d1 >> 8 & 255] + "-" + _lut[d1 >> 16 & 15 | 64] + _lut[d1 >> 24 & 255] + "-" + _lut[d2 & 63 | 128] + _lut[d2 >> 8 & 255] + "-" + _lut[d2 >> 16 & 255] + _lut[d2 >> 24 & 255] + _lut[d3 & 255] + _lut[d3 >> 8 & 255] + _lut[d3 >> 16 & 255] + _lut[d3 >> 24 & 255];
   return uuid2.toLowerCase();
 }
-function clamp(value2, min, max) {
+function clamp2(value2, min, max) {
   return Math.max(min, Math.min(max, value2));
 }
 function euclideanModulo(n, m) {
@@ -43367,7 +43435,7 @@ var MathUtils = /* @__PURE__ */ Object.freeze({
   DEG2RAD,
   RAD2DEG,
   generateUUID,
-  clamp,
+  clamp: clamp2,
   euclideanModulo,
   mapLinear,
   inverseLerp,
@@ -44158,8 +44226,8 @@ var Color = class {
   }
   setHSL(h, s, l, colorSpace = LinearSRGBColorSpace) {
     h = euclideanModulo(h, 1);
-    s = clamp(s, 0, 1);
-    l = clamp(l, 0, 1);
+    s = clamp2(s, 0, 1);
+    l = clamp2(l, 0, 1);
     if (s === 0) {
       this.r = this.g = this.b = l;
     } else {
@@ -44278,7 +44346,7 @@ var Color = class {
   }
   getHex(colorSpace = SRGBColorSpace) {
     ColorManagement.fromWorkingColorSpace(toComponents(this, _rgb), colorSpace);
-    return clamp(_rgb.r * 255, 0, 255) << 16 ^ clamp(_rgb.g * 255, 0, 255) << 8 ^ clamp(_rgb.b * 255, 0, 255) << 0;
+    return clamp2(_rgb.r * 255, 0, 255) << 16 ^ clamp2(_rgb.g * 255, 0, 255) << 8 ^ clamp2(_rgb.b * 255, 0, 255) << 0;
   }
   getHexString(colorSpace = SRGBColorSpace) {
     return ("000000" + this.getHex(colorSpace).toString(16)).slice(-6);
@@ -45496,7 +45564,7 @@ var Quaternion = class {
     return this.normalize();
   }
   angleTo(q) {
-    return 2 * Math.acos(Math.abs(clamp(this.dot(q), -1, 1)));
+    return 2 * Math.acos(Math.abs(clamp2(this.dot(q), -1, 1)));
   }
   rotateTowards(q, step) {
     const angle = this.angleTo(q);
@@ -45986,7 +46054,7 @@ var Vector3 = class {
     if (denominator === 0)
       return Math.PI / 2;
     const theta = this.dot(v) / denominator;
-    return Math.acos(clamp(theta, -1, 1));
+    return Math.acos(clamp2(theta, -1, 1));
   }
   distanceTo(v) {
     return Math.sqrt(this.distanceToSquared(v));
@@ -47418,7 +47486,7 @@ var Euler = class {
     const m31 = te[2], m32 = te[6], m33 = te[10];
     switch (order) {
       case "XYZ":
-        this._y = Math.asin(clamp(m13, -1, 1));
+        this._y = Math.asin(clamp2(m13, -1, 1));
         if (Math.abs(m13) < 0.9999999) {
           this._x = Math.atan2(-m23, m33);
           this._z = Math.atan2(-m12, m11);
@@ -47428,7 +47496,7 @@ var Euler = class {
         }
         break;
       case "YXZ":
-        this._x = Math.asin(-clamp(m23, -1, 1));
+        this._x = Math.asin(-clamp2(m23, -1, 1));
         if (Math.abs(m23) < 0.9999999) {
           this._y = Math.atan2(m13, m33);
           this._z = Math.atan2(m21, m22);
@@ -47438,7 +47506,7 @@ var Euler = class {
         }
         break;
       case "ZXY":
-        this._x = Math.asin(clamp(m32, -1, 1));
+        this._x = Math.asin(clamp2(m32, -1, 1));
         if (Math.abs(m32) < 0.9999999) {
           this._y = Math.atan2(-m31, m33);
           this._z = Math.atan2(-m12, m22);
@@ -47448,7 +47516,7 @@ var Euler = class {
         }
         break;
       case "ZYX":
-        this._y = Math.asin(-clamp(m31, -1, 1));
+        this._y = Math.asin(-clamp2(m31, -1, 1));
         if (Math.abs(m31) < 0.9999999) {
           this._x = Math.atan2(m32, m33);
           this._z = Math.atan2(m21, m11);
@@ -47458,7 +47526,7 @@ var Euler = class {
         }
         break;
       case "YZX":
-        this._z = Math.asin(clamp(m21, -1, 1));
+        this._z = Math.asin(clamp2(m21, -1, 1));
         if (Math.abs(m21) < 0.9999999) {
           this._x = Math.atan2(-m23, m22);
           this._y = Math.atan2(-m31, m11);
@@ -47468,7 +47536,7 @@ var Euler = class {
         }
         break;
       case "XZY":
-        this._z = Math.asin(-clamp(m12, -1, 1));
+        this._z = Math.asin(-clamp2(m12, -1, 1));
         if (Math.abs(m12) < 0.9999999) {
           this._x = Math.atan2(m32, m22);
           this._y = Math.atan2(m13, m11);
@@ -60878,13 +60946,13 @@ var Curve = class {
       vec.crossVectors(tangents[i - 1], tangents[i]);
       if (vec.length() > Number.EPSILON) {
         vec.normalize();
-        const theta = Math.acos(clamp(tangents[i - 1].dot(tangents[i]), -1, 1));
+        const theta = Math.acos(clamp2(tangents[i - 1].dot(tangents[i]), -1, 1));
         normals[i].applyMatrix4(mat.makeRotationAxis(vec, theta));
       }
       binormals[i].crossVectors(tangents[i], normals[i]);
     }
     if (closed === true) {
-      let theta = Math.acos(clamp(normals[0].dot(normals[segments]), -1, 1));
+      let theta = Math.acos(clamp2(normals[0].dot(normals[segments]), -1, 1));
       theta /= segments;
       if (tangents[0].dot(vec.crossVectors(normals[0], normals[segments])) > 0) {
         theta = -theta;
@@ -61701,7 +61769,7 @@ var LatheGeometry = class extends BufferGeometry {
       phiLength
     };
     segments = Math.floor(segments);
-    phiLength = clamp(phiLength, 0, Math.PI * 2);
+    phiLength = clamp2(phiLength, 0, Math.PI * 2);
     const indices = [];
     const vertices = [];
     const uvs = [];
@@ -64191,7 +64259,7 @@ var MeshPhysicalMaterial = class extends MeshStandardMaterial {
     this.ior = 1.5;
     Object.defineProperty(this, "reflectivity", {
       get: function() {
-        return clamp(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
+        return clamp2(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
       },
       set: function(reflectivity) {
         this.ior = (1 + 0.4 * reflectivity) / (1 - 0.4 * reflectivity);
@@ -68350,16 +68418,16 @@ var PropertyBinding = class {
     return name.replace(/\s/g, "_").replace(_reservedRe, "");
   }
   static parseTrackName(trackName) {
-    const matches = _trackRe.exec(trackName);
-    if (matches === null) {
+    const matches2 = _trackRe.exec(trackName);
+    if (matches2 === null) {
       throw new Error("PropertyBinding: Cannot parse trackName: " + trackName);
     }
     const results = {
-      nodeName: matches[2],
-      objectName: matches[3],
-      objectIndex: matches[4],
-      propertyName: matches[5],
-      propertyIndex: matches[6]
+      nodeName: matches2[2],
+      objectName: matches2[3],
+      objectIndex: matches2[4],
+      propertyName: matches2[5],
+      propertyIndex: matches2[6]
     };
     const lastDot = results.nodeName && results.nodeName.lastIndexOf(".");
     if (lastDot !== void 0 && lastDot !== -1) {
@@ -69629,7 +69697,7 @@ var Spherical = class {
       this.phi = 0;
     } else {
       this.theta = Math.atan2(x, z);
-      this.phi = Math.acos(clamp(y / this.radius, -1, 1));
+      this.phi = Math.acos(clamp2(y / this.radius, -1, 1));
     }
     return this;
   }
@@ -69808,7 +69876,7 @@ var Line3 = class {
     const startEnd_startP = _startEnd.dot(_startP);
     let t = startEnd_startP / startEnd2;
     if (clampToLine) {
-      t = clamp(t, 0, 1);
+      t = clamp2(t, 0, 1);
     }
     return t;
   }
@@ -70669,7 +70737,7 @@ var DataUtils = class {
   static toHalfFloat(val) {
     if (Math.abs(val) > 65504)
       console.warn("THREE.DataUtils.toHalfFloat(): Value out of range.");
-    val = clamp(val, -65504, 65504);
+    val = clamp2(val, -65504, 65504);
     _floatView[0] = val;
     const f = _uint32View[0];
     const e = f >> 23 & 511;
@@ -71152,7 +71220,7 @@ var Engine = class {
 };
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/flow/assert.js
-function assert(condition, ...msg) {
+function assert2(condition, ...msg) {
   if (condition) {
     return;
   }
@@ -71165,6 +71233,117 @@ function assert(condition, ...msg) {
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/math/rng.js
 var import_mersenne_twister2 = __toESM(require_mersenne_twister(), 1);
+function makeRNG2(...args) {
+  return new RNG2(...args);
+}
+var RNG2 = class {
+  constructor(seed = Math.random() * 1e9) {
+    this._rng = new import_mersenne_twister2.default(seed);
+    this._seed = seed;
+  }
+  get seed() {
+    return this._seed;
+  }
+  reset() {
+    this._rng = new import_mersenne_twister2.default(this._seed);
+  }
+  fork(offset = 0) {
+    return new RNG2(this.uint31() + offset);
+  }
+  random() {
+    return this._rng.random();
+  }
+  sign() {
+    return this._rng.random() < 0.5 ? -1 : 1;
+  }
+  bool() {
+    return this._rng.random() < 0.5 ? false : true;
+  }
+  int31() {
+    return this.sign() * this.uint31();
+  }
+  uint31() {
+    return this._rng.random_int31();
+  }
+  range(minValue, maxValue) {
+    const a = this._rng.random();
+    return minValue + a * (maxValue - minValue);
+  }
+  rangei(minValue, maxValue) {
+    const a = this._rng.random();
+    return Math.floor(minValue + a * (maxValue - minValue));
+  }
+  _s4() {
+    return Math.floor(this.random() * 65536).toString(16).substring(1);
+  }
+  uuid() {
+    const s42 = () => this._s4();
+    return `${s42() + s42()}-${s42()}-${s42()}-${s42()}-${s42()}${s42()}${s42()}`;
+  }
+  shuffle(arr) {
+    const temp = [...arr];
+    const dst = [];
+    while (temp.length) {
+      const i = Math.floor(this.random() * temp.length);
+      dst.push(temp[i]);
+      temp[i] = temp[temp.length - 1];
+      temp.pop();
+    }
+    return dst;
+  }
+  select(arr, count, weightFunc) {
+    if (arguments.length === 1) {
+      count = 1;
+    } else if (arguments.length === 2) {
+      if (typeof count === "function") {
+        weightFunc = count;
+        count = 1;
+      }
+    }
+    if (count === 1) {
+      if (!weightFunc) {
+        const i = Math.floor(this.random() * arr.length);
+        return arr[i];
+      } else {
+        const i = this._selectWeightedIndex(arr, weightFunc);
+        return arr[i];
+      }
+    } else {
+      const b = [...arr];
+      const results = [];
+      while (count > 0 && b.length > 0) {
+        let i;
+        if (!weightFunc) {
+          i = Math.floor(this.random() * b.length);
+        } else {
+          i = this._selectWeightedIndex(b, weightFunc);
+        }
+        const t = b[i];
+        b[i] = b[b.length - 1];
+        b.pop();
+        results.push(t);
+      }
+      return results;
+    }
+  }
+  _selectWeightedIndex(arr, cb) {
+    let sum = 0;
+    let tally = new Array(arr.length);
+    for (let i = 0; i < arr.length; i++) {
+      const entry = arr[i];
+      const weight = cb(entry);
+      sum += weight;
+      tally[i] = sum;
+    }
+    const roll = this.range(0, sum);
+    for (let i = 0; i < arr.length; i++) {
+      if (roll < tally[i]) {
+        return i;
+      }
+    }
+    throw new Error("RUNTIME_ERROR: Index out of range");
+  }
+};
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/core/src/strings/nearest_overlap.js
 var import_js_levenshtein2 = __toESM(require_js_levenshtein(), 1);
@@ -71297,7 +71476,7 @@ var HeightMap = class {
         this._layers.height[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
       }
     }
-    assert(this._layers.height.length === this._segments * this._segments);
+    assert2(this._layers.height.length === this._segments * this._segments);
   }
   get offset() {
     return this._offset;
@@ -71460,9 +71639,9 @@ var HeightMap = class {
     const normalArr = normalAttr.array;
     const colorAttr = this._mesh.geometry.attributes.color;
     const colorArr = colorAttr.array;
-    assert(indexArr.length === 5 * 6 * segments * segments);
-    assert(positionArr.length === 5 * 4 * 3 * segments * segments);
-    assert(colorArr.length === 5 * 4 * 3 * segments * segments);
+    assert2(indexArr.length === 5 * 6 * segments * segments);
+    assert2(positionArr.length === 5 * 4 * 3 * segments * segments);
+    assert2(colorArr.length === 5 * 4 * 3 * segments * segments);
     function sort2(a, b) {
       return a < b ? [a, b] : [b, a];
     }
@@ -71565,6 +71744,60 @@ var OrbitCamera = class {
       return bounds;
     }
     return new Box3();
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/voxel_sprite.js
+var VoxelSprite = class {
+  constructor({
+    url = null,
+    scale = 1,
+    depth = 1,
+    flags = {},
+    worldX = 0,
+    worldY = 0,
+    stateMachine = null
+  } = {}) {
+    if (!url) {
+      throw new Error(`url must be defined`);
+    }
+    this._url = url;
+    this._position = new Vector3(worldX, worldY, 0);
+    this._offset = new Vector3(0, 0, 0);
+    this._scale = scale;
+    this._depth = 1;
+    this._flags = Object.assign({}, flags);
+    this._mesh = null;
+    this._stateMachine = stateMachine;
+  }
+  get flags() {
+    return this._flags;
+  }
+  get position() {
+    return this._position;
+  }
+  stateMachine(ctx) {
+    if (!this._stateMachine) {
+      return;
+    }
+    const stateMachine = this._stateMachine(ctx);
+    stateMachine._bind = this;
+    return stateMachine;
+  }
+  async mesh({ engine }) {
+    const geometry = await engine.cache.imageGeometry.get(this._url, this._scale, this._depth, this._offset);
+    let material = new MeshBasicMaterial({
+      color: 16777215
+    });
+    material.vertexColors = true;
+    const mesh = new Mesh(geometry, material);
+    mesh.castShadow = true;
+    mesh.position.set(0.5, 0.5, 0);
+    const group = new Group();
+    group.position.copy(this._position);
+    group.add(mesh);
+    this._mesh = group;
+    return this._mesh;
   }
 };
 
@@ -72223,9 +72456,558 @@ var EngineFrame = import_react16.default.memo(function({
   }));
 });
 
+// relative:/workspaces/monorepo/source/lib/engine/examples/13-farmers/forest.js
+var import_chroma_js2 = __toESM(require_chroma());
+
+// relative:/workspaces/monorepo/source/lib/engine/examples/13-farmers/make_voxel_geometry.js
+function makeVoxelGeometry(voxels, options) {
+  options = Object.assign({
+    voxelScale: 1,
+    textureAtlasSize: 1
+  }, options);
+  const arrays = {
+    elements: 0,
+    index: [],
+    position: new ChunkedFloat32Array(),
+    normal: new ChunkedFloat32Array(),
+    uv: new ChunkedFloat32Array(),
+    color: new ChunkedFloat32Array()
+  };
+  const quad2 = ({ label, corners, id, positions, normal, color, uv }) => {
+    const [p0, p1, p2, p3] = positions.map((i) => corners[i]);
+    const [uv0, uv1, uv2, uv3] = uv;
+    arrays.position.push(...p0);
+    arrays.normal.push(...normal);
+    arrays.uv.push(...uv0);
+    arrays.position.push(...p1);
+    arrays.normal.push(...normal);
+    arrays.uv.push(...uv1);
+    arrays.position.push(...p2);
+    arrays.normal.push(...normal);
+    arrays.uv.push(...uv2);
+    arrays.position.push(...p3);
+    arrays.normal.push(...normal);
+    arrays.uv.push(...uv3);
+    color = [...color];
+    const colorScale = {
+      top: 1,
+      bottom: 0.1,
+      left: 0.5,
+      right: 0.75,
+      front: 0.6,
+      back: 0.6
+    }[label];
+    color[0] *= colorScale;
+    color[1] *= colorScale;
+    color[2] *= colorScale;
+    arrays.color.push(...color);
+    arrays.color.push(...color);
+    arrays.color.push(...color);
+    arrays.color.push(...color);
+    const s = arrays.elements;
+    arrays.index.push(s);
+    arrays.index.push(s + 1);
+    arrays.index.push(s + 2);
+    arrays.index.push(s);
+    arrays.index.push(s + 2);
+    arrays.index.push(s + 3);
+    arrays.elements += 4;
+  };
+  const hasNeighbor = (vx, vy, vz) => {
+    if (vx < 0 || vy < 0 || vz < 0 || vx >= voxels.size.x || vy >= voxels.size.y || vz >= voxels.size.z) {
+      return false;
+    }
+    const voxel = voxels.get(vx, vy, vz);
+    if (!voxel) {
+      return false;
+    }
+    return true;
+  };
+  let voxelID = 0;
+  for (let vz = 0; vz < voxels.size.z; vz++) {
+    for (let vy = 0; vy < voxels.size.y; vy++) {
+      for (let vx = 0; vx < voxels.size.x; vx++, voxelID++) {
+        const voxel = voxels.get(vx, vy, vz);
+        if (!voxel) {
+          continue;
+        }
+        let { color, texture } = voxel;
+        const vs = (1 - options.voxelScale) / 2;
+        const f0 = 0 + vs;
+        const f1 = 1 - vs;
+        const corners = [
+          [f0 + vx, f0 + vy, f1 + vz],
+          [f1 + vx, f0 + vy, f1 + vz],
+          [f0 + vx, f1 + vy, f1 + vz],
+          [f1 + vx, f1 + vy, f1 + vz],
+          [f0 + vx, f0 + vy, f0 + vz],
+          [f1 + vx, f0 + vy, f0 + vz],
+          [f0 + vx, f1 + vy, f0 + vz],
+          [f1 + vx, f1 + vy, f0 + vz]
+        ];
+        const atlasSize = voxels.textureAtlasSize || 1;
+        const nudge = 0 / atlasSize;
+        const u0 = Math.floor(texture % atlasSize) / atlasSize + nudge;
+        const u1 = u0 + 1 / atlasSize - nudge;
+        const v0 = 1 - Math.floor(texture / atlasSize) - nudge;
+        const v1 = v0 - 1 / atlasSize + nudge;
+        if (!hasNeighbor(vx, vy, vz + 1)) {
+          quad2({
+            label: "top",
+            id: voxelID,
+            corners,
+            positions: [0, 1, 3, 2],
+            normal: [0, 0, 1],
+            color,
+            uv: [
+              [u0, v0],
+              [u1, v0],
+              [u1, v1],
+              [u0, v1]
+            ]
+          });
+        }
+        if (!hasNeighbor(vx, vy, vz - 1)) {
+          quad2({
+            label: "bottom",
+            id: voxelID,
+            corners,
+            positions: [4, 6, 7, 5],
+            normal: [0, 0, -1],
+            color,
+            uv: [
+              [u0, v0],
+              [u0, v1],
+              [u1, v1],
+              [u1, v0]
+            ]
+          });
+        }
+        if (!hasNeighbor(vx + 1, vy, vz)) {
+          quad2({
+            label: "right",
+            id: voxelID,
+            corners,
+            positions: [3, 1, 5, 7],
+            normal: [1, 0, 0],
+            color,
+            uv: [
+              [u1, v0],
+              [u0, v0],
+              [u0, v1],
+              [u1, v1]
+            ]
+          });
+        }
+        if (!hasNeighbor(vx - 1, vy, vz)) {
+          quad2({
+            label: "left",
+            id: voxelID,
+            corners,
+            positions: [6, 4, 0, 2],
+            normal: [-1, 0, 0],
+            color,
+            uv: [
+              [u0, v1],
+              [u1, v1],
+              [u1, v0],
+              [u0, v0]
+            ]
+          });
+        }
+        if (!hasNeighbor(vx, vy + 1, vz)) {
+          quad2({
+            label: "front",
+            id: voxelID,
+            corners,
+            positions: [2, 3, 7, 6],
+            normal: [0, 1, 0],
+            color,
+            uv: [
+              [u1, v0],
+              [u0, v0],
+              [u0, v1],
+              [u1, v1]
+            ]
+          });
+        }
+        if (!hasNeighbor(vx, vy - 1, vz)) {
+          quad2({
+            label: "back",
+            id: voxelID,
+            corners,
+            positions: [0, 4, 5, 1],
+            normal: [0, -1, 0],
+            color,
+            uv: [
+              [u0, v0],
+              [u0, v1],
+              [u1, v1],
+              [u1, v0]
+            ]
+          });
+        }
+      }
+    }
+  }
+  let geometry = {
+    position: arrays.position.data(),
+    normal: arrays.normal.data(),
+    uv: arrays.uv.data(),
+    color: arrays.color.data(),
+    index: new Int32Array(arrays.index)
+  };
+  return geometry;
+}
+var ChunkedFloat32Array = class {
+  constructor() {
+    this.chunks = [];
+    this.index = 0;
+  }
+  push(...f) {
+    for (let v of f) {
+      const CHUNKSIZE = 32 * 1024;
+      const ci = Math.floor(this.index / CHUNKSIZE);
+      const co = this.index % CHUNKSIZE;
+      let chunk = this.chunks[ci];
+      if (!chunk) {
+        chunk = new Float32Array(CHUNKSIZE);
+        this.chunks[ci] = chunk;
+      }
+      chunk[co] = v;
+      this.index++;
+    }
+  }
+  data() {
+    const arr = new Float32Array(this.index);
+    let i = 0;
+    for (let chunk of this.chunks) {
+      for (let j = 0; j < chunk.length; j++) {
+        arr[i++] = chunk[j];
+      }
+    }
+    return arr;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/examples/13-farmers/voxel_mesh_sg.js
+function grid3d(x, y, z, size, out = {}) {
+  out.gx = Math.floor(x / size);
+  out.gy = Math.floor(y / size);
+  out.gz = Math.floor(z / size);
+  out.lx = x - out.gx * size;
+  out.ly = y - out.gy * size;
+  out.lz = z - out.gz * size;
+  return out;
+}
+var VoxelModelSG = class {
+  constructor({ billboard = false } = {}) {
+    this._chunks = new Map3DI({ defaultCallback: () => new Chunk() });
+    this._group = new Group();
+    this._billboard = billboard;
+  }
+  dispose() {
+    for (let chunk of this._chunks.values()) {
+      chunk.dispose();
+    }
+    this._chunks = null;
+  }
+  set(x, y, z, c) {
+    if (!this._chunks) {
+      return;
+    }
+    x = Math.floor(x);
+    y = Math.floor(y);
+    z = Math.floor(z);
+    const p = grid3d(x, y, z, CHUNK_SIZE);
+    const chunk = this._chunks.ensure(p.gx, p.gy, p.gz);
+    chunk.set(p.lx, p.ly, p.lz, c);
+  }
+  heightAt(x, y, defaultValue = -Infinity) {
+    let max = -Infinity;
+    for (let [cx, cy, cz, chunk] of this._chunks.entries()) {
+      const wx = cx * CHUNK_SIZE;
+      const wy = cy * CHUNK_SIZE;
+      if (x >= wx && x < wx + CHUNK_SIZE && y >= wy && y < wy + CHUNK_SIZE) {
+        const lz = chunk.heightAt(x - wx, y - wy);
+        if (lz > -Infinity) {
+          max = Math.max(max, cz * CHUNK_SIZE + lz);
+        }
+      }
+    }
+    return max > -Infinity ? max : defaultValue;
+  }
+  mesh({ engine }) {
+    return this._group;
+  }
+  update({ engine }) {
+    for (let [cx, cy, cz, chunk] of this._chunks.entries()) {
+      chunk.updateMesh(engine, this._group, cx, cy, cz);
+    }
+    if (this._billboard) {
+      const cam = engine.renderer.camera.position;
+      const ang = Math.atan2(cam.y, cam.x);
+      this._group.setRotationFromAxisAngle(new Vector3(0, 0, 1), ang + Math.PI / 2);
+    }
+  }
+};
+var CHUNK_SIZE = 8;
+var Chunk = class {
+  constructor() {
+    this._data = new Uint32Array(CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE);
+    this._data.fill(0);
+    this._dirty = true;
+    this._mesh = null;
+  }
+  dispose() {
+    if (this._mesh) {
+      this._mesh.removeFromParent();
+      this._mesh.geometry.dispose();
+      this._mesh = null;
+    }
+  }
+  set(x, y, z, c) {
+    const i = chunkIndex(x, y, z);
+    this._data[i] = colorClamp(c);
+    this._dirty = true;
+  }
+  heightAt(x, y) {
+    for (let z = CHUNK_SIZE - 1; z >= 0; z--) {
+      const i = chunkIndex(x, y, z);
+      const v = this._data[i];
+      if (v > 0) {
+        return z;
+      }
+    }
+    return -Infinity;
+  }
+  updateMesh(engine, parent, cx, cy, cz) {
+    if (!this._dirty) {
+      return;
+    }
+    if (this._mesh) {
+      parent.remove(this._mesh);
+      this._mesh.geometry.dispose();
+      this._mesh = null;
+    }
+    const iface = {
+      size: { x: 8, y: 8, z: 8 },
+      get: (x, y, z) => {
+        const i = (z * CHUNK_SIZE + y) * CHUNK_SIZE + x;
+        const color = this._data[i];
+        if (color === 0) {
+          return null;
+        }
+        return {
+          color: [
+            (color >> 16 & 255) / 255,
+            (color >> 8 & 255) / 255,
+            (color >> 0 & 255) / 255
+          ],
+          texture: 0
+        };
+      }
+    };
+    const arrays = makeVoxelGeometry(iface);
+    let geometry = new BufferGeometry();
+    geometry.setAttribute("position", new Float32BufferAttribute(arrays.position, 3));
+    geometry.setAttribute("normal", new Float32BufferAttribute(arrays.normal, 3));
+    geometry.setAttribute("color", new Float32BufferAttribute(arrays.color, 3));
+    geometry.setIndex(Array.from(arrays.index));
+    geometry.computeBoundingBox();
+    geometry.uvsNeedUpdate = true;
+    const material = materialCache.get("white");
+    assert(material, `Material should always exist`);
+    const mesh = new Mesh(geometry, material);
+    mesh.position.set(cx * CHUNK_SIZE, cy * CHUNK_SIZE, cz * CHUNK_SIZE);
+    parent.add(mesh);
+    this._group = mesh;
+    this._dirty = false;
+  }
+};
+function chunkIndex(x, y, z) {
+  return (z * CHUNK_SIZE + y) * CHUNK_SIZE + x;
+}
+function colorClamp(c) {
+  return Math.floor(Math.max(0, Math.min(255, c[0] * 255))) << 16 | Math.floor(Math.max(0, Math.min(255, c[1] * 255))) << 8 | Math.floor(Math.max(0, Math.min(255, c[2] * 255))) << 0;
+}
+var MaterialCache = class {
+  constructor() {
+    this._cache = {};
+  }
+  get(color) {
+    let material = this._cache[color];
+    if (!material) {
+      material = new MeshPhongMaterial({ color, shininess: 0 });
+      material.vertexColors = true;
+      material.needsUpdate = true;
+      this._cache[color] = material;
+    }
+    return material;
+  }
+};
+var materialCache = new MaterialCache();
+
+// relative:/workspaces/monorepo/source/lib/engine/examples/13-farmers/forest.js
+var Forest = class {
+  constructor(params) {
+    this._params = Object.assign({
+      seed: 31174,
+      count: 32
+    }, params);
+  }
+  init({ engine }) {
+    const { count, seed } = this._params;
+    const rng = makeRNG2(seed);
+    const W = 128;
+    for (let i = 0; i < count; i++) {
+      let position;
+      for (let attempt = 0; attempt < 100; attempt++) {
+        position = [rng.rangei(-W, W), rng.rangei(-W, W)];
+      }
+      engine.actors.push(new TreeActor({ position }));
+    }
+  }
+};
+var TreeActor = class {
+  constructor(params) {
+    this._params = Object.assign({
+      position: [0, 0, 0]
+    }, params);
+    this._group = null;
+    this._position = new Vector3(this._params.position[0], this._params.position[1], this._params.position[2]);
+    this.flags = {
+      meshNeedsUpdate: true,
+      castShadow: true,
+      pinToGroundHeight: true
+    };
+  }
+  get position() {
+    return this._position;
+  }
+  get groundCollisionShape() {
+    return {
+      type: "rect",
+      width: 3
+    };
+  }
+  async mesh({ engine }) {
+    const rng = makeRNG2(2998474);
+    const { position } = this._params;
+    this._group = new Group();
+    this._group.position.set(position[0] + rng.range(-0.01, 0.01), position[1] + rng.range(-0.01, 0.01), 0);
+    const mesh = await this._buildMesh({ engine, rng });
+    this._group.add(mesh);
+    return this._group;
+  }
+  async _buildMesh({ engine, rng }) {
+    const model = new VoxelModelSG();
+    const func = await treeShader.generate({
+      height: rng.rangei(8, 20),
+      radius: rng.rangei(3, 6)
+    });
+    const ctx = buildContext(model);
+    for (let it of func(ctx)) {
+    }
+    model.update({ engine });
+    return model.mesh({ engine });
+  }
+};
+function buildContext(voxels) {
+  const ctx = {};
+  const rng = makeRNG2();
+  ctx.rng = rng;
+  ctx.color = [1, 1, 1, 1];
+  let offset = { x: 0, y: 0, z: 0 };
+  let shadePixel = () => ctx.color;
+  ctx.setPixelShader = function(type, value2) {
+    const c = value2;
+    const arr = [1, 0.95, 0.9, 0.85];
+    shadePixel = () => {
+      const shade = rng.select(arr);
+      return [c[0] * shade, c[1] * shade, c[2] * shade];
+    };
+  };
+  ctx.setOffset = function(x, y, z) {
+    offset.x = x;
+    offset.y = y;
+    offset.z = z;
+  };
+  ctx.point = function(x, y, z, color) {
+    voxels.set(x + offset.x, y + offset.y, z + offset.z, color);
+  };
+  ctx.voxel = function(x, y, z) {
+    const c = shadePixel();
+    voxels.set(x + offset.x, y + offset.y, z + offset.z, c);
+  };
+  ctx.heightAt = function(x, y) {
+    return voxels.heightAt(x, y, 0);
+  };
+  ctx.sphere = (cx, cy, cz, r, base) => {
+    for (let dz = -r; dz <= r; dz++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          const d2 = dx * dx + dy * dy + dz * dz;
+          if (d2 > r * r) {
+            continue;
+          }
+          const x = Math.floor(cx + dx);
+          const y = Math.floor(cy + dy);
+          const z = Math.floor(cz + dz);
+          const shade = rng.select([1, 0.95, 0.9, 0.85]);
+          const cr = base[0] * shade;
+          const cg = base[1] * shade;
+          const cb = base[2] * shade;
+          voxels.set(x + offset.x, y + offset.y, z + offset.z, [cr, cg, cb]);
+        }
+      }
+    }
+  };
+  return ctx;
+}
+var treeShader = {
+  generate: async function(values) {
+    const height = values.height;
+    const radius = values.radius;
+    return function* ({ point, sphere }) {
+      const rng = makeRNG2();
+      const base = [
+        rng.rangei(98, 162) / 255,
+        rng.rangei(120, 192) / 255,
+        rng.rangei(0, 32) / 255
+      ];
+      const ctrunk = (0, import_chroma_js2.default)("brown").brighten(4.5).gl();
+      for (let z = 0; z < height - radius; z++) {
+        const c = [...ctrunk];
+        const s = rng.select([0.9, 0.95, 1, 1]);
+        c[0] *= s;
+        c[1] *= s;
+        c[2] *= s;
+        point(0, 0, z, c);
+      }
+      for (let i = 0; i < 1; i++) {
+        const cx = 0;
+        const cy = 0;
+        const cz = height;
+        const color = [...base];
+        color[0] *= rng.range(0.5, 1);
+        color[1] *= rng.range(0.85, 1);
+        color[2] *= rng.range(0.5, 1);
+        sphere(cx, cy, cz, radius, color);
+        yield;
+      }
+    };
+  }
+};
+
+// glob:glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}
+var matches = [{ url: "assets/proto/sprites/kestrel.png" }, { url: "assets/proto/sprites/kestrel.png.asset.yaml" }, { url: "assets/proto/sprites/king.png" }, { url: "assets/proto/sprites/king.png.asset.yaml" }, { url: "assets/proto/sprites/ranger.png" }, { url: "assets/proto/sprites/ranger.png.asset.yaml" }, { url: "assets/proto/sprites/ranger2.png" }, { url: "assets/proto/sprites/ranger2.png.asset.yaml" }, { url: "assets/proto/sprites/wizard.png" }, { url: "assets/proto/sprites/wizard.png.asset.yaml" }];
+var png_asset_default = { matches };
+
 // builtin:./__app.js
+var assetURL = Object.fromEntries(png_asset_default.matches.map(({ url }) => [url.split("/").pop(), url]));
 function app_default() {
-  return /* @__PURE__ */ import_react17.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react17.default.createElement("h1", null, "Pathfinding"), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement(EngineView, null)));
+  return /* @__PURE__ */ import_react17.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react17.default.createElement("h1", null, "Farmers"), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement(EngineView, null)), /* @__PURE__ */ import_react17.default.createElement("p", null, "\u{1F6A7} Work in progress"), /* @__PURE__ */ import_react17.default.createElement("p", null, 'The goal of this experiment is to have farmer sprites that (1) find a rectangular plot of land, (2) "reserve" it for farming, (3) iteratively go over each tile with a hoe to prepare the soil, (4) rest, (5) repeat.'));
 }
 function makeGrassColorFunc(segments) {
   const scale = 1 / (segments * 100 / 256);
@@ -72262,16 +73044,26 @@ var db = {
     }
   })
 };
-var COLOR_DEFAULT = db.colors.add({});
+var COLOR_DEFAULT = db.colors.add({
+  rgb: [1, 1, 1]
+});
 var COLOR_YELLOW = db.colors.add({
   rgb: [1, 1, 0.2]
 });
 var COLOR_ORANGE = db.colors.add({
   rgb: [235 / 255, 143 / 255, 52 / 255]
 });
+var COLOR_RED = db.colors.add({
+  rgb: [235 / 255, 43 / 255, 12 / 255]
+});
+var grassColorFunc = makeGrassColorFunc(256);
 var TILE_GRASS = db.tiles.add({
   walkable: true,
-  colorFunc: makeGrassColorFunc(256)
+  colorFunc: grassColorFunc
+});
+var TILE_GRASS_UNWALKABLE = db.tiles.add({
+  walkable: false,
+  colorFunc: grassColorFunc
 });
 var TILE_BLACK = db.tiles.add({
   walkable: false,
@@ -72282,7 +73074,9 @@ var TILE_BLUE = db.tiles.add({
   colorFunc: () => [0.1, 0.5, 0.9]
 });
 function makeHeightMap(rng) {
-  const S = 96;
+  const S = 192;
+  const simplex1 = makeSimplexNoise();
+  const simplex2 = makeSimplexNoise();
   const simplex3 = makeSimplexNoise();
   const heightMap = new HeightMap({
     offset: [-256 / 2, -256 / 2, 0],
@@ -72293,8 +73087,10 @@ function makeHeightMap(rng) {
       color: Int8Array
     },
     heightFunc: (sx, sy) => {
-      const a = (1 + simplex3.noise2D(sx / S, sy / S)) / 2;
-      return 0.1 * a;
+      const nx = sx + 5 * simplex1.noise2D(4 * sx / S, 4 * sy / S);
+      const ny = sy + 5 * simplex2.noise2D(4 * sx / S, 4 * sy / S);
+      const a = 1 + simplex3.noise2D(nx / S, ny / S) / 2;
+      return 0.1 * Math.pow(1.1 * a, 1.5);
     }
   });
   const tileArray = heightMap.getLayerArray("tile");
@@ -72302,30 +73098,23 @@ function makeHeightMap(rng) {
   tileArray.fill(TILE_GRASS);
   colorArray.fill(COLOR_DEFAULT);
   heightMap.colorFunc = function(sx, sy, wz, si) {
-    const tile = tileArray[si];
-    const color = colorArray[si];
-    switch (color) {
-      case COLOR_DEFAULT:
-        return db.tiles.get(tile).colorFunc(sx, sy);
-      default: {
-        const obj = db.colors.get(color);
-        return obj.rgb;
+    const tile = db.tiles.get(tileArray[si]);
+    const colorIndex = colorArray[si];
+    const color = db.colors.get(colorIndex);
+    switch (colorIndex) {
+      case COLOR_DEFAULT: {
+        const rgb = tile.colorFunc(sx, sy);
+        if (!tile.walkable) {
+          rgb[0] = clamp(rgb[0] * 2, 0, 1);
+          rgb[1] = clamp(rgb[1] * 0.5, 0, 1);
+          rgb[2] = clamp(rgb[2] * 0.5, 0, 1);
+        }
+        return rgb;
       }
+      default:
+        return color.rgb;
     }
   };
-  iterateCount(400, (i) => {
-    const cx = rng.rangei(0, heightMap.segments);
-    const cy = rng.rangei(0, heightMap.segments);
-    const tile = i < 40 ? TILE_BLACK : TILE_BLUE;
-    const count = i < 40 ? 8 : 4;
-    iterateBorder2D(cx, cy, count, (sx, sy) => {
-      const si = heightMap.coordS2I(sx, sy);
-      if (si !== -1) {
-        colorArray[si] = COLOR_DEFAULT;
-        tileArray[si] = tile;
-      }
-    });
-  });
   heightMap.updateMesh();
   return heightMap;
 }
@@ -72333,58 +73122,119 @@ function EngineView() {
   const engine = useEngine(() => {
     const rng = makeRNG();
     const heightMap = makeHeightMap(rng);
-    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 64e3, offsetZ: 96 }), new BasicLighting(), new GroundPlane(), heightMap, ...generate(60, () => new Updater(heightMap)));
+    const tileArray = heightMap.getLayerArray("tile");
+    const colorArray = heightMap.getLayerArray("color");
+    engine.events.on("actor.postinit", ({ actor }) => {
+      const shape = actor.groundCollisionShape;
+      if (!shape) {
+        return;
+      }
+      const [sx, sy] = heightMap.coordW2S(actor.position.x, actor.position.y);
+      iterateCircle2D(sx, sy, 2 * shape.width, (sx2, sy2) => {
+        const si = heightMap.coordS2I(sx2, sy2);
+        if (si !== -1) {
+          tileArray[si] = TILE_GRASS_UNWALKABLE;
+          heightMap.updateSegment(sx2, sy2);
+        }
+      });
+    });
+    class Init {
+      stateMachine({ engine: engine2 }) {
+        return {
+          _start: function* () {
+            engine2.actors.push(new Forest({ count: 128 }));
+            yield;
+            engine2.actors.push(...generate(10, (i) => {
+              const walkable = (wx, wy) => {
+                const si = heightMap.coordW2I(wx, wy);
+                if (si === -1) {
+                  return false;
+                }
+                const tileIndex = tileArray[si];
+                const tile = db.tiles.get(tileIndex);
+                return tile.walkable;
+              };
+              let worldX, worldY;
+              do {
+                const radius = rng.range(10, 96);
+                const ang = rng.range(0, 2 * Math.PI);
+                worldX = Math.floor(radius * Math.cos(ang));
+                worldY = Math.floor(radius * Math.sin(ang));
+              } while (!walkable(worldX, worldY));
+              return new VoxelSprite({
+                url: assetURL[i == 0 ? "kestrel.png" : rng.select([
+                  "wizard.png",
+                  "ranger.png",
+                  "ranger.png",
+                  "ranger.png",
+                  "ranger2.png",
+                  "ranger2.png",
+                  "ranger2.png",
+                  "king.png"
+                ])],
+                flags: {
+                  billboard: true,
+                  pinToGroundHeight: true
+                },
+                worldX,
+                worldY,
+                stateMachine: function({ actor }) {
+                  return {
+                    _start: function* () {
+                      return "pathfind.start";
+                    },
+                    ...makePathfindBehaviorForHeightmap(heightMap, actor)
+                  };
+                }
+              });
+            }));
+            return;
+          }
+        };
+      }
+    }
+    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 72e3, offsetZ: 24 }), new BasicLighting(), new GroundPlane(), heightMap, new Init());
   });
   return /* @__PURE__ */ import_react17.default.createElement(EngineFrame, {
     engine,
     recorder: "three"
   });
 }
-function pathFindBehavior(heightmap) {
-  const MAX_SEARCH_DISTANCE = 60;
-  const rng = makeRNG();
-  const SEGMENTS = heightmap.segments;
-  const tileArray = heightmap.getLayerArray("tile");
-  const colorArray = heightmap.getLayerArray("color");
-  const tileAt = (sx, sy) => {
-    if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
-      return null;
-    }
-    return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
-  };
-  const pathfinder = new PathfinderGraph({
-    width: heightmap.segments,
-    height: heightmap.segments,
-    baseCost: (a) => tileAt(a.x, a.y)?.walkable ? 0 : 1e10,
-    edgeCost: (a, b) => {
-      const hb = heightmap.getLayerSC("height", a.x, a.y);
-      const ha = heightmap.getLayerSC("height", b.x, b.y);
-      return Math.max(0, hb - ha);
-    }
-  });
+function makePathfindBehavior({
+  pathfinder,
+  positionFunc,
+  prefix: prefix2 = "pathfind.",
+  MAX_SEARCH_DISTANCE = 100,
+  rng = makeRNG(),
+  onMove,
+  moveDelay = 0
+}) {
+  const prefixName = (s) => `${prefix2}${s}`;
+  const STATE_START = prefixName("start");
+  const STATE_TARGET = prefixName("target");
+  const STATE_MOVE = prefixName("move");
+  const STATE_MOVELOOP = prefixName("moveLoop");
   return {
-    _start: function* () {
-      return "target";
+    [STATE_START]: function* () {
+      return STATE_TARGET;
     },
-    target: function* () {
+    [STATE_TARGET]: function* () {
       yield rng.rangei(5, 10);
-      const sx = rng.rangei(0, heightmap.segments);
-      const sy = rng.rangei(0, heightmap.segments);
-      const si = sy * heightmap.segments + sx;
-      const ex = rng.rangei(0, heightmap.segments);
-      const ey = rng.rangei(0, heightmap.segments);
-      const ei = ey * heightmap.segments + ex;
-      if (si === -1 || ei === -1) {
-        return "target";
+      const [sx, sy] = positionFunc();
+      if (!pathfinder.walkable(sx, sy)) {
+        console.error("starting on an unwalkable tile");
+        debugger;
       }
-      if (!tileAt(sx, sy).walkable || !tileAt(ex, ey).walkable) {
-        return "target";
+      const ex = rng.rangei(0, pathfinder.width);
+      const ey = rng.rangei(0, pathfinder.height);
+      if (!pathfinder.walkable(ex, ey)) {
+        return STATE_TARGET;
       }
-      return ["moveLoop", sx, sy, ex, ey];
+      return [STATE_MOVELOOP, sx, sy, ex, ey];
     },
-    moveLoop: function* (sx, sy, ex, ey) {
+    [STATE_MOVELOOP]: function* (sx, sy, ex, ey) {
       if (sx === ex && sy === ey) {
-        return "target";
+        return STATE_TARGET;
       }
       const dx = ex - sx;
       const dy = ey - sy;
@@ -72399,40 +73249,71 @@ function pathFindBehavior(heightmap) {
         let xg = xi;
         let yg = yi;
         let jitter = 1;
-        let tile = tileAt(xg, yg);
-        while (!tile?.walkable) {
+        while (!pathfinder.walkable(xg, yg)) {
           xg = xi + Math.floor(rng.sign() + rng.range(1, jitter));
           yg = yi + Math.floor(rng.sign() + rng.range(1, jitter));
-          tile = tileAt(xg, yg);
-          jitter += 0.2;
+          jitter += 0.25;
         }
         result2 = yield pathfinder.pathfind(sx, sy, xg, yg);
       }
       const path = result2.map((g) => ({ x: g[0], y: g[1] }));
-      const colorIndex = rng.select([COLOR_YELLOW, COLOR_ORANGE]);
-      return ["move", path, ex, ey, colorIndex];
+      return [STATE_MOVE, path, ex, ey];
     },
-    move: function* (path, ex, ey, colorIndex) {
+    [STATE_MOVE]: function* (path, ex, ey) {
       let x, y;
       while (path.length) {
         ({ x, y } = path.shift());
-        const si = y * heightmap.segments + x;
-        colorArray[si] = colorIndex;
-        heightmap.updateSegment(x, y);
-        yield;
+        onMove(x, y);
+        yield moveDelay;
       }
-      return ["moveLoop", x, y, ex, ey];
+      return [STATE_MOVELOOP, x, y, ex, ey];
     }
   };
 }
-var Updater = class {
-  constructor(heightMap) {
-    this._heightMap = heightMap;
-  }
-  stateMachine() {
-    return pathFindBehavior(this._heightMap);
-  }
-};
+function makePathfindBehaviorForHeightmap(heightMap, actor) {
+  const rng = makeRNG();
+  const heightArray = heightMap.getLayerArray("height");
+  const tileArray = heightMap.getLayerArray("tile");
+  const colorArray = heightMap.getLayerArray("color");
+  const SEGMENTS = heightMap.segments;
+  const tileAt = (sx, sy) => {
+    if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
+      return null;
+    }
+    return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
+  };
+  const walkable = (sx, sy) => {
+    const tile = tileAt(sx, sy);
+    return tile ? tile.walkable : false;
+  };
+  const colorIndex = rng.select([COLOR_YELLOW, COLOR_ORANGE]);
+  const pathfinder = new PathfinderGraph({
+    width: SEGMENTS,
+    height: SEGMENTS,
+    walkable,
+    baseCost: (a) => tileAt(a.x, a.y)?.walkable ? 0 : 1e10,
+    edgeCost: (a, b) => {
+      const hb = heightArray[b.y * SEGMENTS + b.x];
+      const ha = heightArray[a.y * SEGMENTS + a.x];
+      return Math.max(0, 10 * (hb - ha));
+    }
+  });
+  return makePathfindBehavior({
+    pathfinder,
+    moveDelay: 4,
+    positionFunc: () => {
+      return heightMap.coordW2S(actor.position.x, actor.position.y);
+    },
+    onMove: (x, y) => {
+      const si = y * SEGMENTS + x;
+      colorArray[si] = colorIndex;
+      heightMap.updateSegment(x, y);
+      const [wx, wy] = heightMap.coordS2W(x, y);
+      actor.position.x = wx;
+      actor.position.y = wy;
+    }
+  });
+}
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");
