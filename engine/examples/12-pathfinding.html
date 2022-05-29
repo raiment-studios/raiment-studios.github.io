@@ -70819,8 +70819,12 @@ var ActorList = class {
         debugger;
       }
       this._added.push(actor);
-      this._list.push(actor);
     }
+  }
+  remove(actor) {
+    this._added = this._added.filter((a) => a !== actor);
+    this._list = this._list.filter((a) => a !== actor);
+    this._removed.push(actor);
   }
   filter(cb) {
     return this._list.filter(cb);
@@ -71071,7 +71075,8 @@ var Engine = class {
       frameNumber: 0,
       frameFPS: 0,
       actors: null,
-      actor: null
+      actor: null,
+      mesh: null
     };
     this._renderers = {};
     this._cache = {};
@@ -71146,9 +71151,19 @@ var Engine = class {
           }
           renderer.addActor(ctx, actor);
         }
+        this._actors._list.push(actor);
       }
     }
     this._actors._added = [];
+    for (let actor of this._actors._removed) {
+      for (let renderer of Object.values(this._renderers)) {
+        if (!renderer.removeActor) {
+          break;
+        }
+        renderer.removeActor(ctx, actor);
+      }
+    }
+    this._actors._removed = [];
     this.events.fire("engine.preupdate", ctx);
     const frame10Parity = ctx.frameNumber % 10;
     for (let actor of this._actors) {
@@ -71163,6 +71178,7 @@ var Engine = class {
     }
     for (let actor of this._actors) {
       ctx.actor = actor;
+      ctx.mesh = actor.__mesh;
       if (actor.update) {
         actor.update(ctx);
       }
@@ -71959,6 +71975,7 @@ var RendererThree = class {
     if (!actor.mesh) {
       return;
     }
+    const { scene } = this;
     function addToScene(mesh) {
       actor.__mesh = mesh;
       if (actor.flags?.castShadow) {
@@ -71966,13 +71983,18 @@ var RendererThree = class {
       }
       scene.add(mesh);
     }
-    const { scene } = this;
     const ret = actor.mesh(ctx);
     if (typeof ret.then === "function") {
       ret.then((mesh) => addToScene(mesh));
     } else {
       addToScene(ret);
     }
+  }
+  removeActor(ctx, actor) {
+    if (!actor.__mesh) {
+      return;
+    }
+    this.scene.remove(actor.__mesh);
   }
   renderFrame({ engine }) {
     for (let actor of engine.actors) {
