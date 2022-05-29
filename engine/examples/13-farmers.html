@@ -71016,16 +71016,20 @@ var RingBuffer = class {
 var World = class {
   constructor(engine) {
     this._engine = engine;
+    this._groundHeightActors = [];
+    engine.events.on("actor.postinit", ({ actor }) => {
+      if (!actor.worldGroundHeight) {
+        return;
+      }
+      this._groundHeightActors.push(actor);
+    });
   }
   get engine() {
     return this._engine;
   }
   groundHeight(wx, wy) {
     let max = -Infinity;
-    for (let actor of this.engine.actors) {
-      if (!actor.worldGroundHeight) {
-        continue;
-      }
+    for (let actor of this._groundHeightActors) {
       const z = actor.worldGroundHeight(wx, wy);
       if (z > max) {
         max = z;
@@ -71212,7 +71216,11 @@ var Engine = class {
     }
     this._actors._added = [];
     this.events.fire("engine.preupdate", ctx);
+    const frame10Parity = ctx.frameNumber % 10;
     for (let actor of this._actors) {
+      if (actor.frame10Parity && actor.frame10Parity === frame10Parity) {
+        continue;
+      }
       ctx.actor = actor;
       this.events.fire("actor.preupdate", ctx);
       if (actor.__stateMachine) {
@@ -71771,15 +71779,18 @@ var VoxelSprite = class {
     flags = {},
     worldX = 0,
     worldY = 0,
-    stateMachine = null
+    position = null,
+    stateMachine = null,
+    spriteScale = 1
   } = {}) {
     if (!url) {
       throw new Error(`url must be defined`);
     }
     this._url = url;
-    this._position = new Vector3(worldX, worldY, 0);
+    this._position = position || new Vector3(worldX, worldY, 0);
     this._offset = new Vector3(0, 0, 0);
     this._scale = scale;
+    this._spriteScale = spriteScale;
     this._depth = 1;
     this._flags = Object.assign({}, flags);
     this._mesh = null;
@@ -71790,6 +71801,9 @@ var VoxelSprite = class {
   }
   get position() {
     return this._position;
+  }
+  get innerMesh() {
+    return this._mesh?.children[0];
   }
   stateMachine(ctx) {
     if (!this._stateMachine) {
@@ -71808,6 +71822,7 @@ var VoxelSprite = class {
     const mesh = new Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.position.set(0.5, 0.5, 0);
+    mesh.scale.set(this._spriteScale, this._spriteScale, this._spriteScale);
     const group = new Group();
     group.position.copy(this._position);
     group.add(mesh);
@@ -73038,7 +73053,7 @@ var treeShader = {
 };
 
 // glob:glob:$(MONOREPO_ROOT)/source;assets/proto/**/*{.png,.asset.yaml}
-var matches = [{ url: "assets/proto/sprites/farmer.png" }, { url: "assets/proto/sprites/farmer.png.asset.yaml" }, { url: "assets/proto/sprites/farmer2.png" }, { url: "assets/proto/sprites/farmer2.png.asset.yaml" }, { url: "assets/proto/sprites/kestrel.png" }, { url: "assets/proto/sprites/kestrel.png.asset.yaml" }, { url: "assets/proto/sprites/king.png" }, { url: "assets/proto/sprites/king.png.asset.yaml" }, { url: "assets/proto/sprites/ranger.png" }, { url: "assets/proto/sprites/ranger.png.asset.yaml" }, { url: "assets/proto/sprites/ranger2.png" }, { url: "assets/proto/sprites/ranger2.png.asset.yaml" }, { url: "assets/proto/sprites/wizard.png" }, { url: "assets/proto/sprites/wizard.png.asset.yaml" }];
+var matches = [{ url: "assets/proto/sprites/corn-stalk.png" }, { url: "assets/proto/sprites/farmer.png" }, { url: "assets/proto/sprites/farmer.png.asset.yaml" }, { url: "assets/proto/sprites/farmer2.png" }, { url: "assets/proto/sprites/farmer2.png.asset.yaml" }, { url: "assets/proto/sprites/kestrel.png" }, { url: "assets/proto/sprites/kestrel.png.asset.yaml" }, { url: "assets/proto/sprites/king.png" }, { url: "assets/proto/sprites/king.png.asset.yaml" }, { url: "assets/proto/sprites/ranger.png" }, { url: "assets/proto/sprites/ranger.png.asset.yaml" }, { url: "assets/proto/sprites/ranger2.png" }, { url: "assets/proto/sprites/ranger2.png.asset.yaml" }, { url: "assets/proto/sprites/wizard.png" }, { url: "assets/proto/sprites/wizard.png.asset.yaml" }];
 var png_asset_default = { matches };
 
 // builtin:./__app.js
@@ -73062,15 +73077,30 @@ function makeGrassColorFunc(segments) {
 var ObjectTable = class {
   constructor({ transform: transform2 = (obj) => obj } = {}) {
     this._list = [];
+    this._free = [];
     this._transform = transform2;
   }
   add(obj) {
-    const i = this._list.length;
+    let i;
+    if (this._free.length) {
+      i = this._free.shift();
+    } else {
+      i = this._list.length;
+    }
     this._list.push(this._transform(obj));
     return i;
   }
   get(index4) {
     return this._list[index4];
+  }
+  remove(obj) {
+    for (let i = 0; i < this._list.length; i++) {
+      if (this._list[i] === obj) {
+        this._list[i] = null;
+        this._free.push(i);
+        break;
+      }
+    }
   }
 };
 var db = {
@@ -73085,6 +73115,8 @@ var db = {
     }
   })
 };
+var objectList = new ObjectTable();
+objectList.add({});
 var COLOR_DEFAULT = db.colors.add({
   rgb: [1, 1, 1]
 });
@@ -73117,9 +73149,10 @@ var TILE_DIRT_WALKABLE = db.tiles.add({
   walkCost: 10,
   colorFunc: (sx, sy) => {
     const base = grassColorFunc(sx, sy);
-    base[0] *= 1.25;
-    base[1] *= 0.5;
-    base[2] *= 0.5;
+    const a = sy % 2 ? 0.75 : 1;
+    base[0] *= 1.25 * a;
+    base[1] *= 0.5 * a;
+    base[2] *= 0.5 * a;
     return base;
   }
 });
@@ -73134,7 +73167,8 @@ function makeHeightMap(rng) {
     segments: 256,
     layers: {
       tile: Int8Array,
-      color: Int8Array
+      color: Int8Array,
+      object: Int16Array
     },
     heightFunc: (sx, sy) => {
       const nx = sx + 5 * simplex1.noise2D(4 * sx / S, 4 * sy / S);
@@ -73145,8 +73179,10 @@ function makeHeightMap(rng) {
   });
   const tileArray = heightMap.getLayerArray("tile");
   const colorArray = heightMap.getLayerArray("color");
+  const objectArray = heightMap.getLayerArray("object");
   tileArray.fill(TILE_GRASS);
   colorArray.fill(COLOR_DEFAULT);
+  objectArray.fill(0);
   heightMap.colorFunc = function(sx, sy, wz, si) {
     const tile = db.tiles.get(tileArray[si]);
     const colorIndex = colorArray[si];
@@ -73182,7 +73218,7 @@ function EngineView() {
         }
       });
     });
-    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 72e3, offsetZ: 32 }), new BasicLighting(), new GroundPlane(), heightMap);
+    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 72e3, offsetZ: 8 }), new BasicLighting(), new GroundPlane(), heightMap);
     engine.opt.heightMap = heightMap;
     engine.opt.walkableS = function(sx, sy) {
       const si = sy * heightMap.segments + sx;
@@ -73211,17 +73247,67 @@ function EngineView() {
       } while (!walkable(worldX, worldY));
       return [worldX, worldY];
     };
+    engine.opt.generateRandomWalkablePosition2 = function() {
+      const [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
+      return new Vector3(worldX, worldY, 0);
+    };
     engine.opt.generatePathfindingBehavior = function(actor) {
       return makePathfindBehaviorForHeightmap(heightMap, actor);
     };
     engine.addSequence(function* () {
       engine.actors.push(new Forest({ count: 40 }));
       yield;
+      engine.actors.push({
+        stateMachine: function() {
+          const tileArray2 = heightMap.getLayerArray("tile");
+          const objectArray = heightMap.getLayerArray("object");
+          return {
+            _start: function* () {
+              return "grow";
+            },
+            grow: function* () {
+              for (let i = 0; i < 10; i++) {
+                const sx = 4 * Math.floor(rng.rangei(0, heightMap.segments) / 2);
+                const sy = 6 * Math.floor(rng.rangei(0, heightMap.segments) / 4);
+                const si = sy * heightMap.segments + sx;
+                const tileIndex = tileArray2[si];
+                if (tileIndex !== TILE_DIRT_WALKABLE) {
+                  continue;
+                }
+                const objectIndex = objectArray[si];
+                if (objectIndex !== 0) {
+                  const obj = objectList.get(objectIndex);
+                  if (obj._spriteScale < 1) {
+                    obj._spriteScale += 0.1;
+                    obj.innerMesh?.scale.set(obj._spriteScale, obj._spriteScale, obj._spriteScale);
+                  }
+                  continue;
+                }
+                const [wx, wy] = heightMap.coordS2W(sx, sy);
+                const sprite = new VoxelSprite({
+                  url: assetURL["corn-stalk.png"],
+                  flags: {
+                    billboard: true,
+                    pinToGroundHeight: true
+                  },
+                  position: new Vector3(wx, wy, 0),
+                  spriteScale: 0.1
+                });
+                const index4 = objectList.add(sprite);
+                objectArray[si] = index4;
+                sprite.frame10Parity = rng.rangei(1, 10);
+                engine.actors.push(sprite);
+              }
+              yield 1;
+              return "grow";
+            }
+          };
+        }
+      });
       engine.actors.push(...generate(10, (i) => {
         let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
         return new VoxelSprite({
-          url: assetURL[rng.select([
-            "kestrel.png",
+          url: assetURL[i === 0 ? "kestrel.png" : rng.select([
             "wizard.png",
             "ranger.png",
             "ranger.png",

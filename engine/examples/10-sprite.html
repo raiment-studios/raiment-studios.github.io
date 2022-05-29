@@ -42242,16 +42242,20 @@ var RingBuffer = class {
 var World = class {
   constructor(engine) {
     this._engine = engine;
+    this._groundHeightActors = [];
+    engine.events.on("actor.postinit", ({ actor }) => {
+      if (!actor.worldGroundHeight) {
+        return;
+      }
+      this._groundHeightActors.push(actor);
+    });
   }
   get engine() {
     return this._engine;
   }
   groundHeight(wx, wy) {
     let max = -Infinity;
-    for (let actor of this.engine.actors) {
-      if (!actor.worldGroundHeight) {
-        continue;
-      }
+    for (let actor of this._groundHeightActors) {
       const z = actor.worldGroundHeight(wx, wy);
       if (z > max) {
         max = z;
@@ -70663,7 +70667,11 @@ var Engine = class {
     }
     this._actors._added = [];
     this.events.fire("engine.preupdate", ctx);
+    const frame10Parity = ctx.frameNumber % 10;
     for (let actor of this._actors) {
+      if (actor.frame10Parity && actor.frame10Parity === frame10Parity) {
+        continue;
+      }
       ctx.actor = actor;
       this.events.fire("actor.preupdate", ctx);
       if (actor.__stateMachine) {
@@ -70834,15 +70842,18 @@ var VoxelSprite = class {
     flags = {},
     worldX = 0,
     worldY = 0,
-    stateMachine = null
+    position = null,
+    stateMachine = null,
+    spriteScale = 1
   } = {}) {
     if (!url) {
       throw new Error(`url must be defined`);
     }
     this._url = url;
-    this._position = new Vector3(worldX, worldY, 0);
+    this._position = position || new Vector3(worldX, worldY, 0);
     this._offset = new Vector3(0, 0, 0);
     this._scale = scale;
+    this._spriteScale = spriteScale;
     this._depth = 1;
     this._flags = Object.assign({}, flags);
     this._mesh = null;
@@ -70853,6 +70864,9 @@ var VoxelSprite = class {
   }
   get position() {
     return this._position;
+  }
+  get innerMesh() {
+    return this._mesh?.children[0];
   }
   stateMachine(ctx) {
     if (!this._stateMachine) {
@@ -70871,6 +70885,7 @@ var VoxelSprite = class {
     const mesh = new Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.position.set(0.5, 0.5, 0);
+    mesh.scale.set(this._spriteScale, this._spriteScale, this._spriteScale);
     const group = new Group();
     group.position.copy(this._position);
     group.add(mesh);

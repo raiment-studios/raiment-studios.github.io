@@ -70950,16 +70950,20 @@ var RingBuffer = class {
 var World = class {
   constructor(engine) {
     this._engine = engine;
+    this._groundHeightActors = [];
+    engine.events.on("actor.postinit", ({ actor }) => {
+      if (!actor.worldGroundHeight) {
+        return;
+      }
+      this._groundHeightActors.push(actor);
+    });
   }
   get engine() {
     return this._engine;
   }
   groundHeight(wx, wy) {
     let max = -Infinity;
-    for (let actor of this.engine.actors) {
-      if (!actor.worldGroundHeight) {
-        continue;
-      }
+    for (let actor of this._groundHeightActors) {
       const z = actor.worldGroundHeight(wx, wy);
       if (z > max) {
         max = z;
@@ -71146,7 +71150,11 @@ var Engine = class {
     }
     this._actors._added = [];
     this.events.fire("engine.preupdate", ctx);
+    const frame10Parity = ctx.frameNumber % 10;
     for (let actor of this._actors) {
+      if (actor.frame10Parity && actor.frame10Parity === frame10Parity) {
+        continue;
+      }
       ctx.actor = actor;
       this.events.fire("actor.preupdate", ctx);
       if (actor.__stateMachine) {
