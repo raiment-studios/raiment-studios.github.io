@@ -2298,9 +2298,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React11 = require_react();
+        var React13 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React11.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React13.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3701,7 +3701,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React11.Children.forEach(props.children, function(child) {
+                React13.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -11273,7 +11273,7 @@ var require_react_dom_development = __commonJS({
           }
         }
         var fakeInternalInstance = {};
-        var emptyRefsObject = new React11.Component().refs;
+        var emptyRefsObject = new React13.Component().refs;
         var didWarnAboutStateAssignmentForComponent;
         var didWarnAboutUninitializedState;
         var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -36822,24 +36822,24 @@ var require_chroma = __commonJS({
         colorbrewer[key.toLowerCase()] = colorbrewer[key];
       }
       var colorbrewer_1 = colorbrewer;
-      var chroma2 = chroma_1;
-      chroma2.average = average;
-      chroma2.bezier = bezier_1;
-      chroma2.blend = blend_1;
-      chroma2.cubehelix = cubehelix;
-      chroma2.mix = chroma2.interpolate = mix$1;
-      chroma2.random = random_1;
-      chroma2.scale = scale$2;
-      chroma2.analyze = analyze_1.analyze;
-      chroma2.contrast = contrast;
-      chroma2.deltaE = deltaE;
-      chroma2.distance = distance;
-      chroma2.limits = analyze_1.limits;
-      chroma2.valid = valid;
-      chroma2.scales = scales;
-      chroma2.colors = w3cx11_1;
-      chroma2.brewer = colorbrewer_1;
-      var chroma_js = chroma2;
+      var chroma3 = chroma_1;
+      chroma3.average = average;
+      chroma3.bezier = bezier_1;
+      chroma3.blend = blend_1;
+      chroma3.cubehelix = cubehelix;
+      chroma3.mix = chroma3.interpolate = mix$1;
+      chroma3.random = random_1;
+      chroma3.scale = scale$2;
+      chroma3.analyze = analyze_1.analyze;
+      chroma3.contrast = contrast;
+      chroma3.deltaE = deltaE;
+      chroma3.distance = distance;
+      chroma3.limits = analyze_1.limits;
+      chroma3.valid = valid;
+      chroma3.scales = scales;
+      chroma3.colors = w3cx11_1;
+      chroma3.brewer = colorbrewer_1;
+      var chroma_js = chroma3;
       return chroma_js;
     });
   }
@@ -37984,11 +37984,11 @@ var require_getDisplayName = __commonJS({
 });
 
 // builtin:./__bootstrap.js
-var import_react12 = __toESM(require_react());
-var import_client = __toESM(require_client());
+var import_react14 = __toESM(require_react());
+var import_client2 = __toESM(require_client());
 
 // builtin:./__app.js
-var import_react11 = __toESM(require_react());
+var import_react13 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/core/src/collections/map_2di.js
 var SPAN = 1 << 26;
@@ -38277,10 +38277,22 @@ var ActorList = class {
       this._added.push(actor);
     }
   }
-  remove(actor) {
-    this._added = this._added.filter((a) => a !== actor);
-    this._list = this._list.filter((a) => a !== actor);
-    this._removed.push(actor);
+  remove(...actors) {
+    for (let actor of actors) {
+      const added = this._added.filter((a) => a !== actor);
+      const list = this._list.filter((a) => a !== actor);
+      let count = this._list.length - list.length + (this._added.length - added.length);
+      if (count !== 1) {
+        console.error("Did not remove exactly one actor from the actor lists");
+        debugger;
+      }
+      if (actor.id) {
+        delete this._idCache[actor.id];
+      }
+      this._added = added;
+      this._list = list;
+      this._removed.push(actor);
+    }
   }
   filter(cb) {
     return this._list.filter(cb);
@@ -38438,10 +38450,13 @@ var StateMachine = class {
   constructor(states) {
     this._self = states._bind;
     this._states = states;
-    this._activeState = states._start.call(this._self);
+    this._activeState = null;
     this._waitCycles = 0;
     this._waitOnPromise = false;
     this._nextValue = void 0;
+    this._activeStateName = "_start";
+    this._priorStateName = null;
+    this._activeState = states._start.call(this._self);
   }
   bind(obj) {
     this._self = obj;
@@ -38462,6 +38477,8 @@ var StateMachine = class {
     if (result2.done) {
       let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
       const generator = this._states[nextState];
+      this._priorStateName = this._activeStateName;
+      this._activeStateName = nextState;
       this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
     } else if (typeof result2.value === "number") {
       this._waitCycles = result2.value;
@@ -56531,6 +56548,17 @@ function registerBillboard(engine) {
   });
 }
 
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/journal.js
+var import_react = __toESM(require_react());
+var Journal = class {
+  constructor(engine) {
+    this._engine = engine;
+  }
+  message(s) {
+    this._engine.events.fire("journal.message", s);
+  }
+};
+
 // relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
 var Engine = class {
   constructor() {
@@ -56546,10 +56574,12 @@ var Engine = class {
       actor: null,
       mesh: null
     };
+    this._hostElement = null;
     this._renderers = {};
     this._cache = {};
     this._actors = new ActorList();
     this._world = new World(this);
+    this._journal = new Journal(this);
     this._opt = {};
     registerPinToGroundHeight(this);
     registerBillboard(this);
@@ -56575,13 +56605,20 @@ var Engine = class {
   get world() {
     return this._world;
   }
+  get journal() {
+    return this._journal;
+  }
+  context() {
+    return this._context;
+  }
   get opt() {
     return this._opt;
   }
-  addSequence(generatorFunc) {
+  addSequence(generatorFunc, self2) {
     this.actors.push({
       stateMachine() {
         return {
+          _bind: self2,
           _start: generatorFunc
         };
       }
@@ -56603,9 +56640,7 @@ var Engine = class {
       for (let actor of this._actors._added) {
         ctx.actor = actor;
         this.events.fire("actor.preinit", ctx);
-        if (actor.init) {
-          actor.init(ctx);
-        }
+        actor.init?.(ctx);
         this.events.fire("actor.postinit", ctx);
         if (actor.stateMachine) {
           const desc = actor.stateMachine(ctx);
@@ -56614,22 +56649,17 @@ var Engine = class {
           }
         }
         for (let renderer of Object.values(this._renderers)) {
-          if (!renderer.addActor) {
-            break;
-          }
-          renderer.addActor(ctx, actor);
+          renderer.addActor?.(ctx, actor);
         }
         this._actors._list.push(actor);
       }
+      this._actors._added = [];
     }
-    this._actors._added = [];
     for (let actor of this._actors._removed) {
       for (let renderer of Object.values(this._renderers)) {
-        if (!renderer.removeActor) {
-          break;
-        }
-        renderer.removeActor(ctx, actor);
+        renderer.removeActor?.(ctx, actor);
       }
+      actor.dispose?.(ctx);
     }
     this._actors._removed = [];
     this.events.fire("engine.preupdate", ctx);
@@ -56640,22 +56670,18 @@ var Engine = class {
       }
       ctx.actor = actor;
       this.events.fire("actor.preupdate", ctx);
-      if (actor.__stateMachine) {
-        actor.__stateMachine.update(ctx);
-      }
+      actor.__stateMachine?.update(ctx);
     }
     for (let actor of this._actors) {
       ctx.actor = actor;
       ctx.mesh = actor.__mesh;
-      if (actor.update) {
-        actor.update(ctx);
-      }
+      actor.update?.(ctx);
       this.events.fire("actor.postupdate", ctx);
     }
     this.events.fire("engine.preupdate", ctx);
     ctx.actor = null;
     for (let renderer of Object.values(this._renderers)) {
-      renderer.renderFrame(ctx);
+      renderer.renderFrame?.(ctx);
     }
   }
 };
@@ -56677,6 +56703,9 @@ var import_lodash = __toESM(require_lodash());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/basic_lighting.js
 var import_chroma_js = __toESM(require_chroma());
+
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/day_night_lighting.js
+var import_chroma_js2 = __toESM(require_chroma());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/ai/pathfinder_graph.js
 var import_heap = __toESM(require_heap2());
@@ -56710,10 +56739,10 @@ function loadImage(src) {
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/use_engine.js
-var import_react = __toESM(require_react());
+var import_react2 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-var import_react10 = __toESM(require_react());
+var import_react12 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/caches/image_geometry_cache.js
 var ImageGeometryCache = class {
@@ -56846,6 +56875,107 @@ var RendererHUD = class {
   }
 };
 
+// relative:/workspaces/monorepo/source/lib/engine/src/renderer_react/renderer_react.js
+var import_react3 = __toESM(require_react());
+var import_client = __toESM(require_client());
+var RendererReact = class {
+  constructor(hostElement, engine) {
+    const rect = hostElement.getBoundingClientRect();
+    const { width, height } = rect;
+    hostElement.style.position = "relative";
+    const container2 = document.createElement("div");
+    container2.style.position = "absolute";
+    container2.style.width = `${width}px`;
+    container2.style.height = `${height}px`;
+    container2.style.top = 0;
+    container2.style.left = 0;
+    container2.style.backgroundColor = "transparent";
+    container2.style.overflow = "clipped";
+    hostElement.appendChild(container2);
+    this._container = container2;
+    const root3 = import_client.default.createRoot(container2);
+    root3.render(/* @__PURE__ */ import_react3.default.createElement(Container, {
+      engine
+    }));
+  }
+  dispose() {
+  }
+};
+var local = {
+  uniqueID: 1
+};
+function Container({ engine }) {
+  const [messages, setMessages] = import_react3.default.useState([]);
+  const handleDispose = (id) => {
+    setMessages((messages2) => messages2.filter((c) => c.id !== id));
+  };
+  import_react3.default.useEffect(() => {
+    const unwind = engine.events.on("journal.message", (msg) => {
+      setMessages((messages2) => [
+        ...messages2,
+        {
+          id: local.uniqueID++,
+          content: msg
+        }
+      ]);
+    });
+    return () => {
+      unwind();
+    };
+  }, []);
+  return /* @__PURE__ */ import_react3.default.createElement("div", {
+    style: { color: "white", padding: 8 }
+  }, messages.map((c) => /* @__PURE__ */ import_react3.default.createElement(JournalMessage, {
+    key: c.id,
+    msg: c.content,
+    onDispose: () => handleDispose(c.id)
+  })));
+}
+function JournalMessage({ msg, onDispose }) {
+  const ref = import_react3.default.useRef(null);
+  const [style, setStyle] = import_react3.default.useState({
+    opacity: 0,
+    height: "auto",
+    padding: 8,
+    marginBottom: 4
+  });
+  import_react3.default.useEffect(() => {
+    const timers = [
+      setTimeout(() => setStyle((style2) => ({ ...style2, opacity: 1 })), 0),
+      setTimeout(() => {
+        const rect = ref.current.getBoundingClientRect();
+        setStyle((style2) => ({ ...style2, height: rect.height }));
+      }),
+      setTimeout(() => {
+        setStyle((style2) => ({ ...style2, height: 0, padding: "0px 8px", marginBottom: 0 }));
+      }, 5e3),
+      setTimeout(onDispose, 6e3)
+    ];
+    return () => {
+      for (let timer of timers) {
+        clearTimeout(timer);
+      }
+    };
+  }, []);
+  return /* @__PURE__ */ import_react3.default.createElement("div", {
+    ref,
+    style: {
+      boxSizing: "border-box",
+      overflow: "hidden",
+      borderRadius: 8,
+      backgroundColor: "rgba(0,0,0,.45)",
+      fontSize: 14,
+      transition: [
+        "opacity .5s ease-in-out",
+        "height .5s ease-in-out",
+        "padding .5s ease-in-out",
+        "marging .5s ease-in-out"
+      ].join(", "),
+      ...style
+    }
+  }, msg);
+}
+
 // relative:/workspaces/monorepo/source/lib/engine/src/renderer_three/renderer_three.js
 var RendererThree = class {
   constructor(elem) {
@@ -56973,7 +57103,7 @@ var RendererTwo = class {
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_recorder.js
-var import_react9 = __toESM(require_react());
+var import_react11 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@babel/runtime/helpers/esm/extends.js
 function _extends() {
@@ -57008,11 +57138,11 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 }
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/react-jss/dist/react-jss.esm.js
-var import_react3 = __toESM(require_react());
+var import_react5 = __toESM(require_react());
 var import_hoist_non_react_statics2 = __toESM(require_hoist_non_react_statics_cjs());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/theming/dist/theming.esm.js
-var import_react2 = __toESM(require_react());
+var import_react4 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/tiny-warning/dist/tiny-warning.esm.js
 var isProduction = false;
@@ -57092,7 +57222,7 @@ function createThemeProvider(context) {
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "lastTheme", void 0);
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "renderProvider", function(outerTheme) {
         var children = _this.props.children;
-        return import_react2.default.createElement(context.Provider, {
+        return import_react4.default.createElement(context.Provider, {
           value: _this.getTheme(outerTheme)
         }, children);
       });
@@ -57120,10 +57250,10 @@ function createThemeProvider(context) {
       if (!children) {
         return null;
       }
-      return import_react2.default.createElement(context.Consumer, null, this.renderProvider);
+      return import_react4.default.createElement(context.Consumer, null, this.renderProvider);
     };
     return ThemeProvider3;
-  }(import_react2.default.Component);
+  }(import_react4.default.Component);
   if (true) {
     ThemeProvider2.propTypes = {
       children: import_prop_types.default.node,
@@ -57134,10 +57264,10 @@ function createThemeProvider(context) {
 }
 function createWithTheme(context) {
   return function hoc(Component) {
-    var withTheme2 = import_react2.default.forwardRef(function(props, ref) {
-      return import_react2.default.createElement(context.Consumer, null, function(theme) {
+    var withTheme2 = import_react4.default.forwardRef(function(props, ref) {
+      return import_react4.default.createElement(context.Consumer, null, function(theme) {
         true ? tiny_warning_esm_default(isObject(theme), "[theming] Please use withTheme only with the ThemeProvider") : void 0;
-        return import_react2.default.createElement(Component, _extends2({
+        return import_react4.default.createElement(Component, _extends2({
           theme,
           ref
         }, props));
@@ -57152,7 +57282,7 @@ function createWithTheme(context) {
 }
 function createUseTheme(context) {
   var useTheme2 = function useTheme3() {
-    var theme = import_react2.default.useContext(context);
+    var theme = import_react4.default.useContext(context);
     true ? tiny_warning_esm_default(isObject(theme), "[theming] Please use useTheme only with the ThemeProvider") : void 0;
     return theme;
   };
@@ -57166,7 +57296,7 @@ function createTheming(context) {
     ThemeProvider: createThemeProvider(context)
   };
 }
-var ThemeContext = (0, import_react2.createContext)();
+var ThemeContext = (0, import_react4.createContext)();
 var _createTheming = createTheming(ThemeContext);
 var withTheme = _createTheming.withTheme;
 var ThemeProvider = _createTheming.ThemeProvider;
@@ -60384,7 +60514,7 @@ var index3 = Number.MIN_SAFE_INTEGER || -1e9;
 var getSheetIndex = function getSheetIndex2() {
   return index3++;
 };
-var JssContext = (0, import_react3.createContext)({
+var JssContext = (0, import_react5.createContext)({
   classNamePrefix: "",
   disableStylesGeneration: false
 });
@@ -60523,7 +60653,7 @@ var getSheetClasses = function getSheetClasses2(sheet, dynamicRules) {
   }
   return classes;
 };
-var useEffectOrLayoutEffect = module_default ? import_react3.useLayoutEffect : import_react3.useEffect;
+var useEffectOrLayoutEffect = module_default ? import_react5.useLayoutEffect : import_react5.useEffect;
 var noTheme = {};
 var createUseStyles = function createUseStyles2(styles2, options) {
   if (options === void 0) {
@@ -60533,16 +60663,16 @@ var createUseStyles = function createUseStyles2(styles2, options) {
   var ThemeContext$1 = theming && theming.context || ThemeContext;
   var useTheme2 = function useTheme3(theme) {
     if (typeof styles2 === "function") {
-      return theme || (0, import_react3.useContext)(ThemeContext$1) || noTheme;
+      return theme || (0, import_react5.useContext)(ThemeContext$1) || noTheme;
     }
     return noTheme;
   };
   var emptyObject = {};
   return function useStyles(data) {
-    var isFirstMount = (0, import_react3.useRef)(true);
-    var context = (0, import_react3.useContext)(JssContext);
+    var isFirstMount = (0, import_react5.useRef)(true);
+    var context = (0, import_react5.useContext)(JssContext);
     var theme = useTheme2(data && data.theme);
-    var _React$useMemo = (0, import_react3.useMemo)(function() {
+    var _React$useMemo = (0, import_react5.useMemo)(function() {
       var newSheet = createStyleSheet({
         context,
         styles: styles2,
@@ -60582,12 +60712,12 @@ var createUseStyles = function createUseStyles2(styles2, options) {
         }
       };
     }, [sheet]);
-    var classes = (0, import_react3.useMemo)(function() {
+    var classes = (0, import_react5.useMemo)(function() {
       return sheet && dynamicRules ? getSheetClasses(sheet, dynamicRules) : emptyObject;
     }, [sheet, dynamicRules]);
-    (0, import_react3.useDebugValue)(classes);
-    (0, import_react3.useDebugValue)(theme === noTheme ? "No theme" : theme);
-    (0, import_react3.useEffect)(function() {
+    (0, import_react5.useDebugValue)(classes);
+    (0, import_react5.useDebugValue)(theme === noTheme ? "No theme" : theme);
+    (0, import_react5.useEffect)(function() {
       isFirstMount.current = false;
     });
     return classes;
@@ -60607,17 +60737,17 @@ var create3 = function create4(css3) {
       delete newProps.css;
       args[1] = newProps;
     }
-    return import_react3.createElement.apply(void 0, args);
+    return import_react5.createElement.apply(void 0, args);
   };
 };
 var jsx = create3();
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_async_effect.js
-var import_react4 = __toESM(require_react(), 1);
+var import_react6 = __toESM(require_react(), 1);
 var INTERRUPTED = Symbol();
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_google_font.js
-var import_react5 = __toESM(require_react(), 1);
+var import_react7 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_common_styles.js
 var styles = {
@@ -60653,20 +60783,20 @@ var useCommonStyles2 = createUseStyles({
 });
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_local_storage.js
-var import_react6 = __toESM(require_react(), 1);
+var import_react8 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/reading_frame.js
-var import_react7 = __toESM(require_react(), 1);
+var import_react9 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/flex.js
-var import_react8 = __toESM(require_react(), 1);
+var import_react10 = __toESM(require_react(), 1);
 function Flex({
   className,
   style,
   children,
   align = "center"
 }) {
-  return /* @__PURE__ */ import_react8.default.createElement("div", {
+  return /* @__PURE__ */ import_react10.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "row",
@@ -60683,7 +60813,7 @@ function EngineRecorder({
   duration = 16600,
   autoStart = false
 }) {
-  const [recording, setRecording] = import_react9.default.useState({
+  const [recording, setRecording] = import_react11.default.useState({
     active: false,
     ready: false,
     dataURI: null,
@@ -60730,51 +60860,51 @@ function EngineRecorder({
       dataURI
     });
   };
-  import_react9.default.useEffect(() => {
+  import_react11.default.useEffect(() => {
     if (autoStart) {
       setTimeout(() => handleRecord(), 100);
     }
   }, []);
-  return /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement(Flex, {
+  return /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement(Flex, {
     style: {
       padding: "4px 0"
     }
-  }, /* @__PURE__ */ import_react9.default.createElement("button", {
+  }, /* @__PURE__ */ import_react11.default.createElement("button", {
     style: {
       width: "8rem"
     },
     disabled: recording.active,
     onClick: () => handleRecord(duration)
-  }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react9.default.createElement("div", {
+  }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react11.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react9.default.createElement("button", {
+  }), /* @__PURE__ */ import_react11.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(8e3)
-  }, "8"), /* @__PURE__ */ import_react9.default.createElement("div", {
+  }, "8"), /* @__PURE__ */ import_react11.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react9.default.createElement("button", {
+  }), /* @__PURE__ */ import_react11.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(12e3)
-  }, "12"), /* @__PURE__ */ import_react9.default.createElement("div", {
+  }, "12"), /* @__PURE__ */ import_react11.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react9.default.createElement("button", {
+  }), /* @__PURE__ */ import_react11.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(3e4)
-  }, "30"), /* @__PURE__ */ import_react9.default.createElement("div", {
+  }, "30"), /* @__PURE__ */ import_react11.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react9.default.createElement("button", {
+  }), /* @__PURE__ */ import_react11.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(6e4)
-  }, "60"), /* @__PURE__ */ import_react9.default.createElement("div", {
+  }, "60"), /* @__PURE__ */ import_react11.default.createElement("div", {
     style: { width: "1rem" }
-  }), /* @__PURE__ */ import_react9.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react9.default.createElement("a", {
+  }), /* @__PURE__ */ import_react11.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react11.default.createElement("a", {
     href: recording.dataURI,
     target: "_blank"
   }, "download"))));
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-var EngineFrame = import_react10.default.memo(function({
+var EngineFrame = import_react12.default.memo(function({
   engine = new Engine(),
   actors = [],
   recorder = null,
@@ -60782,10 +60912,12 @@ var EngineFrame = import_react10.default.memo(function({
   recorderDuration = void 0,
   style = {}
 }) {
-  const refElem = import_react10.default.useRef(null);
-  import_react10.default.useEffect(() => {
+  const refElem = import_react12.default.useRef(null);
+  import_react12.default.useEffect(() => {
+    engine._hostElement = refElem.current;
     engine._renderers["three"] = new RendererThree(refElem.current);
     engine._renderers["two"] = new RendererTwo(refElem.current);
+    engine._renderers["react"] = new RendererReact(refElem.current, engine);
     engine._renderers["hud"] = new RendererHUD(refElem.current);
     engine._cache.imageGeometry = new ImageGeometryCache();
     engine._actors.push(...actors);
@@ -60795,7 +60927,7 @@ var EngineFrame = import_react10.default.memo(function({
       engine.dispose();
     };
   }, [refElem.current]);
-  return /* @__PURE__ */ import_react10.default.createElement(import_react10.default.Fragment, null, /* @__PURE__ */ import_react10.default.createElement("div", {
+  return /* @__PURE__ */ import_react12.default.createElement(import_react12.default.Fragment, null, /* @__PURE__ */ import_react12.default.createElement("div", {
     ref: refElem,
     style: {
       width: "100%",
@@ -60804,7 +60936,7 @@ var EngineFrame = import_react10.default.memo(function({
       margin: 0,
       ...style
     }
-  }), recorder && /* @__PURE__ */ import_react10.default.createElement(EngineRecorder, {
+  }), recorder && /* @__PURE__ */ import_react12.default.createElement(EngineRecorder, {
     engine,
     rendererName: recorder,
     autoStart: autoRecord,
@@ -60814,18 +60946,18 @@ var EngineFrame = import_react10.default.memo(function({
 
 // builtin:./__app.js
 function app_default() {
-  return /* @__PURE__ */ import_react11.default.createElement("div", {
+  return /* @__PURE__ */ import_react13.default.createElement("div", {
     style: {
       margin: "1rem auto 6rem",
       width: "62rem"
     }
-  }, /* @__PURE__ */ import_react11.default.createElement("h1", null, "Frame Loop"), /* @__PURE__ */ import_react11.default.createElement(LoopRunner, null), /* @__PURE__ */ import_react11.default.createElement(LoopRunner, null));
+  }, /* @__PURE__ */ import_react13.default.createElement("h1", null, "Frame Loop"), /* @__PURE__ */ import_react13.default.createElement(LoopRunner, null), /* @__PURE__ */ import_react13.default.createElement(LoopRunner, null));
 }
 function LoopRunner() {
-  const [frameData, setFrameData] = import_react11.default.useState({
+  const [frameData, setFrameData] = import_react13.default.useState({
     frameNumber: 0
   });
-  import_react11.default.useEffect(() => {
+  import_react13.default.useEffect(() => {
     let frameLoop = new FrameLoop((ctx) => {
       setFrameData({
         frameNumber: ctx.frameNumber,
@@ -60841,20 +60973,20 @@ function LoopRunner() {
       frameLoop.stop();
     };
   }, []);
-  return /* @__PURE__ */ import_react11.default.createElement("div", {
+  return /* @__PURE__ */ import_react13.default.createElement("div", {
     style: {
       margin: "1rem 0",
       padding: 16,
       border: "solid 1px #CCC",
       borderRadius: 8
     }
-  }, /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("code", null, "frameNumber: ", frameData.frameNumber)), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("code", null, "frameSkipCount: ", frameData.frameSkipCount)), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("code", null, "Loop time: ", frameData.frameLoopTimeMs)), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("code", null, "Average FPS:", " ", Math.floor(1e4 * frameData.frameNumber / frameData.frameLoopTimeMS) / 10)), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("code", null, "Theoretical FPS:", " ", Math.floor(1e4 * frameData.frameNumber / frameData.frameTimeMS) / 10)));
+  }, /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("code", null, "frameNumber: ", frameData.frameNumber)), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("code", null, "frameSkipCount: ", frameData.frameSkipCount)), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("code", null, "Loop time: ", frameData.frameLoopTimeMs)), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("code", null, "Average FPS:", " ", Math.floor(1e4 * frameData.frameNumber / frameData.frameLoopTimeMS) / 10)), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("code", null, "Theoretical FPS:", " ", Math.floor(1e4 * frameData.frameNumber / frameData.frameTimeMS) / 10)));
 }
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");
-var root2 = import_client.default.createRoot(container);
-root2.render(/* @__PURE__ */ import_react12.default.createElement(app_default, null));
+var root2 = import_client2.default.createRoot(container);
+root2.render(/* @__PURE__ */ import_react14.default.createElement(app_default, null));
 /*
 object-assign
 (c) Sindre Sorhus

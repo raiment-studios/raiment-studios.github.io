@@ -2302,9 +2302,9 @@ var require_react_dom_development = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React17 = require_react();
+        var React19 = require_react();
         var Scheduler = require_scheduler();
-        var ReactSharedInternals = React17.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React19.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -3705,7 +3705,7 @@ var require_react_dom_development = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React17.Children.forEach(props.children, function(child) {
+                React19.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -11277,7 +11277,7 @@ var require_react_dom_development = __commonJS({
           }
         }
         var fakeInternalInstance = {};
-        var emptyRefsObject = new React17.Component().refs;
+        var emptyRefsObject = new React19.Component().refs;
         var didWarnAboutStateAssignmentForComponent;
         var didWarnAboutUninitializedState;
         var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -33653,7 +33653,7 @@ var require_lodash = __commonJS({
         function valuesIn(object) {
           return object == null ? [] : baseValues(object, keysIn(object));
         }
-        function clamp2(number, lower, upper) {
+        function clamp3(number, lower, upper) {
           if (upper === undefined2) {
             upper = lower;
             lower = undefined2;
@@ -34327,7 +34327,7 @@ var require_lodash = __commonJS({
         lodash.camelCase = camelCase2;
         lodash.capitalize = capitalize;
         lodash.ceil = ceil;
-        lodash.clamp = clamp2;
+        lodash.clamp = clamp3;
         lodash.clone = clone;
         lodash.cloneDeep = cloneDeep;
         lodash.cloneDeepWith = cloneDeepWith;
@@ -37682,24 +37682,24 @@ var require_chroma = __commonJS({
         colorbrewer[key.toLowerCase()] = colorbrewer[key];
       }
       var colorbrewer_1 = colorbrewer;
-      var chroma3 = chroma_1;
-      chroma3.average = average;
-      chroma3.bezier = bezier_1;
-      chroma3.blend = blend_1;
-      chroma3.cubehelix = cubehelix;
-      chroma3.mix = chroma3.interpolate = mix$1;
-      chroma3.random = random_1;
-      chroma3.scale = scale$2;
-      chroma3.analyze = analyze_1.analyze;
-      chroma3.contrast = contrast;
-      chroma3.deltaE = deltaE;
-      chroma3.distance = distance;
-      chroma3.limits = analyze_1.limits;
-      chroma3.valid = valid;
-      chroma3.scales = scales;
-      chroma3.colors = w3cx11_1;
-      chroma3.brewer = colorbrewer_1;
-      var chroma_js = chroma3;
+      var chroma4 = chroma_1;
+      chroma4.average = average;
+      chroma4.bezier = bezier_1;
+      chroma4.blend = blend_1;
+      chroma4.cubehelix = cubehelix;
+      chroma4.mix = chroma4.interpolate = mix$1;
+      chroma4.random = random_1;
+      chroma4.scale = scale$2;
+      chroma4.analyze = analyze_1.analyze;
+      chroma4.contrast = contrast;
+      chroma4.deltaE = deltaE;
+      chroma4.distance = distance;
+      chroma4.limits = analyze_1.limits;
+      chroma4.valid = valid;
+      chroma4.scales = scales;
+      chroma4.colors = w3cx11_1;
+      chroma4.brewer = colorbrewer_1;
+      var chroma_js = chroma4;
       return chroma_js;
     });
   }
@@ -37988,11 +37988,11 @@ var require_heap2 = __commonJS({
 });
 
 // builtin:./__bootstrap.js
-var import_react18 = __toESM(require_react());
-var import_client = __toESM(require_client());
+var import_react20 = __toESM(require_react());
+var import_client2 = __toESM(require_client());
 
 // builtin:./__app.js
-var import_react17 = __toESM(require_react());
+var import_react19 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@babel/runtime/helpers/esm/extends.js
 function _extends() {
@@ -41971,6 +41971,17 @@ function iterateCircle2D(cx, cy, radius, cb) {
   }
 }
 
+// relative:/workspaces/monorepo/source/lib/core/src/math/clamp.js
+function clamp(v, min, max) {
+  if (!(v > min)) {
+    return min;
+  }
+  if (!(v < max)) {
+    return max;
+  }
+  return v;
+}
+
 // relative:/workspaces/monorepo/source/lib/core/src/math/rng.js
 var import_mersenne_twister = __toESM(require_mersenne_twister());
 function makeRNG(...args) {
@@ -43280,7 +43291,7 @@ function generateUUID() {
   const uuid2 = _lut[d0 & 255] + _lut[d0 >> 8 & 255] + _lut[d0 >> 16 & 255] + _lut[d0 >> 24 & 255] + "-" + _lut[d1 & 255] + _lut[d1 >> 8 & 255] + "-" + _lut[d1 >> 16 & 15 | 64] + _lut[d1 >> 24 & 255] + "-" + _lut[d2 & 63 | 128] + _lut[d2 >> 8 & 255] + "-" + _lut[d2 >> 16 & 255] + _lut[d2 >> 24 & 255] + _lut[d3 & 255] + _lut[d3 >> 8 & 255] + _lut[d3 >> 16 & 255] + _lut[d3 >> 24 & 255];
   return uuid2.toLowerCase();
 }
-function clamp(value2, min, max) {
+function clamp2(value2, min, max) {
   return Math.max(min, Math.min(max, value2));
 }
 function euclideanModulo(n, m) {
@@ -43424,7 +43435,7 @@ var MathUtils = /* @__PURE__ */ Object.freeze({
   DEG2RAD,
   RAD2DEG,
   generateUUID,
-  clamp,
+  clamp: clamp2,
   euclideanModulo,
   mapLinear,
   inverseLerp,
@@ -44215,8 +44226,8 @@ var Color = class {
   }
   setHSL(h, s, l, colorSpace = LinearSRGBColorSpace) {
     h = euclideanModulo(h, 1);
-    s = clamp(s, 0, 1);
-    l = clamp(l, 0, 1);
+    s = clamp2(s, 0, 1);
+    l = clamp2(l, 0, 1);
     if (s === 0) {
       this.r = this.g = this.b = l;
     } else {
@@ -44335,7 +44346,7 @@ var Color = class {
   }
   getHex(colorSpace = SRGBColorSpace) {
     ColorManagement.fromWorkingColorSpace(toComponents(this, _rgb), colorSpace);
-    return clamp(_rgb.r * 255, 0, 255) << 16 ^ clamp(_rgb.g * 255, 0, 255) << 8 ^ clamp(_rgb.b * 255, 0, 255) << 0;
+    return clamp2(_rgb.r * 255, 0, 255) << 16 ^ clamp2(_rgb.g * 255, 0, 255) << 8 ^ clamp2(_rgb.b * 255, 0, 255) << 0;
   }
   getHexString(colorSpace = SRGBColorSpace) {
     return ("000000" + this.getHex(colorSpace).toString(16)).slice(-6);
@@ -45553,7 +45564,7 @@ var Quaternion = class {
     return this.normalize();
   }
   angleTo(q) {
-    return 2 * Math.acos(Math.abs(clamp(this.dot(q), -1, 1)));
+    return 2 * Math.acos(Math.abs(clamp2(this.dot(q), -1, 1)));
   }
   rotateTowards(q, step) {
     const angle = this.angleTo(q);
@@ -46043,7 +46054,7 @@ var Vector3 = class {
     if (denominator === 0)
       return Math.PI / 2;
     const theta = this.dot(v) / denominator;
-    return Math.acos(clamp(theta, -1, 1));
+    return Math.acos(clamp2(theta, -1, 1));
   }
   distanceTo(v) {
     return Math.sqrt(this.distanceToSquared(v));
@@ -47475,7 +47486,7 @@ var Euler = class {
     const m31 = te[2], m32 = te[6], m33 = te[10];
     switch (order) {
       case "XYZ":
-        this._y = Math.asin(clamp(m13, -1, 1));
+        this._y = Math.asin(clamp2(m13, -1, 1));
         if (Math.abs(m13) < 0.9999999) {
           this._x = Math.atan2(-m23, m33);
           this._z = Math.atan2(-m12, m11);
@@ -47485,7 +47496,7 @@ var Euler = class {
         }
         break;
       case "YXZ":
-        this._x = Math.asin(-clamp(m23, -1, 1));
+        this._x = Math.asin(-clamp2(m23, -1, 1));
         if (Math.abs(m23) < 0.9999999) {
           this._y = Math.atan2(m13, m33);
           this._z = Math.atan2(m21, m22);
@@ -47495,7 +47506,7 @@ var Euler = class {
         }
         break;
       case "ZXY":
-        this._x = Math.asin(clamp(m32, -1, 1));
+        this._x = Math.asin(clamp2(m32, -1, 1));
         if (Math.abs(m32) < 0.9999999) {
           this._y = Math.atan2(-m31, m33);
           this._z = Math.atan2(-m12, m22);
@@ -47505,7 +47516,7 @@ var Euler = class {
         }
         break;
       case "ZYX":
-        this._y = Math.asin(-clamp(m31, -1, 1));
+        this._y = Math.asin(-clamp2(m31, -1, 1));
         if (Math.abs(m31) < 0.9999999) {
           this._x = Math.atan2(m32, m33);
           this._z = Math.atan2(m21, m11);
@@ -47515,7 +47526,7 @@ var Euler = class {
         }
         break;
       case "YZX":
-        this._z = Math.asin(clamp(m21, -1, 1));
+        this._z = Math.asin(clamp2(m21, -1, 1));
         if (Math.abs(m21) < 0.9999999) {
           this._x = Math.atan2(-m23, m22);
           this._y = Math.atan2(-m31, m11);
@@ -47525,7 +47536,7 @@ var Euler = class {
         }
         break;
       case "XZY":
-        this._z = Math.asin(-clamp(m12, -1, 1));
+        this._z = Math.asin(-clamp2(m12, -1, 1));
         if (Math.abs(m12) < 0.9999999) {
           this._x = Math.atan2(m32, m22);
           this._y = Math.atan2(m13, m11);
@@ -60935,13 +60946,13 @@ var Curve = class {
       vec.crossVectors(tangents[i - 1], tangents[i]);
       if (vec.length() > Number.EPSILON) {
         vec.normalize();
-        const theta = Math.acos(clamp(tangents[i - 1].dot(tangents[i]), -1, 1));
+        const theta = Math.acos(clamp2(tangents[i - 1].dot(tangents[i]), -1, 1));
         normals[i].applyMatrix4(mat.makeRotationAxis(vec, theta));
       }
       binormals[i].crossVectors(tangents[i], normals[i]);
     }
     if (closed === true) {
-      let theta = Math.acos(clamp(normals[0].dot(normals[segments]), -1, 1));
+      let theta = Math.acos(clamp2(normals[0].dot(normals[segments]), -1, 1));
       theta /= segments;
       if (tangents[0].dot(vec.crossVectors(normals[0], normals[segments])) > 0) {
         theta = -theta;
@@ -61758,7 +61769,7 @@ var LatheGeometry = class extends BufferGeometry {
       phiLength
     };
     segments = Math.floor(segments);
-    phiLength = clamp(phiLength, 0, Math.PI * 2);
+    phiLength = clamp2(phiLength, 0, Math.PI * 2);
     const indices = [];
     const vertices = [];
     const uvs = [];
@@ -64248,7 +64259,7 @@ var MeshPhysicalMaterial = class extends MeshStandardMaterial {
     this.ior = 1.5;
     Object.defineProperty(this, "reflectivity", {
       get: function() {
-        return clamp(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
+        return clamp2(2.5 * (this.ior - 1) / (this.ior + 1), 0, 1);
       },
       set: function(reflectivity) {
         this.ior = (1 + 0.4 * reflectivity) / (1 - 0.4 * reflectivity);
@@ -69686,7 +69697,7 @@ var Spherical = class {
       this.phi = 0;
     } else {
       this.theta = Math.atan2(x, z);
-      this.phi = Math.acos(clamp(y / this.radius, -1, 1));
+      this.phi = Math.acos(clamp2(y / this.radius, -1, 1));
     }
     return this;
   }
@@ -69865,7 +69876,7 @@ var Line3 = class {
     const startEnd_startP = _startEnd.dot(_startP);
     let t = startEnd_startP / startEnd2;
     if (clampToLine) {
-      t = clamp(t, 0, 1);
+      t = clamp2(t, 0, 1);
     }
     return t;
   }
@@ -70726,7 +70737,7 @@ var DataUtils = class {
   static toHalfFloat(val) {
     if (Math.abs(val) > 65504)
       console.warn("THREE.DataUtils.toHalfFloat(): Value out of range.");
-    val = clamp(val, -65504, 65504);
+    val = clamp2(val, -65504, 65504);
     _floatView[0] = val;
     const f = _uint32View[0];
     const e = f >> 23 & 511;
@@ -70878,10 +70889,22 @@ var ActorList = class {
       this._added.push(actor);
     }
   }
-  remove(actor) {
-    this._added = this._added.filter((a) => a !== actor);
-    this._list = this._list.filter((a) => a !== actor);
-    this._removed.push(actor);
+  remove(...actors) {
+    for (let actor of actors) {
+      const added = this._added.filter((a) => a !== actor);
+      const list = this._list.filter((a) => a !== actor);
+      let count = this._list.length - list.length + (this._added.length - added.length);
+      if (count !== 1) {
+        console.error("Did not remove exactly one actor from the actor lists");
+        debugger;
+      }
+      if (actor.id) {
+        delete this._idCache[actor.id];
+      }
+      this._added = added;
+      this._list = list;
+      this._removed.push(actor);
+    }
   }
   filter(cb) {
     return this._list.filter(cb);
@@ -71039,10 +71062,13 @@ var StateMachine = class {
   constructor(states) {
     this._self = states._bind;
     this._states = states;
-    this._activeState = states._start.call(this._self);
+    this._activeState = null;
     this._waitCycles = 0;
     this._waitOnPromise = false;
     this._nextValue = void 0;
+    this._activeStateName = "_start";
+    this._priorStateName = null;
+    this._activeState = states._start.call(this._self);
   }
   bind(obj) {
     this._self = obj;
@@ -71063,6 +71089,8 @@ var StateMachine = class {
     if (result2.done) {
       let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
       const generator = this._states[nextState];
+      this._priorStateName = this._activeStateName;
+      this._activeStateName = nextState;
       this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
     } else if (typeof result2.value === "number") {
       this._waitCycles = result2.value;
@@ -71120,6 +71148,17 @@ function registerBillboard(engine) {
   });
 }
 
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/journal.js
+var import_react9 = __toESM(require_react());
+var Journal = class {
+  constructor(engine) {
+    this._engine = engine;
+  }
+  message(s) {
+    this._engine.events.fire("journal.message", s);
+  }
+};
+
 // relative:/workspaces/monorepo/source/lib/engine/src/engine/engine.js
 var Engine = class {
   constructor() {
@@ -71135,10 +71174,12 @@ var Engine = class {
       actor: null,
       mesh: null
     };
+    this._hostElement = null;
     this._renderers = {};
     this._cache = {};
     this._actors = new ActorList();
     this._world = new World(this);
+    this._journal = new Journal(this);
     this._opt = {};
     registerPinToGroundHeight(this);
     registerBillboard(this);
@@ -71164,13 +71205,20 @@ var Engine = class {
   get world() {
     return this._world;
   }
+  get journal() {
+    return this._journal;
+  }
+  context() {
+    return this._context;
+  }
   get opt() {
     return this._opt;
   }
-  addSequence(generatorFunc) {
+  addSequence(generatorFunc, self2) {
     this.actors.push({
       stateMachine() {
         return {
+          _bind: self2,
           _start: generatorFunc
         };
       }
@@ -71192,9 +71240,7 @@ var Engine = class {
       for (let actor of this._actors._added) {
         ctx.actor = actor;
         this.events.fire("actor.preinit", ctx);
-        if (actor.init) {
-          actor.init(ctx);
-        }
+        actor.init?.(ctx);
         this.events.fire("actor.postinit", ctx);
         if (actor.stateMachine) {
           const desc = actor.stateMachine(ctx);
@@ -71203,22 +71249,17 @@ var Engine = class {
           }
         }
         for (let renderer of Object.values(this._renderers)) {
-          if (!renderer.addActor) {
-            break;
-          }
-          renderer.addActor(ctx, actor);
+          renderer.addActor?.(ctx, actor);
         }
         this._actors._list.push(actor);
       }
+      this._actors._added = [];
     }
-    this._actors._added = [];
     for (let actor of this._actors._removed) {
       for (let renderer of Object.values(this._renderers)) {
-        if (!renderer.removeActor) {
-          break;
-        }
-        renderer.removeActor(ctx, actor);
+        renderer.removeActor?.(ctx, actor);
       }
+      actor.dispose?.(ctx);
     }
     this._actors._removed = [];
     this.events.fire("engine.preupdate", ctx);
@@ -71229,22 +71270,18 @@ var Engine = class {
       }
       ctx.actor = actor;
       this.events.fire("actor.preupdate", ctx);
-      if (actor.__stateMachine) {
-        actor.__stateMachine.update(ctx);
-      }
+      actor.__stateMachine?.update(ctx);
     }
     for (let actor of this._actors) {
       ctx.actor = actor;
       ctx.mesh = actor.__mesh;
-      if (actor.update) {
-        actor.update(ctx);
-      }
+      actor.update?.(ctx);
       this.events.fire("actor.postupdate", ctx);
     }
     this.events.fire("engine.preupdate", ctx);
     ctx.actor = null;
     for (let renderer of Object.values(this._renderers)) {
-      renderer.renderFrame(ctx);
+      renderer.renderFrame?.(ctx);
     }
   }
 };
@@ -71389,56 +71426,122 @@ var import_lodash = __toESM(require_lodash());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/basic_lighting.js
 var import_chroma_js = __toESM(require_chroma());
-var BasicLighting = class {
+
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/day_night_lighting.js
+var import_chroma_js2 = __toESM(require_chroma());
+var DayNightLighting = class {
   constructor(params) {
-    this._params = Object.assign({
-      enableAmbient: false,
-      enableHelper: false,
+    this._params = {
       intensity: 1,
-      skyFade: 0
-    }, params);
+      skyFade: 0,
+      speed: 1,
+      nightSpeed: null,
+      ...params
+    };
+    if (this._params.nightSpeed === null) {
+      this._params.nightSpeed = this._params.speed * 1.5;
+    }
+    this._lightSun = null;
+    this._light2 = null;
+    this._sun = null;
+    this._timeOfDay = 9;
+  }
+  update({ engine }) {
+    const { speed, nightSpeed } = this._params;
+    const { renderer } = engine.renderers.three;
+    const angle = (this._timeOfDay - 6) * Math.PI / 12;
+    const dist = 128;
+    const x = dist * Math.cos(angle);
+    const z = dist * Math.sin(angle);
+    const y = dist / 5 + Math.sin(angle * 2);
+    const amount = (z <= 0 ? nightSpeed : speed) * 1e-3;
+    this._timeOfDay += amount;
+    if (this._timeOfDay >= 24) {
+      this._timeOfDay -= 24;
+    }
+    if (this._lightSun) {
+      this._lightSun.intensity = Math.max(0, 0.75 * z / dist);
+      this._lightSun.castShadow = this._lightSun.intensity > 0.05;
+      this._lightSun.position.set(x, y, z);
+      this._sun.position.set(x, y, z);
+      this._light2.intensity = Math.max(0, 0.25 * z / dist);
+      const skyColors = [
+        [0, "#111"],
+        [4, "#111"],
+        [5, "#8a8170"],
+        [7.5, "#abd6f7"],
+        [10, "#6086f0"],
+        [12, "#3060C0"],
+        [16, "#3060C0"],
+        [19, "#0e0942"],
+        [21, "#333"],
+        [24, "#111"]
+      ];
+      let c0;
+      let c1;
+      let color;
+      for (let i = 0; i < skyColors.length; i++) {
+        const [time, value2] = skyColors[i];
+        if (this._timeOfDay < time) {
+          const j = (i + skyColors.length - 1) % skyColors.length;
+          c0 = skyColors[j][1];
+          c1 = skyColors[i][1];
+          const d0 = Math.abs(this._timeOfDay - skyColors[j][0]);
+          const d1 = Math.abs(skyColors[i][0] - this._timeOfDay);
+          const a = d0 / (d0 + d1);
+          color = import_chroma_js2.default.mix(c0, c1, a);
+          break;
+        }
+      }
+      renderer.setClearColor(color.hex());
+    }
   }
   mesh({ engine }) {
-    const rendererThree = engine.renderers.three;
-    const { scene, camera, renderer } = rendererThree;
+    const { scene, renderer, camera } = engine.renderers.three;
     const { intensity, skyFade } = this._params;
     scene.fog = new Fog(3355596, 10, 500);
-    const color = import_chroma_js.default.mix("#3060C0", "black", skyFade);
+    const color = import_chroma_js2.default.mix("#3060C0", "black", skyFade);
     renderer.setClearColor(color.hex());
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFSoftShadowMap;
-    if (this._params.enableAmbient) {
-      var light = new AmbientLight(1052688, intensity);
+    {
+      const sphereGeometry = new SphereGeometry(5, 32, 32);
+      const sphereMaterial = new MeshBasicMaterial({ color: 16773726 });
+      const sphere = new Mesh(sphereGeometry, sphereMaterial);
+      sphere.position.set(0, 0, 28);
+      scene.add(sphere);
+      this._sun = sphere;
+    }
+    {
+      const light = new AmbientLight(2105376, intensity);
       scene.add(light);
     }
     {
-      var light = new HemisphereLight(4210752, 16777164, 0.25 * intensity);
+      const light = new HemisphereLight(4210752, 16777164, 0.25 * intensity);
       scene.add(light);
+      this._light2 = light;
     }
     {
-      var light = new DirectionalLight(16777215, 0.5 * intensity, 100);
-      light.position.set(90, 32, 150);
+      const light = new DirectionalLight(16777215, 0.5 * intensity, 100);
+      light.position.set(20, 16, 22);
       light.castShadow = true;
-      light.shadow.mapSize.width = 2048;
-      light.shadow.mapSize.height = 2048;
-      light.shadow.camera.near = 10;
-      light.shadow.camera.far = 320;
+      light.shadow.camera.near = 1;
+      light.shadow.camera.far = 400;
       light.shadow.bias = 1e-4;
-      const d = 128 * 2;
+      const d = 150;
       light.shadow.camera.left = -d;
       light.shadow.camera.right = d;
       light.shadow.camera.top = d;
       light.shadow.camera.bottom = -d;
+      light.shadow.mapSize.width = 2 * 1024;
+      light.shadow.mapSize.height = 2 * 1024;
       scene.add(light);
-      if (this._params.enableHelper) {
-        const helper = new CameraHelper(light.shadow.camera);
-        scene.add(helper);
-      }
+      this._lightSun = light;
     }
     if (true) {
-      let light2 = new PointLight(8355711, intensity);
-      light2.position.set(5, 0, 5);
-      camera.add(light2);
+      let light = new PointLight(8355711, intensity * 0.25);
+      light.position.set(5, 0, 5);
+      camera.add(light);
       scene.add(camera);
     }
     return new Group();
@@ -71843,6 +71946,77 @@ var Rain = class {
   }
 };
 
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/snow.js
+var Snow = class {
+  constructor({ count = 1e4 } = {}) {
+    this._count = count;
+    this._children = [];
+  }
+  init({ engine }) {
+    const c1 = Math.floor(this._count / 3);
+    const c0 = this._count - c1;
+    this._children = [
+      new SnowEffect({
+        count: c0,
+        color: 13421772
+      }),
+      new SnowEffect({
+        count: c1,
+        color: 14540253
+      })
+    ];
+    engine.actors.push(...this._children);
+  }
+  dispose({ engine }) {
+    engine.actors.remove(...this._children);
+  }
+};
+var SnowEffect = class {
+  constructor({
+    count = 1e5,
+    color = 8947848
+  } = {}) {
+    this._context = {
+      rng: makeRNG(6237)
+    };
+    this._count = count;
+    this._color = color;
+  }
+  update({ engine, mesh }) {
+    const { rng } = this._context;
+    const v = mesh.geometry.attributes.position.array;
+    for (let i = 0; i < v.length; i += 3) {
+      const sx = v[i + 0];
+      const sy = v[i + 1];
+      let z = v[i + 2];
+      if (v[i + 2] < 0) {
+        v[i + 0] = rng.range(-250, 250);
+        v[i + 1] = rng.range(-250, 250);
+        z = rng.range(490, 510);
+      } else {
+        z -= rng.range(0.5, 1.05);
+      }
+      v[i + 2] = z;
+    }
+    mesh.geometry.attributes.position.needsUpdate = true;
+  }
+  mesh() {
+    const { rng } = this._context;
+    const vertices = [];
+    for (var p = 0; p < this._count; p++) {
+      const x = rng.range(-250, 250);
+      const y = rng.range(-250, 250);
+      const z = rng.range(0, 500);
+      vertices.push(x, y, z);
+    }
+    const geometry = new BufferGeometry();
+    geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+    const material = new PointsMaterial({ color: this._color });
+    const points = new Points(geometry, material);
+    return points;
+  }
+};
+
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/voxel_sprite.js
 var VoxelSprite = class {
   constructor({
@@ -71906,68 +72080,163 @@ var VoxelSprite = class {
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/weather_system.js
 var WeatherSystem = class {
+  constructor() {
+    this.id = "weather_system";
+    this.condition = null;
+  }
   stateMachine({ engine }) {
     const rng = makeRNG();
     const RAIN_LIGHT = 5e3;
     const RAIN_NORMAL = 1e5;
     const RAIN_HEAVY = 5e5;
-    return {
-      _start: function* () {
-        return rng.select([
-          [1, "clear"],
+    const makeStates = (table) => {
+      const desc = {
+        _bind: this
+      };
+      const TIME_SCALE = 60;
+      let local2 = {
+        priorState: null
+      };
+      for (let [
+        key,
+        { condition = "clear", effect, duration, transitions, messages }
+      ] of Object.entries(table)) {
+        desc[key] = function* () {
+          this.condition = condition;
+          let actor;
+          if (effect) {
+            const [Type, ...args] = effect;
+            actor = new Type(...args);
+            engine.actors.push(actor);
+          }
+          const waitTime = duration ? TIME_SCALE * rng.rangei(duration[0], duration[1]) : 0;
+          const wait0 = Math.min(waitTime, 5);
+          const wait1 = waitTime - wait0;
+          if (wait0) {
+            yield wait0;
+          }
+          const ctx = engine.context();
+          if (messages && ctx.frameNumber > 5 * 60) {
+            const key2 = local2.priorState;
+            const set = messages[key2] || messages["*"];
+            if (set) {
+              const value2 = rng.select(set, (e) => e[0])[1];
+              let msg = typeof value2 === "function" ? value2() : value2;
+              if (msg) {
+                engine.journal.message(msg);
+              }
+            }
+          }
+          if (wait1) {
+            yield wait1;
+          }
+          if (actor) {
+            engine.actors.remove(actor);
+          }
+          local2.priorState = key;
+          const nextState = rng.select(transitions, (e) => e[0])[1];
+          return nextState;
+        };
+      }
+      return desc;
+    };
+    return makeStates({
+      _start: {
+        transitions: [
+          [80, "clear"],
+          [30, "clearWindy"],
           [15, "rainLight"],
           [10, "rainNormal"],
-          [10, "rainHeavy"]
-        ], (e) => e[0])[1];
+          [10, "rainHeavy"],
+          [30, "snow"]
+        ]
       },
-      clear: function* () {
-        yield 60 * rng.rangei(10, 100);
-        return rng.select([
-          "clear",
-          "clear",
-          "rainLight",
-          "rainLight",
-          "rainLight",
-          "rainNormal",
-          "rainHeavy"
-        ]);
+      clear: {
+        duration: [10, 100],
+        transitions: [
+          [30, "clear"],
+          [30, "clearWindy"],
+          [30, "rainLight"],
+          [10, "rainNormal"],
+          [10, "rainHeavy"],
+          [10, "snow"]
+        ]
       },
-      rainLight: function* () {
-        const actor = new Rain({ count: RAIN_LIGHT });
-        engine.actors.push(actor);
-        yield 60 * rng.rangei(5, 50);
-        engine.actors.remove(actor);
-        return rng.select(["clear", "rainNormal", "rainNormal"]);
+      clearWindy: {
+        duration: [10, 100],
+        transitions: [
+          [30, "clear"],
+          [50, "rainLight"],
+          [50, "rainNormal"],
+          [20, "rainHeavy"]
+        ],
+        messages: {
+          "*": [[100, `The wind is howling.`]]
+        }
       },
-      rainLightEnd: function* () {
-        const actor = new Rain({ count: RAIN_LIGHT });
-        engine.actors.push(actor);
-        yield 60 * rng.rangei(5, 50);
-        engine.actors.remove(actor);
-        return "clear";
+      snow: {
+        condition: "snow",
+        effect: [Snow, { count: 5e5 }],
+        duration: [20, 200],
+        transitions: [[100, "snowLight"]],
+        messages: {
+          "*": [
+            [100, `It's beginning to snow.`],
+            [20, "The snow does not seem to accumulate."]
+          ]
+        }
       },
-      rainNormal: function* () {
-        const actor = new Rain({ count: RAIN_NORMAL });
-        engine.actors.push(actor);
-        yield 60 * rng.rangei(10, 200);
-        engine.actors.remove(actor);
-        return rng.select(["rainLightEnd", "rainHeavy"]);
+      snowLight: {
+        condition: "snow",
+        effect: [Snow, { count: 1e5 }],
+        duration: [3, 12],
+        transitions: [[100, "clear"]],
+        messages: {
+          "*": [
+            [100, `It's beginning to snow.`],
+            [20, "The snow does not seem to accumulate."]
+          ]
+        }
       },
-      rainHeavy: function* () {
-        const actor = new Rain({ count: RAIN_HEAVY });
-        engine.actors.push(actor);
-        yield 60 * rng.rangei(10, 100);
-        engine.actors.remove(actor);
-        return rng.select([
-          "rainLightEnd",
-          "rainLightEnd",
-          "rainLightEnd",
-          "rainLightEnd",
-          "rainNormal",
-          "clear"
-        ]);
+      rainLight: {
+        effect: [Rain, { count: RAIN_LIGHT }],
+        duration: [5, 50],
+        transitions: [
+          [1, "clear"],
+          [2, "rainNormal"]
+        ],
+        messages: {
+          clear: [
+            [100, "It has begun to rain."],
+            [100, null]
+          ]
+        }
+      },
+      rainLightEnd: {
+        effect: [Rain, { count: RAIN_LIGHT }],
+        duration: [5, 50],
+        transitions: [[1, "clear"]],
+        messages: {
+          "*": [[100, () => "The weather Looks to be clearing up."]]
+        }
+      },
+      rainNormal: {
+        effect: [Rain, { count: RAIN_NORMAL }],
+        duration: [10, 200],
+        transitions: [
+          [1, "rainLightEnd"],
+          [1, "rainHeavy"]
+        ]
+      },
+      rainHeavy: {
+        effect: [Rain, { count: RAIN_HEAVY }],
+        duration: [10, 100],
+        transitions: [
+          [1, "rainLightEnd"],
+          [2, "rainNormal"]
+        ]
       }
-    };
+    });
   }
 };
 
@@ -72176,10 +72445,10 @@ function updateBoxCollision(actor, box) {
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/use_engine.js
-var import_react9 = __toESM(require_react());
+var import_react10 = __toESM(require_react());
 function useEngine(initCb = noop) {
-  const [engine] = (0, import_react9.useState)(new Engine());
-  (0, import_react9.useEffect)(() => {
+  const [engine] = (0, import_react10.useState)(new Engine());
+  (0, import_react10.useEffect)(() => {
     initCb({ engine });
     return () => {
       engine.stop();
@@ -72192,7 +72461,7 @@ function noop() {
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-var import_react16 = __toESM(require_react());
+var import_react18 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/caches/image_geometry_cache.js
 var ImageGeometryCache = class {
@@ -72325,6 +72594,107 @@ var RendererHUD = class {
   }
 };
 
+// relative:/workspaces/monorepo/source/lib/engine/src/renderer_react/renderer_react.js
+var import_react11 = __toESM(require_react());
+var import_client = __toESM(require_client());
+var RendererReact = class {
+  constructor(hostElement, engine) {
+    const rect = hostElement.getBoundingClientRect();
+    const { width, height } = rect;
+    hostElement.style.position = "relative";
+    const container2 = document.createElement("div");
+    container2.style.position = "absolute";
+    container2.style.width = `${width}px`;
+    container2.style.height = `${height}px`;
+    container2.style.top = 0;
+    container2.style.left = 0;
+    container2.style.backgroundColor = "transparent";
+    container2.style.overflow = "clipped";
+    hostElement.appendChild(container2);
+    this._container = container2;
+    const root3 = import_client.default.createRoot(container2);
+    root3.render(/* @__PURE__ */ import_react11.default.createElement(Container, {
+      engine
+    }));
+  }
+  dispose() {
+  }
+};
+var local = {
+  uniqueID: 1
+};
+function Container({ engine }) {
+  const [messages, setMessages] = import_react11.default.useState([]);
+  const handleDispose = (id) => {
+    setMessages((messages2) => messages2.filter((c) => c.id !== id));
+  };
+  import_react11.default.useEffect(() => {
+    const unwind = engine.events.on("journal.message", (msg) => {
+      setMessages((messages2) => [
+        ...messages2,
+        {
+          id: local.uniqueID++,
+          content: msg
+        }
+      ]);
+    });
+    return () => {
+      unwind();
+    };
+  }, []);
+  return /* @__PURE__ */ import_react11.default.createElement("div", {
+    style: { color: "white", padding: 8 }
+  }, messages.map((c) => /* @__PURE__ */ import_react11.default.createElement(JournalMessage, {
+    key: c.id,
+    msg: c.content,
+    onDispose: () => handleDispose(c.id)
+  })));
+}
+function JournalMessage({ msg, onDispose }) {
+  const ref = import_react11.default.useRef(null);
+  const [style, setStyle] = import_react11.default.useState({
+    opacity: 0,
+    height: "auto",
+    padding: 8,
+    marginBottom: 4
+  });
+  import_react11.default.useEffect(() => {
+    const timers = [
+      setTimeout(() => setStyle((style2) => ({ ...style2, opacity: 1 })), 0),
+      setTimeout(() => {
+        const rect = ref.current.getBoundingClientRect();
+        setStyle((style2) => ({ ...style2, height: rect.height }));
+      }),
+      setTimeout(() => {
+        setStyle((style2) => ({ ...style2, height: 0, padding: "0px 8px", marginBottom: 0 }));
+      }, 5e3),
+      setTimeout(onDispose, 6e3)
+    ];
+    return () => {
+      for (let timer of timers) {
+        clearTimeout(timer);
+      }
+    };
+  }, []);
+  return /* @__PURE__ */ import_react11.default.createElement("div", {
+    ref,
+    style: {
+      boxSizing: "border-box",
+      overflow: "hidden",
+      borderRadius: 8,
+      backgroundColor: "rgba(0,0,0,.45)",
+      fontSize: 14,
+      transition: [
+        "opacity .5s ease-in-out",
+        "height .5s ease-in-out",
+        "padding .5s ease-in-out",
+        "marging .5s ease-in-out"
+      ].join(", "),
+      ...style
+    }
+  }, msg);
+}
+
 // relative:/workspaces/monorepo/source/lib/engine/src/renderer_three/renderer_three.js
 var RendererThree = class {
   constructor(elem) {
@@ -72452,14 +72822,14 @@ var RendererTwo = class {
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_recorder.js
-var import_react15 = __toESM(require_react());
+var import_react17 = __toESM(require_react());
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_async_effect.js
-var import_react10 = __toESM(require_react(), 1);
+var import_react12 = __toESM(require_react(), 1);
 var INTERRUPTED2 = Symbol();
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_google_font.js
-var import_react11 = __toESM(require_react(), 1);
+var import_react13 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_common_styles.js
 var styles2 = {
@@ -72495,20 +72865,20 @@ var useCommonStyles22 = createUseStyles({
 });
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/hooks/use_local_storage.js
-var import_react12 = __toESM(require_react(), 1);
+var import_react14 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/reading_frame.js
-var import_react13 = __toESM(require_react(), 1);
+var import_react15 = __toESM(require_react(), 1);
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/@raiment/react-ex/src/components/flex.js
-var import_react14 = __toESM(require_react(), 1);
+var import_react16 = __toESM(require_react(), 1);
 function Flex2({
   className,
   style,
   children,
   align = "center"
 }) {
-  return /* @__PURE__ */ import_react14.default.createElement("div", {
+  return /* @__PURE__ */ import_react16.default.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "row",
@@ -72525,7 +72895,7 @@ function EngineRecorder({
   duration = 16600,
   autoStart = false
 }) {
-  const [recording, setRecording] = import_react15.default.useState({
+  const [recording, setRecording] = import_react17.default.useState({
     active: false,
     ready: false,
     dataURI: null,
@@ -72572,51 +72942,51 @@ function EngineRecorder({
       dataURI
     });
   };
-  import_react15.default.useEffect(() => {
+  import_react17.default.useEffect(() => {
     if (autoStart) {
       setTimeout(() => handleRecord(), 100);
     }
   }, []);
-  return /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement(Flex2, {
+  return /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement(Flex2, {
     style: {
       padding: "4px 0"
     }
-  }, /* @__PURE__ */ import_react15.default.createElement("button", {
+  }, /* @__PURE__ */ import_react17.default.createElement("button", {
     style: {
       width: "8rem"
     },
     disabled: recording.active,
     onClick: () => handleRecord(duration)
-  }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react15.default.createElement("div", {
+  }, recording.active ? `Recording (${Math.floor(recording.countdown / 1e3)})...` : "Record"), /* @__PURE__ */ import_react17.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react15.default.createElement("button", {
+  }), /* @__PURE__ */ import_react17.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(8e3)
-  }, "8"), /* @__PURE__ */ import_react15.default.createElement("div", {
+  }, "8"), /* @__PURE__ */ import_react17.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react15.default.createElement("button", {
+  }), /* @__PURE__ */ import_react17.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(12e3)
-  }, "12"), /* @__PURE__ */ import_react15.default.createElement("div", {
+  }, "12"), /* @__PURE__ */ import_react17.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react15.default.createElement("button", {
+  }), /* @__PURE__ */ import_react17.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(3e4)
-  }, "30"), /* @__PURE__ */ import_react15.default.createElement("div", {
+  }, "30"), /* @__PURE__ */ import_react17.default.createElement("div", {
     style: { width: ".25rem" }
-  }), /* @__PURE__ */ import_react15.default.createElement("button", {
+  }), /* @__PURE__ */ import_react17.default.createElement("button", {
     disabled: recording.active,
     onClick: () => handleRecord(6e4)
-  }, "60"), /* @__PURE__ */ import_react15.default.createElement("div", {
+  }, "60"), /* @__PURE__ */ import_react17.default.createElement("div", {
     style: { width: "1rem" }
-  }), /* @__PURE__ */ import_react15.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react15.default.createElement("a", {
+  }), /* @__PURE__ */ import_react17.default.createElement("div", null, recording.ready && /* @__PURE__ */ import_react17.default.createElement("a", {
     href: recording.dataURI,
     target: "_blank"
   }, "download"))));
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/engine_frame.js
-var EngineFrame = import_react16.default.memo(function({
+var EngineFrame = import_react18.default.memo(function({
   engine = new Engine(),
   actors = [],
   recorder = null,
@@ -72624,10 +72994,12 @@ var EngineFrame = import_react16.default.memo(function({
   recorderDuration = void 0,
   style = {}
 }) {
-  const refElem = import_react16.default.useRef(null);
-  import_react16.default.useEffect(() => {
+  const refElem = import_react18.default.useRef(null);
+  import_react18.default.useEffect(() => {
+    engine._hostElement = refElem.current;
     engine._renderers["three"] = new RendererThree(refElem.current);
     engine._renderers["two"] = new RendererTwo(refElem.current);
+    engine._renderers["react"] = new RendererReact(refElem.current, engine);
     engine._renderers["hud"] = new RendererHUD(refElem.current);
     engine._cache.imageGeometry = new ImageGeometryCache();
     engine._actors.push(...actors);
@@ -72637,7 +73009,7 @@ var EngineFrame = import_react16.default.memo(function({
       engine.dispose();
     };
   }, [refElem.current]);
-  return /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, /* @__PURE__ */ import_react16.default.createElement("div", {
+  return /* @__PURE__ */ import_react18.default.createElement(import_react18.default.Fragment, null, /* @__PURE__ */ import_react18.default.createElement("div", {
     ref: refElem,
     style: {
       width: "100%",
@@ -72646,7 +73018,7 @@ var EngineFrame = import_react16.default.memo(function({
       margin: 0,
       ...style
     }
-  }), recorder && /* @__PURE__ */ import_react16.default.createElement(EngineRecorder, {
+  }), recorder && /* @__PURE__ */ import_react18.default.createElement(EngineRecorder, {
     engine,
     rendererName: recorder,
     autoStart: autoRecord,
@@ -72655,7 +73027,7 @@ var EngineFrame = import_react16.default.memo(function({
 });
 
 // relative:/workspaces/monorepo/source/lib/engine/examples/14-weather/forest.js
-var import_chroma_js2 = __toESM(require_chroma());
+var import_chroma_js3 = __toESM(require_chroma());
 
 // relative:/workspaces/monorepo/source/lib/engine/examples/14-weather/make_voxel_geometry.js
 function makeVoxelGeometry(voxels, options) {
@@ -73174,7 +73546,7 @@ var treeShader = {
         rng.rangei(120, 192) / 255,
         rng.rangei(0, 32) / 255
       ];
-      const ctrunk = (0, import_chroma_js2.default)("brown").brighten(4.5).gl();
+      const ctrunk = (0, import_chroma_js3.default)("brown").brighten(4.5).gl();
       for (let z = 0; z < height - radius; z++) {
         const c = [...ctrunk];
         const s = rng.select([0.9, 0.95, 1, 1]);
@@ -73202,10 +73574,98 @@ var treeShader = {
 var matches = [{ url: "assets/proto/sprites/corn-stalk.png" }, { url: "assets/proto/sprites/farmer.png" }, { url: "assets/proto/sprites/farmer.png.asset.yaml" }, { url: "assets/proto/sprites/farmer2.png" }, { url: "assets/proto/sprites/farmer2.png.asset.yaml" }, { url: "assets/proto/sprites/kestrel.png" }, { url: "assets/proto/sprites/kestrel.png.asset.yaml" }, { url: "assets/proto/sprites/king.png" }, { url: "assets/proto/sprites/king.png.asset.yaml" }, { url: "assets/proto/sprites/ranger.png" }, { url: "assets/proto/sprites/ranger.png.asset.yaml" }, { url: "assets/proto/sprites/ranger2.png" }, { url: "assets/proto/sprites/ranger2.png.asset.yaml" }, { url: "assets/proto/sprites/wizard.png" }, { url: "assets/proto/sprites/wizard.png.asset.yaml" }];
 var png_asset_default = { matches };
 
-// builtin:./__app.js
-var assetURL = Object.fromEntries(png_asset_default.matches.map(({ url }) => [url.split("/").pop(), url]));
-function app_default() {
-  return /* @__PURE__ */ import_react17.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react17.default.createElement("h1", null, "Farmers"), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement(EngineView, null)), /* @__PURE__ */ import_react17.default.createElement("p", null, "\u{1F6A7} Work in progress"), /* @__PURE__ */ import_react17.default.createElement("p", null, 'The goal of this experiment is to have farmer sprites that (1) find a rectangular plot of land, (2) "reserve" it for farming, (3) iteratively go over each tile with a hoe to prepare the soil, (4) rest, (5) repeat.'));
+// relative:/workspaces/monorepo/source/lib/engine/examples/14-weather/lookup_table.js
+var LookupTable = class {
+  constructor({ normalize: normalize2 = (obj) => obj, table = null } = {}) {
+    this._list = [];
+    this._free = [];
+    this._normalize = normalize2;
+    this._set = {};
+    if (table) {
+      this.addSet(table);
+    }
+  }
+  add(obj) {
+    let i;
+    if (this._free.length) {
+      i = this._free.shift();
+    } else {
+      i = this._list.length;
+    }
+    this._normalize(obj, i);
+    this._list.push(obj);
+    return i;
+  }
+  get(index4) {
+    return this._list[index4];
+  }
+  remove(obj) {
+    for (let i = 0; i < this._list.length; i++) {
+      if (this._list[i] === obj) {
+        this._list[i] = null;
+        this._free.push(i);
+        for (let [key, value2] of Object.entries(this._set)) {
+          if (value2 === i) {
+            delete this._set[key];
+          }
+        }
+        break;
+      }
+    }
+  }
+  keys() {
+    return this._set;
+  }
+  addSet(m) {
+    for (let [key, value2] of Object.entries(m)) {
+      const index4 = this.add(value2);
+      this._set[key] = index4;
+    }
+    return this._set;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/examples/14-weather/tiles.js
+function initTileLookupTable() {
+  const grassColorFunc = makeGrassColorFunc(256);
+  const table = new LookupTable({
+    normalize: (obj) => {
+      return {
+        walkCost: obj.walkable ? 0 : 1e10,
+        tillable: true,
+        ...obj
+      };
+    },
+    table: {
+      GRASS: {
+        walkable: true,
+        colorFunc: grassColorFunc
+      },
+      GRASS_UNWALKABLE: {
+        walkable: false,
+        colorFunc: grassColorFunc
+      },
+      GRASS_UNTILLABLE: {
+        walkable: true,
+        walkCost: 20,
+        tillable: false,
+        colorFunc: grassColorFunc
+      },
+      DIRT_WALKABLE: {
+        walkable: true,
+        walkCost: 10,
+        colorFunc: (sx, sy) => {
+          const base = grassColorFunc(sx, sy);
+          const a = sy % 2 ? 0.75 : 1;
+          base[0] *= 1.25 * a;
+          base[1] *= 0.5 * a;
+          base[2] *= 0.5 * a;
+          return base;
+        }
+      }
+    }
+  });
+  return table;
 }
 function makeGrassColorFunc(segments) {
   const scale = 1 / (segments * 100 / 256);
@@ -73220,88 +73680,19 @@ function makeGrassColorFunc(segments) {
     return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
   };
 }
-var ObjectTable = class {
-  constructor({ transform: transform2 = (obj) => obj } = {}) {
-    this._list = [];
-    this._free = [];
-    this._transform = transform2;
-  }
-  add(obj) {
-    let i;
-    if (this._free.length) {
-      i = this._free.shift();
-    } else {
-      i = this._list.length;
-    }
-    this._list.push(this._transform(obj));
-    return i;
-  }
-  get(index4) {
-    return this._list[index4];
-  }
-  remove(obj) {
-    for (let i = 0; i < this._list.length; i++) {
-      if (this._list[i] === obj) {
-        this._list[i] = null;
-        this._free.push(i);
-        break;
-      }
-    }
-  }
-};
+
+// builtin:./__app.js
+var assetURL = Object.fromEntries(png_asset_default.matches.map(({ url }) => [url.split("/").pop(), url]));
+function app_default() {
+  return /* @__PURE__ */ import_react19.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react19.default.createElement("h1", null, "Weather"), /* @__PURE__ */ import_react19.default.createElement("div", null, /* @__PURE__ */ import_react19.default.createElement(EngineView, null)));
+}
 var db = {
-  colors: new ObjectTable(),
-  tiles: new ObjectTable({
-    transform: (obj) => {
-      return {
-        walkCost: obj.walkable ? 0 : 1e10,
-        tillable: true,
-        ...obj
-      };
-    }
-  })
+  colors: new LookupTable(),
+  tiles: initTileLookupTable()
 };
-var objectList = new ObjectTable();
+var TILE = db.tiles.keys();
+var objectList = new LookupTable();
 objectList.add({});
-var COLOR_DEFAULT = db.colors.add({
-  rgb: [1, 1, 1]
-});
-var COLOR_YELLOW = db.colors.add({
-  rgb: [1, 1, 0.2]
-});
-var COLOR_ORANGE = db.colors.add({
-  rgb: [235 / 255, 143 / 255, 52 / 255]
-});
-var COLOR_RED = db.colors.add({
-  rgb: [235 / 255, 43 / 255, 12 / 255]
-});
-var grassColorFunc = makeGrassColorFunc(256);
-var TILE_GRASS = db.tiles.add({
-  walkable: true,
-  colorFunc: grassColorFunc
-});
-var TILE_GRASS_UNWALKABLE = db.tiles.add({
-  walkable: false,
-  colorFunc: grassColorFunc
-});
-var TILE_GRASS_UNTILLABLE = db.tiles.add({
-  walkable: true,
-  walkCost: 20,
-  tillable: false,
-  colorFunc: grassColorFunc
-});
-var TILE_DIRT_WALKABLE = db.tiles.add({
-  walkable: true,
-  walkCost: 10,
-  colorFunc: (sx, sy) => {
-    const base = grassColorFunc(sx, sy);
-    const a = sy % 2 ? 0.75 : 1;
-    base[0] *= 1.25 * a;
-    base[1] *= 0.5 * a;
-    base[2] *= 0.5 * a;
-    return base;
-  }
-});
 function makeHeightMap(rng) {
   const S = 192;
   const simplex1 = makeSimplexNoise();
@@ -73313,8 +73704,8 @@ function makeHeightMap(rng) {
     segments: 256,
     layers: {
       tile: Int8Array,
-      color: Int8Array,
-      object: Int16Array
+      object: Int16Array,
+      snow: Float32Array
     },
     heightFunc: (sx, sy) => {
       const nx = sx + 5 * simplex1.noise2D(4 * sx / S, 4 * sy / S);
@@ -73324,23 +73715,19 @@ function makeHeightMap(rng) {
     }
   });
   const tileArray = heightMap.getLayerArray("tile");
-  const colorArray = heightMap.getLayerArray("color");
   const objectArray = heightMap.getLayerArray("object");
-  tileArray.fill(TILE_GRASS);
-  colorArray.fill(COLOR_DEFAULT);
+  const snowArray = heightMap.getLayerArray("snow");
+  tileArray.fill(TILE.GRASS);
   objectArray.fill(0);
+  snowArray.fill(0);
   heightMap.colorFunc = function(sx, sy, wz, si) {
     const tile = db.tiles.get(tileArray[si]);
-    const colorIndex = colorArray[si];
-    const color = db.colors.get(colorIndex);
-    switch (colorIndex) {
-      case COLOR_DEFAULT: {
-        const rgb = tile.colorFunc(sx, sy);
-        return rgb;
-      }
-      default:
-        return color.rgb;
-    }
+    const rgb = tile.colorFunc(sx, sy);
+    const s = clamp(snowArray[si], 0, 1);
+    rgb[0] = rgb[0] * (1 - s) + s * 1;
+    rgb[1] = rgb[1] * (1 - s) + s * 1;
+    rgb[2] = rgb[2] * (1 - s) + s * 1;
+    return rgb;
   };
   heightMap.updateMesh();
   return heightMap;
@@ -73350,6 +73737,7 @@ function EngineView() {
     const rng = makeRNG();
     const heightMap = makeHeightMap(rng);
     const tileArray = heightMap.getLayerArray("tile");
+    const snowArray = heightMap.getLayerArray("snow");
     engine.events.on("actor.postinit", ({ actor }) => {
       const shape = actor.groundCollisionShape;
       if (!shape) {
@@ -73359,12 +73747,12 @@ function EngineView() {
       iterateCircle2D(sx, sy, 2 * shape.width, (sx2, sy2) => {
         const si = heightMap.coordS2I(sx2, sy2);
         if (si !== -1) {
-          tileArray[si] = TILE_GRASS_UNWALKABLE;
+          tileArray[si] = TILE.GRASS_UNWALKABLE;
           heightMap.updateSegment(sx2, sy2);
         }
       });
     });
-    engine.actors.push(new Grid(), new OrbitCamera({ radius: 64, periodMS: 72e3, offsetZ: 8 }), new BasicLighting(), new GroundPlane(), heightMap);
+    engine.actors.push(new Grid(), new OrbitCamera({ radius: 92, periodMS: 72e3, offsetZ: 16 }), new DayNightLighting(), new GroundPlane(), heightMap);
     engine.opt.heightMap = heightMap;
     engine.opt.walkableS = function(sx, sy) {
       const si = sy * heightMap.segments + sx;
@@ -73382,14 +73770,12 @@ function EngineView() {
           return false;
         }
         const tileIndex = tileArray[si];
-        return tileIndex === TILE_GRASS;
+        return tileIndex === TILE.GRASS;
       };
       let worldX, worldY;
       do {
-        const radius = rng.range(10, 96);
-        const ang = rng.range(0, 2 * Math.PI);
-        worldX = Math.floor(radius * Math.cos(ang));
-        worldY = Math.floor(radius * Math.sin(ang));
+        worldX = rng.rangei(0, heightMap.segments);
+        worldY = rng.rangei(0, heightMap.segments);
       } while (!walkable(worldX, worldY));
       return [worldX, worldY];
     };
@@ -73400,6 +73786,12 @@ function EngineView() {
     engine.opt.generatePathfindingBehavior = function(actor) {
       return makePathfindBehaviorForHeightmap(heightMap, actor);
     };
+    engine.addSequence(function* () {
+      yield 10;
+      engine.journal.message("Welcome to Galthea, the world of Kestrel");
+      yield 2 * 60;
+      engine.journal.message("Your quest is to seek out Tristan.");
+    });
     engine.addSequence(function* () {
       engine.actors.push(new Forest({ count: 40 }), new WeatherSystem());
       yield;
@@ -73433,11 +73825,34 @@ function EngineView() {
         });
       }));
       yield;
+      const weatherSystem = engine.actors.selectByID("weather_system");
+      engine.actors.push({
+        update: ({ frameNumber }) => {
+          if (frameNumber % 4 == 0)
+            for (let i = 0; i < 2500; i++) {
+              const sx = rng.rangei(0, 256);
+              const sy = rng.rangei(0, 256);
+              const si = sy * heightMap.segments + sx;
+              const v0 = snowArray[si];
+              let v1;
+              if (weatherSystem.condition === "snow") {
+                v1 = Math.min(v0 + 0.2, 2);
+              } else {
+                v1 = Math.max(v0 - 0.2, 0);
+              }
+              if (v0 !== v1) {
+                snowArray[si] = v1;
+                heightMap.updateSegment(sx, sy);
+              }
+            }
+        }
+      });
+      yield;
       engine.actors.push(new Updater(heightMap));
       return;
     });
   });
-  return /* @__PURE__ */ import_react17.default.createElement(EngineFrame, {
+  return /* @__PURE__ */ import_react19.default.createElement(EngineFrame, {
     engine,
     recorder: "three"
   });
@@ -73512,7 +73927,7 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
   const rng = makeRNG();
   const heightArray = heightMap.getLayerArray("height");
   const tileArray = heightMap.getLayerArray("tile");
-  const colorArray = heightMap.getLayerArray("color");
+  const snowArray = heightMap.getLayerArray("snow");
   const SEGMENTS = heightMap.segments;
   const tileAt = (sx, sy) => {
     if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
@@ -73528,7 +73943,7 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
     width: SEGMENTS,
     height: SEGMENTS,
     walkable,
-    baseCost: (a) => tileAt(a.x, a.y)?.walkCost,
+    baseCost: (a) => tileAt(a.x, a.y)?.walkCost ?? 0,
     edgeCost: (a, b) => {
       const hb = heightArray[b.y * SEGMENTS + b.x];
       const ha = heightArray[a.y * SEGMENTS + a.x];
@@ -73541,10 +73956,16 @@ function makePathfindBehaviorForHeightmap(heightMap, actor) {
     positionFunc: () => {
       return heightMap.coordW2S(actor.position.x, actor.position.y);
     },
-    onMove: (x, y) => {
-      const [wx, wy] = heightMap.coordS2W(x, y);
+    onMove: (sx, sy) => {
+      const [wx, wy] = heightMap.coordS2W(sx, sy);
       actor.position.x = wx;
       actor.position.y = wy;
+      const si = sy * heightMap.segments + sx;
+      const snow0 = snowArray[si];
+      if (snow0 > 0) {
+        snowArray[si] = clamp(snow0 - 0.5, 0, 0.5);
+        heightMap.updateSegment(sx, sy);
+      }
     }
   });
 }
@@ -73654,8 +74075,8 @@ var Updater = class {
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");
-var root2 = import_client.default.createRoot(container);
-root2.render(/* @__PURE__ */ import_react18.default.createElement(app_default, null));
+var root2 = import_client2.default.createRoot(container);
+root2.render(/* @__PURE__ */ import_react20.default.createElement(app_default, null));
 /*
 object-assign
 (c) Sindre Sorhus
