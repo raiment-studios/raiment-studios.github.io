@@ -34941,7 +34941,7 @@ function registerPinToGroundHeight(engine) {
     }
     const pos = actor.position;
     const z = engine2.world.groundHeight(pos.x, pos.y);
-    if (z > -Infinity) {
+    if (z > -Infinity && z !== pos.z) {
       actor.position.set(pos.x, pos.y, z);
     }
   });
@@ -57463,7 +57463,6 @@ var EngineFrame = import_react12.default.memo(function({
     engine._actors.push(...actors);
     engine.start();
     return () => {
-      console.count("dispose");
       window.removeEventListener("keydown", handleKeyDown);
       engine.stop();
       engine.dispose();
@@ -57474,7 +57473,7 @@ var EngineFrame = import_react12.default.memo(function({
     padding: 0,
     margin: 0
   };
-  if (style.width !== void 0 && style.height !== void 0) {
+  if (!(style.width !== void 0 && style.height !== void 0)) {
     baseStyle.aspectRatio = "16 / 9";
   }
   return /* @__PURE__ */ import_react12.default.createElement(import_react12.default.Fragment, null, /* @__PURE__ */ import_react12.default.createElement("div", {

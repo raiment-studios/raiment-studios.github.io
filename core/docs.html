@@ -27415,6 +27415,7 @@ __export(src_exports, {
   iterateBorder2D: () => iterateBorder2D,
   iterateCircle2D: () => iterateCircle2D,
   iterateCount: () => iterateCount,
+  iterateRect2D: () => iterateRect2D,
   makeRNG: () => makeRNG,
   makeSimplexNoise: () => makeSimplexNoise,
   nearestOverlap: () => nearestOverlap,
@@ -27692,6 +27693,15 @@ function iterateCircle2D(cx, cy, radius, cb) {
 function iterateCount(c, cb) {
   for (let i = 0; i < c; i++) {
     cb(i);
+  }
+}
+
+// relative:/workspaces/monorepo/source/lib/core/src/flow/iterate_rect2d.js
+function iterateRect2D(x0, y0, x1, y1, cb) {
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      cb(x, y);
+    }
   }
 }
 

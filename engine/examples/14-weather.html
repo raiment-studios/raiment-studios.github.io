@@ -57892,7 +57892,7 @@ function registerPinToGroundHeight(engine) {
     }
     const pos = actor.position;
     const z = engine2.world.groundHeight(pos.x, pos.y);
-    if (z > -Infinity) {
+    if (z > -Infinity && z !== pos.z) {
       actor.position.set(pos.x, pos.y, z);
     }
   });
@@ -58214,7 +58214,7 @@ var DayNightLighting = class {
     const { speed, nightSpeed } = this._params;
     const { renderer } = engine.renderers.three;
     const angle = (this._timeOfDay - 6) * Math.PI / 12;
-    const dist = 128;
+    const dist = 512;
     const x = dist * Math.cos(angle);
     const z = dist * Math.sin(angle);
     const y = dist / 5 + Math.sin(angle * 2);
@@ -58260,7 +58260,7 @@ var DayNightLighting = class {
       renderer.setClearColor(color.hex());
     }
   }
-  mesh({ engine }) {
+  initMesh({ engine }) {
     const { scene, renderer, camera } = engine.renderers.three;
     const { intensity, skyFade } = this._params;
     scene.fog = new Fog(3355596, 10, 500);
@@ -58269,7 +58269,7 @@ var DayNightLighting = class {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFSoftShadowMap;
     {
-      const sphereGeometry = new SphereGeometry(5, 32, 32);
+      const sphereGeometry = new SphereGeometry(16, 32, 32);
       const sphereMaterial = new MeshBasicMaterial({ color: 16773726 });
       const sphere = new Mesh(sphereGeometry, sphereMaterial);
       sphere.position.set(0, 0, 28);
@@ -58326,7 +58326,7 @@ var Grid = class {
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/ground_plane.js
 var GroundPlane = class {
-  mesh() {
+  initMesh() {
     const planeGeometry = new PlaneGeometry(256, 256, 32, 32);
     const planeMaterial = new MeshStandardMaterial({ color: 16579804 });
     const plane = new Mesh(planeGeometry, planeMaterial);
@@ -58393,7 +58393,7 @@ var HeightMap = class {
   worldGroundHeight(wx, wy) {
     return this.getLayerWC("height", wx, wy);
   }
-  mesh(ctx) {
+  initMesh(ctx) {
     return this._createMesh(ctx);
   }
   coordW2S(wx, wy) {
@@ -58847,7 +58847,7 @@ var VoxelSprite = class {
     stateMachine._bind = this;
     return stateMachine;
   }
-  async mesh({ engine }) {
+  async initMesh({ engine }) {
     const geometry = await engine.cache.imageGeometry.get(this._url, this._scale, this._depth, this._offset);
     let material = new MeshBasicMaterial({
       color: 16777215
@@ -59829,7 +59829,6 @@ var EngineFrame = import_react19.default.memo(function({
     engine._actors.push(...actors);
     engine.start();
     return () => {
-      console.count("dispose");
       window.removeEventListener("keydown", handleKeyDown);
       engine.stop();
       engine.dispose();
@@ -59840,7 +59839,7 @@ var EngineFrame = import_react19.default.memo(function({
     padding: 0,
     margin: 0
   };
-  if (style.width !== void 0 && style.height !== void 0) {
+  if (!(style.width !== void 0 && style.height !== void 0)) {
     baseStyle.aspectRatio = "16 / 9";
   }
   return /* @__PURE__ */ import_react19.default.createElement(import_react19.default.Fragment, null, /* @__PURE__ */ import_react19.default.createElement("div", {
