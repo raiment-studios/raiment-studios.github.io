@@ -42785,8 +42785,20 @@ function registerPinToGroundHeight(engine) {
     const z = engine2.world.groundHeight(pos.x, pos.y);
     if (z > -Infinity && z !== pos.z) {
       actor.position.set(pos.x, pos.y, z);
+      setMatrixWorldNeedsUpdate(actor.__mesh, true);
     }
   });
+}
+function setMatrixWorldNeedsUpdate(meshLike, value2) {
+  if (!meshLike) {
+    return;
+  }
+  meshLike.matrixWorldNeedsUpdate = value2;
+  if (meshLike.children) {
+    for (let child of meshLike.children) {
+      setMatrixWorldNeedsUpdate(child, value2);
+    }
+  }
 }
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/three/build/three.module.js

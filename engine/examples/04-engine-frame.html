@@ -42409,8 +42409,20 @@ function registerPinToGroundHeight(engine) {
     const z = engine2.world.groundHeight(pos.x, pos.y);
     if (z > -Infinity && z !== pos.z) {
       actor.position.set(pos.x, pos.y, z);
+      setMatrixWorldNeedsUpdate(actor.__mesh, true);
     }
   });
+}
+function setMatrixWorldNeedsUpdate(meshLike, value2) {
+  if (!meshLike) {
+    return;
+  }
+  meshLike.matrixWorldNeedsUpdate = value2;
+  if (meshLike.children) {
+    for (let child of meshLike.children) {
+      setMatrixWorldNeedsUpdate(child, value2);
+    }
+  }
 }
 
 // ../../../../../tmp/sea-temp-0.3.5/node_modules/three/build/three.module.js
@@ -60873,7 +60885,7 @@ var OrbitCamera = class {
     this._radius = new AnimScale(radius);
     this._lookAt = new AnimVector3(0, 0, 0);
     this._angle = 0;
-    this._offsetZ = offsetZ;
+    this._offsetZ = new AnimScale(offsetZ);
     this._autoHeight = true;
     this._autoRotate = true;
   }
@@ -60889,6 +60901,9 @@ var OrbitCamera = class {
     }
     this._radius.target = v;
   }
+  set offsetZ(value2) {
+    this._offsetZ.target = value2;
+  }
   lookAt(pt) {
     this._autoHeight = false;
     this._lookAt.target.copy(pt);
@@ -60897,6 +60912,7 @@ var OrbitCamera = class {
     const \u03B5 = 0.25;
     const worldUp = new Vector3(0, 0, 1);
     const camera = engine.renderers.three.camera;
+    const offsetZ = this._offsetZ.update(\u03B5).current;
     const radius = this._radius.update(\u03B5).current;
     this._lookAt.update(\u03B5 / 2);
     let lookX = this._lookAt.current.x;
@@ -60912,7 +60928,7 @@ var OrbitCamera = class {
     const ang2 = ang / 1.802;
     const cx = lookX + radius * Math.cos(ang);
     const cy = lookY + radius * Math.sin(ang);
-    const cz = lookZ + this._offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
+    const cz = lookZ + offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
     camera.position.set(cx, cy, cz);
     camera.up = worldUp;
     camera.lookAt(lookX, lookY, lookZ);

@@ -61728,8 +61728,20 @@ function registerPinToGroundHeight(engine) {
     const z = engine2.world.groundHeight(pos.x, pos.y);
     if (z > -Infinity && z !== pos.z) {
       actor.position.set(pos.x, pos.y, z);
+      setMatrixWorldNeedsUpdate(actor.__mesh, true);
     }
   });
+}
+function setMatrixWorldNeedsUpdate(meshLike, value2) {
+  if (!meshLike) {
+    return;
+  }
+  meshLike.matrixWorldNeedsUpdate = value2;
+  if (meshLike.children) {
+    for (let child of meshLike.children) {
+      setMatrixWorldNeedsUpdate(child, value2);
+    }
+  }
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/engine/behaviors/register_billboard.js
@@ -62314,6 +62326,9 @@ var HeightMap = class {
   updateSegment(sx, sy) {
     this._recomputeVertexAttrs(sx, sy, false);
   }
+  updateSegmentHeight(sx, sy) {
+    this._recomputeVertexHeight(sx, sy);
+  }
   updateMesh() {
     const segs = this._segments;
     for (let sy = 0; sy < segs; sy++) {
@@ -62392,10 +62407,18 @@ var HeightMap = class {
       dst[index4 + 2] = src[2];
     }
     function quad(vi2, fi2, p0, p1, p2, p3, normal, color2, shade) {
-      copy3(positionArr, vi2 + 0, p0);
-      copy3(positionArr, vi2 + 3, p1);
-      copy3(positionArr, vi2 + 6, p2);
-      copy3(positionArr, vi2 + 9, p3);
+      positionArr[vi2 + 0] = p0[0];
+      positionArr[vi2 + 1] = p0[1];
+      positionArr[vi2 + 2] = p0[2];
+      positionArr[vi2 + 3] = p1[0];
+      positionArr[vi2 + 4] = p1[1];
+      positionArr[vi2 + 5] = p1[2];
+      positionArr[vi2 + 6] = p2[0];
+      positionArr[vi2 + 7] = p2[1];
+      positionArr[vi2 + 8] = p2[2];
+      positionArr[vi2 + 9] = p3[0];
+      positionArr[vi2 + 10] = p3[1];
+      positionArr[vi2 + 11] = p3[2];
       copy3(normalArr, vi2 + 0, normal);
       copy3(normalArr, vi2 + 3, normal);
       copy3(normalArr, vi2 + 6, normal);
@@ -62443,6 +62466,44 @@ var HeightMap = class {
       indexAttr.needsUpdate = true;
     }
   }
+  _recomputeVertexHeight(sx, sy) {
+    const segments = this._segments;
+    sx = Math.floor(sx);
+    sy = Math.floor(sy);
+    if (sx < 0 || sx >= segments || sy < 0 || sy >= segments) {
+      return;
+    }
+    if (!this._mesh) {
+      return;
+    }
+    const i = sy * segments + sx;
+    console.assert(i >= 0 && i < segments * segments, "Index out of range");
+    const heights = this._layers.height;
+    const positionAttr = this._mesh.geometry.attributes.position;
+    const positionArr = positionAttr.array;
+    assert2(positionArr.length === 5 * 4 * 3 * segments * segments);
+    function sort2(a, b) {
+      return a < b ? [a, b] : [b, a];
+    }
+    function quad(vi2, p0, p1, p2, p3) {
+      positionArr[vi2 + 2] = p0;
+      positionArr[vi2 + 5] = p1;
+      positionArr[vi2 + 8] = p2;
+      positionArr[vi2 + 11] = p3;
+    }
+    let [z0, z1] = [0, heights[i]];
+    let vi = 5 * 4 * 3 * i;
+    quad(vi, z1, z1, z1, z1);
+    [z0, z1] = sort2(sx > 0 ? heights[i - 1] : 0, heights[i]);
+    quad(vi + 12, z0, z1, z1, z0);
+    [z0, z1] = sort2(sx + 1 < segments ? heights[i + 1] : 0, heights[i]);
+    quad(vi + 24, z0, z0, z1, z1);
+    [z0, z1] = sort2(sy > 0 ? heights[i - segments] : 0, heights[i]);
+    quad(vi + 3 * 12, z0, z0, z1, z1);
+    [z0, z1] = sort2(sy + 1 < segments ? heights[i + segments] : 0, heights[i]);
+    quad(vi + 4 * 12, z0, z1, z1, z0);
+    positionAttr.needsUpdate = true;
+  }
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/orbit_camera.js
@@ -62458,7 +62519,7 @@ var OrbitCamera = class {
     this._radius = new AnimScale(radius);
     this._lookAt = new AnimVector3(0, 0, 0);
     this._angle = 0;
-    this._offsetZ = offsetZ;
+    this._offsetZ = new AnimScale(offsetZ);
     this._autoHeight = true;
     this._autoRotate = true;
   }
@@ -62474,6 +62535,9 @@ var OrbitCamera = class {
     }
     this._radius.target = v;
   }
+  set offsetZ(value2) {
+    this._offsetZ.target = value2;
+  }
   lookAt(pt) {
     this._autoHeight = false;
     this._lookAt.target.copy(pt);
@@ -62482,6 +62546,7 @@ var OrbitCamera = class {
     const \u03B5 = 0.25;
     const worldUp = new Vector3(0, 0, 1);
     const camera = engine.renderers.three.camera;
+    const offsetZ = this._offsetZ.update(\u03B5).current;
     const radius = this._radius.update(\u03B5).current;
     this._lookAt.update(\u03B5 / 2);
     let lookX = this._lookAt.current.x;
@@ -62497,7 +62562,7 @@ var OrbitCamera = class {
     const ang2 = ang / 1.802;
     const cx = lookX + radius * Math.cos(ang);
     const cy = lookY + radius * Math.sin(ang);
-    const cz = lookZ + this._offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
+    const cz = lookZ + offsetZ + radius * (0.5 + 0.25 * (0.5 + 0.5 * Math.sin(ang2)));
     camera.position.set(cx, cy, cz);
     camera.up = worldUp;
     camera.lookAt(lookX, lookY, lookZ);
@@ -64339,6 +64404,9 @@ var TreeActor = class {
       width: 3
     };
   }
+  get frame10Parity() {
+    return 7;
+  }
   async placementConstraints({ engine }) {
     const mesh = await this._ensureMesh({ engine });
     const bbox = new Box3();
@@ -64377,7 +64445,9 @@ var TreeActor = class {
     for (let it of func(ctx)) {
     }
     model.updateMesh({ engine });
-    return model.mesh({ engine });
+    const mesh = model.mesh({ engine });
+    mesh.matrixAutoUpdate = false;
+    return mesh;
   }
 };
 function buildContext(voxels) {
@@ -64666,6 +64736,7 @@ function EngineView() {
         return;
       }
       camera.radius = 24;
+      camera.offsetZ = 2;
       const pt = actor.position.clone();
       pt.z += 5;
       camera.lookAt(pt);
@@ -65090,9 +65161,9 @@ var Updater = class {
             heightArray[si] = wz + dz;
           });
           pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
-            heightMap.updateSegment(sx, sy);
+            heightMap.updateSegmentHeight(sx, sy);
           });
-          yield 1;
+          yield 2;
         }
         return "changeTerrain";
       }
@@ -65144,7 +65215,6 @@ var Updater2 = class {
       },
       update: function* () {
         const D = 32;
-        const MAX_DIST = Math.sqrt(2 * D * D);
         const heightMap = this._heightMap;
         const heightArray = heightMap.getLayerArray("height");
         const malleabilityArray = heightMap.getLayerArray("malleability");
@@ -65167,12 +65237,9 @@ var Updater2 = class {
             heightArray[si] = wz * (1 - a) + avg * a;
           });
           pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
-            heightMap.updateSegment(sx, sy);
+            heightMap.updateSegmentHeight(sx, sy);
           });
-          pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
-            heightMap.updateSegment(sx, sy);
-          });
-          yield 1;
+          yield 2;
         }
         return "update";
       }
