@@ -41849,6 +41849,40 @@ function ReadingFrame({ children }) {
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/text_down.js
 var import_react9 = __toESM(require_react());
+function TextDown({ text }) {
+  if (!text) {
+    return null;
+  }
+  const expression = /(https?:\/\/)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/i;
+  const re = new RegExp(expression);
+  const parts = [];
+  let t = text;
+  let id = 1;
+  while (t.length > 0) {
+    const m = re.exec(t);
+    if (!m || !(m.index >= 0)) {
+      break;
+    }
+    const pre = t.substring(0, m.index);
+    const match = m[0];
+    const post = t.substring(m.index + match.length);
+    const url = match.match(/^[a-z]+:\/\//) ? match : `https://${match}`;
+    parts.push(/* @__PURE__ */ import_react9.default.createElement("span", {
+      key: id++
+    }, pre), /* @__PURE__ */ import_react9.default.createElement("a", {
+      key: id++,
+      href: url,
+      target: "_blank"
+    }, match));
+    t = post;
+  }
+  if (t.length > 0) {
+    parts.push(/* @__PURE__ */ import_react9.default.createElement("span", {
+      key: id++
+    }, t));
+  }
+  return /* @__PURE__ */ import_react9.default.createElement(import_react9.default.Fragment, null, parts);
+}
 
 // relative:/workspaces/monorepo/source/lib/core/src/collections/map_2di.js
 var SPAN = 1 << 26;
@@ -63860,37 +63894,11 @@ function ImageInfo({ url }) {
     src: url
   }), /* @__PURE__ */ import_react20.default.createElement("div", {
     style: { flex: "0 0 32px" }
-  }), /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement("h3", null, url), /* @__PURE__ */ import_react20.default.createElement("h3", null, "License"), /* @__PURE__ */ import_react20.default.createElement("pre", null, textToReact(data?.license))), /* @__PURE__ */ import_react20.default.createElement("div", {
+  }), /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement("h3", null, url), /* @__PURE__ */ import_react20.default.createElement("h3", null, "License"), /* @__PURE__ */ import_react20.default.createElement(TextDown, {
+    text: data?.license
+  })), /* @__PURE__ */ import_react20.default.createElement("div", {
     style: { flex: "1 0 0" }
   }));
-}
-function textToReact(s) {
-  if (!s) {
-    return null;
-  }
-  const expression = /(https?:\/\/)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/i;
-  const re = new RegExp(expression);
-  const parts = [];
-  let t = s;
-  while (t.length > 0) {
-    const m = re.exec(t);
-    if (!m || !(m.index >= 0)) {
-      break;
-    }
-    const pre = t.substring(0, m.index);
-    const match = m[0];
-    const post = t.substring(m.index + match.length);
-    const url = match.match(/^[a-z]+:\/\//) ? match : `https://${match}`;
-    parts.push(/* @__PURE__ */ import_react20.default.createElement("span", null, pre), /* @__PURE__ */ import_react20.default.createElement("a", {
-      href: url,
-      target: "_blank"
-    }, match));
-    t = post;
-  }
-  if (t.length > 0) {
-    parts.push(/* @__PURE__ */ import_react20.default.createElement("span", null, t));
-  }
-  return /* @__PURE__ */ import_react20.default.createElement(import_react20.default.Fragment, null, parts);
 }
 
 // builtin:./__bootstrap.js

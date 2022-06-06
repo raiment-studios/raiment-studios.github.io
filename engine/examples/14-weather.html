@@ -64093,7 +64093,7 @@ var TreeActor = class {
       width: 3
     };
   }
-  async mesh({ engine }) {
+  async initMesh({ engine }) {
     const rng = makeRNG2(2998474);
     const { position } = this._params;
     this._group = new Group();

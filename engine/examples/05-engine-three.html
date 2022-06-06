@@ -61762,8 +61762,10 @@ var _Sphere = class {
     this.acceleration = new Vector3(0, 0, 0);
     this._mesh = null;
     this._rng = makeRNG();
+  }
+  stateMachine() {
     const rng = this._rng;
-    this.stateMachine = new StateMachine({
+    return {
       _bind: this,
       _start: function* () {
         const mv = 16;
@@ -61786,10 +61788,9 @@ var _Sphere = class {
         yield count;
         return rng.range(0, 10) < 7 ? "accelerateRandom" : "accelerateOrigin";
       }
-    });
+    };
   }
   update() {
-    this.stateMachine.update();
     const dt = 1 / 60;
     this.velocity.addScaledVector(this.acceleration, dt);
     this.position.addScaledVector(this.velocity, dt);

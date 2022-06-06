@@ -64667,7 +64667,7 @@ function EngineView() {
       }
       camera.radius = 24;
       const pt = actor.position.clone();
-      pt.z += 3;
+      pt.z += 5;
       camera.lookAt(pt);
     });
     engine.actors.push(new Grid(), new OrbitCamera({ radius: 72, periodMS: 2e4, offsetZ: 48 }), new DayNightLighting({ speed: 1, nightSpeed: 16 }), new GroundPlane(), heightMap);
