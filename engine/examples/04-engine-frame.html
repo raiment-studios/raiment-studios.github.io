@@ -33261,7 +33261,7 @@ var require_lodash = __commonJS({
           }
           return true;
         }
-        function isEqual(value2, other) {
+        function isEqual2(value2, other) {
           return baseIsEqual(value2, other);
         }
         function isEqualWith(value2, other, customizer) {
@@ -33649,7 +33649,7 @@ var require_lodash = __commonJS({
         function valuesIn(object) {
           return object == null ? [] : baseValues(object, keysIn(object));
         }
-        function clamp2(number, lower, upper) {
+        function clamp3(number, lower, upper) {
           if (upper === undefined2) {
             upper = lower;
             lower = undefined2;
@@ -34323,7 +34323,7 @@ var require_lodash = __commonJS({
         lodash.camelCase = camelCase2;
         lodash.capitalize = capitalize;
         lodash.ceil = ceil;
-        lodash.clamp = clamp2;
+        lodash.clamp = clamp3;
         lodash.clone = clone;
         lodash.cloneDeep = cloneDeep;
         lodash.cloneDeepWith = cloneDeepWith;
@@ -34371,7 +34371,7 @@ var require_lodash = __commonJS({
         lodash.isDate = isDate;
         lodash.isElement = isElement;
         lodash.isEmpty = isEmpty;
-        lodash.isEqual = isEqual;
+        lodash.isEqual = isEqual2;
         lodash.isEqualWith = isEqualWith;
         lodash.isError = isError;
         lodash.isFinite = isFinite2;
@@ -41755,11 +41755,14 @@ var import_react7 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
 var import_react8 = __toESM(require_react());
-function ReadingFrame({ children }) {
+function ReadingFrame({
+  width = "62rem",
+  children
+}) {
   useCommonStyles();
   return /* @__PURE__ */ import_react8.default.createElement("div", {
     style: {
-      width: "62rem",
+      width,
       margin: "1rem auto 2rem"
     }
   }, children);
@@ -42374,6 +42377,9 @@ var StateMachine = class {
     if (result2.done) {
       let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
       const generator = this._states[nextState];
+      if (nextState && !generator) {
+        console.warn(`Transition to unrecognized state '${nextState}'. StateMachine halting.`);
+      }
       this._priorStateName = this._activeStateName;
       this._activeStateName = nextState;
       this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
@@ -58513,8 +58519,8 @@ function WebGLRenderer(parameters = {}) {
       _gl.framebufferTexture2D(36160, 36064, 34069 + activeCubeFace, textureProperties.__webglTexture, activeMipmapLevel);
     } else if (isRenderTarget3D) {
       const textureProperties = properties.get(renderTarget.texture);
-      const layer = activeCubeFace || 0;
-      _gl.framebufferTextureLayer(36160, 36064, textureProperties.__webglTexture, activeMipmapLevel || 0, layer);
+      const layer2 = activeCubeFace || 0;
+      _gl.framebufferTextureLayer(36160, 36064, textureProperties.__webglTexture, activeMipmapLevel || 0, layer2);
     }
     _currentMaterialId = -1;
   };
@@ -60795,11 +60801,9 @@ var Engine = class {
         this.events.fire("actor.preinit", ctx);
         actor.init?.(ctx);
         this.events.fire("actor.postinit", ctx);
-        if (actor.stateMachine) {
-          const desc = actor.stateMachine(ctx);
-          if (desc) {
-            actor.__stateMachine = new StateMachine(desc);
-          }
+        const desc = actor.stateMachine?.(ctx);
+        if (desc) {
+          actor.__stateMachine = new StateMachine(desc);
         }
         for (let renderer of Object.values(this._renderers)) {
           renderer.addActor?.(ctx, actor);
@@ -60822,13 +60826,12 @@ var Engine = class {
         continue;
       }
       ctx.actor = actor;
-      this.events.fire("actor.preupdate", ctx);
-      actor.__stateMachine?.update(ctx);
-    }
-    for (let actor of this._actors) {
-      ctx.actor = actor;
       ctx.mesh = actor.__mesh;
+      this.events.fire("actor.preupdate", ctx);
+      actor.events?.fire("preupdate", ctx);
+      actor.__stateMachine?.update(ctx);
       actor.update?.(ctx);
+      actor.events?.fire("postupdate", ctx);
       this.events.fire("actor.postupdate", ctx);
     }
     this.events.fire("engine.preupdate", ctx);
@@ -60871,6 +60874,9 @@ var Grid = class {
     return grid;
   }
 };
+
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/height_map.js
+var import_lodash2 = __toESM(require_lodash());
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/orbit_camera.js
 var OrbitCamera = class {

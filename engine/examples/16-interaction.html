@@ -41760,11 +41760,14 @@ var import_react7 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
 var import_react8 = __toESM(require_react());
-function ReadingFrame({ children }) {
+function ReadingFrame({
+  width = "62rem",
+  children
+}) {
   useCommonStyles();
   return /* @__PURE__ */ import_react8.default.createElement("div", {
     style: {
-      width: "62rem",
+      width,
       margin: "1rem auto 2rem"
     }
   }, children);
@@ -58867,8 +58870,8 @@ function WebGLRenderer(parameters = {}) {
       _gl.framebufferTexture2D(36160, 36064, 34069 + activeCubeFace, textureProperties.__webglTexture, activeMipmapLevel);
     } else if (isRenderTarget3D) {
       const textureProperties = properties.get(renderTarget.texture);
-      const layer = activeCubeFace || 0;
-      _gl.framebufferTextureLayer(36160, 36064, textureProperties.__webglTexture, activeMipmapLevel || 0, layer);
+      const layer2 = activeCubeFace || 0;
+      _gl.framebufferTextureLayer(36160, 36064, textureProperties.__webglTexture, activeMipmapLevel || 0, layer2);
     }
     _currentMaterialId = -1;
   };
@@ -59286,6 +59289,98 @@ var PointsMaterial = class extends Material {
     return this;
   }
 };
+var _inverseMatrix = /* @__PURE__ */ new Matrix4();
+var _ray = /* @__PURE__ */ new Ray();
+var _sphere = /* @__PURE__ */ new Sphere();
+var _position$2 = /* @__PURE__ */ new Vector3();
+var Points = class extends Object3D {
+  constructor(geometry = new BufferGeometry(), material = new PointsMaterial()) {
+    super();
+    this.isPoints = true;
+    this.type = "Points";
+    this.geometry = geometry;
+    this.material = material;
+    this.updateMorphTargets();
+  }
+  copy(source, recursive) {
+    super.copy(source, recursive);
+    this.material = source.material;
+    this.geometry = source.geometry;
+    return this;
+  }
+  raycast(raycaster, intersects) {
+    const geometry = this.geometry;
+    const matrixWorld = this.matrixWorld;
+    const threshold = raycaster.params.Points.threshold;
+    const drawRange = geometry.drawRange;
+    if (geometry.boundingSphere === null)
+      geometry.computeBoundingSphere();
+    _sphere.copy(geometry.boundingSphere);
+    _sphere.applyMatrix4(matrixWorld);
+    _sphere.radius += threshold;
+    if (raycaster.ray.intersectsSphere(_sphere) === false)
+      return;
+    _inverseMatrix.copy(matrixWorld).invert();
+    _ray.copy(raycaster.ray).applyMatrix4(_inverseMatrix);
+    const localThreshold = threshold / ((this.scale.x + this.scale.y + this.scale.z) / 3);
+    const localThresholdSq = localThreshold * localThreshold;
+    const index4 = geometry.index;
+    const attributes = geometry.attributes;
+    const positionAttribute = attributes.position;
+    if (index4 !== null) {
+      const start = Math.max(0, drawRange.start);
+      const end = Math.min(index4.count, drawRange.start + drawRange.count);
+      for (let i = start, il = end; i < il; i++) {
+        const a = index4.getX(i);
+        _position$2.fromBufferAttribute(positionAttribute, a);
+        testPoint(_position$2, a, localThresholdSq, matrixWorld, raycaster, intersects, this);
+      }
+    } else {
+      const start = Math.max(0, drawRange.start);
+      const end = Math.min(positionAttribute.count, drawRange.start + drawRange.count);
+      for (let i = start, l = end; i < l; i++) {
+        _position$2.fromBufferAttribute(positionAttribute, i);
+        testPoint(_position$2, i, localThresholdSq, matrixWorld, raycaster, intersects, this);
+      }
+    }
+  }
+  updateMorphTargets() {
+    const geometry = this.geometry;
+    const morphAttributes = geometry.morphAttributes;
+    const keys = Object.keys(morphAttributes);
+    if (keys.length > 0) {
+      const morphAttribute = morphAttributes[keys[0]];
+      if (morphAttribute !== void 0) {
+        this.morphTargetInfluences = [];
+        this.morphTargetDictionary = {};
+        for (let m = 0, ml = morphAttribute.length; m < ml; m++) {
+          const name = morphAttribute[m].name || String(m);
+          this.morphTargetInfluences.push(0);
+          this.morphTargetDictionary[name] = m;
+        }
+      }
+    }
+  }
+};
+function testPoint(point, index4, localThresholdSq, matrixWorld, raycaster, intersects, object) {
+  const rayPointDistanceSq = _ray.distanceSqToPoint(point);
+  if (rayPointDistanceSq < localThresholdSq) {
+    const intersectPoint = new Vector3();
+    _ray.closestPointToPoint(point, intersectPoint);
+    intersectPoint.applyMatrix4(matrixWorld);
+    const distance = raycaster.ray.origin.distanceTo(intersectPoint);
+    if (distance < raycaster.near || distance > raycaster.far)
+      return;
+    intersects.push({
+      distance,
+      distanceToRay: Math.sqrt(rayPointDistanceSq),
+      point: intersectPoint,
+      index: index4,
+      face: null,
+      object
+    });
+  }
+}
 function CubicPoly() {
   let c0 = 0, c1 = 0, c2 = 0, c3 = 0;
   function init(x0, x1, t0, t1) {
@@ -61693,6 +61788,9 @@ var StateMachine = class {
     if (result2.done) {
       let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
       const generator = this._states[nextState];
+      if (nextState && !generator) {
+        console.warn(`Transition to unrecognized state '${nextState}'. StateMachine halting.`);
+      }
       this._priorStateName = this._activeStateName;
       this._activeStateName = nextState;
       this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
@@ -61862,11 +61960,9 @@ var Engine = class {
         this.events.fire("actor.preinit", ctx);
         actor.init?.(ctx);
         this.events.fire("actor.postinit", ctx);
-        if (actor.stateMachine) {
-          const desc = actor.stateMachine(ctx);
-          if (desc) {
-            actor.__stateMachine = new StateMachine(desc);
-          }
+        const desc = actor.stateMachine?.(ctx);
+        if (desc) {
+          actor.__stateMachine = new StateMachine(desc);
         }
         for (let renderer of Object.values(this._renderers)) {
           renderer.addActor?.(ctx, actor);
@@ -61889,13 +61985,12 @@ var Engine = class {
         continue;
       }
       ctx.actor = actor;
-      this.events.fire("actor.preupdate", ctx);
-      actor.__stateMachine?.update(ctx);
-    }
-    for (let actor of this._actors) {
-      ctx.actor = actor;
       ctx.mesh = actor.__mesh;
+      this.events.fire("actor.preupdate", ctx);
+      actor.events?.fire("preupdate", ctx);
+      actor.__stateMachine?.update(ctx);
       actor.update?.(ctx);
+      actor.events?.fire("postupdate", ctx);
       this.events.fire("actor.postupdate", ctx);
     }
     this.events.fire("engine.preupdate", ctx);
@@ -62193,6 +62288,7 @@ var GroundPlane = class {
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/height_map.js
+var import_lodash2 = __toESM(require_lodash());
 var HeightMap = class {
   constructor({
     offset = [0, 0, 0],
@@ -62207,29 +62303,22 @@ var HeightMap = class {
     this._scale = scale;
     this._segments = segments;
     this._opacity = opacity;
-    this._layers = {
-      height: new Float32Array(segments * segments)
-    };
-    for (let [layerName, Type] of Object.entries(layers)) {
-      if (layerName === "height") {
-        console.warn(`height layer is implicitly defined`);
-        continue;
-      }
-      this.addLayer(layerName, Type);
-    }
-    this._layers.height.fill(0);
+    this._layers = {};
     this._colorFunc = colorFunc;
     this._heightFunc = heightFunc;
     this._mesh = null;
+    this.addLayer("height", { type: Float32Array });
+    for (let [layerName, options] of Object.entries(layers)) {
+      this.addLayer(layerName, options);
+    }
     for (let y = 0; y < segments; y++) {
       for (let x = 0; x < segments; x++) {
         const u = (x + 0.5) / (segments - 1);
         const v = (y + 0.5) / (segments - 1);
         const i = y * segments + x;
-        this._layers.height[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
+        this._layers.height.array[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
       }
     }
-    assert2(this._layers.height.length === this._segments * this._segments);
   }
   get offset() {
     return this._offset;
@@ -62239,6 +62328,9 @@ var HeightMap = class {
   }
   get segments() {
     return this._segments;
+  }
+  get layers() {
+    return this._layers;
   }
   get colorFunc() {
     return this._colorFunc;
@@ -62286,14 +62378,17 @@ var HeightMap = class {
   coordValidS(sx, sy) {
     return sx >= 0 && sx < this._segments && sy >= 0 && sy < this._segments;
   }
-  addLayer(layerName, Type) {
-    const n = this.segments;
-    const layer = new Type(n * n);
-    layer.fill(0);
-    this._layers[layerName] = layer;
+  addLayer(layerName, { type, ...rest }) {
+    const N = this.segments;
+    const layer2 = new Layer(layerName, N, N, type, rest);
+    this._layers[layerName] = layer2;
   }
   getLayerArray(layerName) {
-    return this._layers[layerName];
+    const arr = this._layers[layerName]?.array;
+    if (!arr) {
+      throw new Error(`Unknown layer '${layer}'`);
+    }
+    return arr;
   }
   getLayerWC(layerName, wx, wy) {
     const [sx, sy] = this.coordW2S(wx, wy);
@@ -62305,14 +62400,14 @@ var HeightMap = class {
   }
   getLayerSC(layerName, sx, sy) {
     const i = sy * this._segments + sx;
-    return this._layers[layerName][i];
+    return this._layers[layerName].array[i];
   }
   setLayerSC(layerName, sx, sy, value2, updateMesh = true) {
     const index4 = sy * this._segments + sx;
     if (index4 === -1) {
       return;
     }
-    this._layers[layerName][index4] = value2;
+    this._layers[layerName].array[index4] = value2;
     if (updateMesh) {
       for (let y = sy - 1; y <= sy + 1; y++) {
         for (let x = sx - 1; x <= sx + 1; x++) {
@@ -62386,7 +62481,7 @@ var HeightMap = class {
     }
     const i = sy * segments + sx;
     console.assert(i >= 0 && i < segments * segments, "Index out of range");
-    const heights = this._layers.height;
+    const heights = this._layers.height.array;
     const indexAttr = this._mesh.geometry.index;
     const indexArr = indexAttr.array;
     const positionAttr = this._mesh.geometry.attributes.position;
@@ -62478,7 +62573,7 @@ var HeightMap = class {
     }
     const i = sy * segments + sx;
     console.assert(i >= 0 && i < segments * segments, "Index out of range");
-    const heights = this._layers.height;
+    const heights = this._layers.height.array;
     const positionAttr = this._mesh.geometry.attributes.position;
     const positionArr = positionAttr.array;
     assert2(positionArr.length === 5 * 4 * 3 * segments * segments);
@@ -62503,6 +62598,119 @@ var HeightMap = class {
     [z0, z1] = sort2(sy + 1 < segments ? heights[i + segments] : 0, heights[i]);
     quad(vi + 4 * 12, z0, z1, z1, z0);
     positionAttr.needsUpdate = true;
+  }
+};
+var Layer = class {
+  constructor(name, width, height, Type, { defaultValue = 0, lookup = null }) {
+    this._name = name;
+    this._width = width;
+    this._height = height;
+    this._array = new Type(width * height);
+    this._table = lookup ? new LookupTable(lookup) : null;
+    if (typeof defaultValue === "string") {
+      defaultValue = this._table.indexForName(defaultValue);
+    }
+    this._array.fill(defaultValue);
+  }
+  get array() {
+    return this._array;
+  }
+  get table() {
+    return this._table;
+  }
+  get(x, y) {
+    const i = y * this._width + x;
+    return this._array[i];
+  }
+  lookup(x, y) {
+    const i = y * this._width + x;
+    const value2 = this._array[i];
+    return this._table.get(value2);
+  }
+  lookupIndex(i) {
+    const value2 = this._array[i];
+    return this._table.get(value2);
+  }
+  mutateAtIndex(index4, props) {
+    const value2 = this._array[index4];
+    this._array[index4] = this._table.getDerived(value2, props);
+  }
+};
+var LookupTable = class {
+  constructor({ normalize = (obj) => obj, table = null } = {}) {
+    this._list = [];
+    this._free = [];
+    this._normalize = normalize;
+    this._set = {};
+    if (table) {
+      this.addSet(table);
+    }
+    this._uidCount = 0;
+    this._uidMap = /* @__PURE__ */ new Map();
+  }
+  get(index4) {
+    return this._list[index4];
+  }
+  indexForName(name) {
+    return this._set[name];
+  }
+  getDerived(baseIndex, props) {
+    const baseObject = this._list[baseIndex];
+    const deltas = [];
+    for (let [key, value2] of Object.entries(props)) {
+      if (baseObject[key] === value2) {
+        continue;
+      }
+      let id = this._uidMap.get(value2);
+      if (id === void 0) {
+        id = this._uidCount++;
+        this._uidMap.set(value2, id);
+      }
+      deltas.push(id);
+    }
+    const derivedName = `${baseObject.name}-d${deltas.join("-")}`;
+    let derivedObject = this._set[derivedName];
+    if (!derivedObject) {
+      this.addSet({ [derivedName]: { ...baseObject, ...props, name: derivedName } });
+    }
+    return derivedObject;
+  }
+  remove(obj) {
+    for (let i = 0; i < this._list.length; i++) {
+      if (this._list[i] === obj) {
+        this._list[i] = null;
+        this._free.push(i);
+        for (let [key, value2] of Object.entries(this._set)) {
+          if (value2 === i) {
+            delete this._set[key];
+          }
+        }
+        break;
+      }
+    }
+  }
+  keys() {
+    return this._set;
+  }
+  addSet(m) {
+    for (let [key, value2] of Object.entries(m)) {
+      const index4 = this._addObject(key, value2);
+      this._set[key] = index4;
+    }
+    return this._set;
+  }
+  _addObject(name, obj) {
+    let i;
+    if (this._free.length) {
+      i = this._free.shift();
+    } else {
+      i = this._list.length;
+    }
+    this._normalize(obj, i);
+    obj.name = name;
+    obj.index = i;
+    this._list.push(obj);
+    return i;
   }
 };
 
@@ -62605,6 +62813,339 @@ var AnimVector3 = class {
       }
     }
     return this;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/rain.js
+var Rain = class {
+  constructor({
+    count = 1e5,
+    color = 3364300
+  } = {}) {
+    this._context = {
+      rng: makeRNG(6237)
+    };
+    this._count = count;
+    this._color = color;
+  }
+  update({ mesh }) {
+    const { rng } = this._context;
+    const v = mesh.geometry.attributes.position.array;
+    const speeds = [1, 1.5, 1.1, 1.3, 1.2];
+    let speedIndex = 0;
+    for (let i = 0; i < v.length; i += 3) {
+      let z = v[i + 2];
+      if (v[i + 2] < 0) {
+        v[i + 0] = rng.range(-256, 256);
+        v[i + 1] = rng.range(-256, 256);
+        z = rng.range(490, 510);
+      } else {
+        const s = speeds[speedIndex];
+        speedIndex = (speedIndex + 1) % speeds.length;
+        z -= 1.5 * s;
+      }
+      v[i + 2] = z;
+    }
+    mesh.geometry.attributes.position.needsUpdate = true;
+  }
+  mesh() {
+    const { rng } = this._context;
+    const vertices = [];
+    const colors = [];
+    for (var p = 0; p < this._count; p++) {
+      const x = rng.range(-250, 250);
+      const y = rng.range(-250, 250);
+      const z = rng.range(0, 500);
+      vertices.push(x, y, z);
+      const color = rng.select([
+        [0.6, 0.6, 0.8],
+        [0.6, 0.7, 1],
+        [0.7, 0.7, 1],
+        [0.8, 0.7, 1],
+        [0.8, 0.7, 1],
+        [0.5, 0.5, 1]
+      ]);
+      colors.push(...color);
+    }
+    const geometry = new BufferGeometry();
+    geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    const material = new PointsMaterial({
+      color: 16777215,
+      size: 1.5,
+      transparent: true,
+      opacity: 0.35
+    });
+    material.vertexColors = true;
+    const points = new Points(geometry, material);
+    return points;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/snow.js
+var Snow = class {
+  constructor({ count = 1e4 } = {}) {
+    this._count = count;
+    this._children = [];
+  }
+  init({ engine }) {
+    const c1 = Math.floor(this._count / 3);
+    const c0 = this._count - c1;
+    this._children = [
+      new SnowEffect({
+        count: c0,
+        color: 13421772
+      }),
+      new SnowEffect({
+        count: c1,
+        color: 14540253
+      })
+    ];
+    engine.actors.push(...this._children);
+  }
+  dispose({ engine }) {
+    engine.actors.remove(...this._children);
+  }
+};
+var SnowEffect = class {
+  constructor({
+    count = 1e5,
+    color = 8947848
+  } = {}) {
+    this._context = {
+      rng: makeRNG(6237)
+    };
+    this._count = count;
+    this._color = color;
+  }
+  update({ engine, mesh }) {
+    const { rng } = this._context;
+    const v = mesh.geometry.attributes.position.array;
+    for (let i = 0; i < v.length; i += 3) {
+      const sx = v[i + 0];
+      const sy = v[i + 1];
+      let z = v[i + 2];
+      if (v[i + 2] < 0) {
+        v[i + 0] = rng.range(-250, 250);
+        v[i + 1] = rng.range(-250, 250);
+        z = rng.range(490, 510);
+      } else {
+        z -= rng.range(0.5, 1.05);
+      }
+      v[i + 2] = z;
+    }
+    mesh.geometry.attributes.position.needsUpdate = true;
+  }
+  mesh() {
+    const { rng } = this._context;
+    const vertices = [];
+    for (var p = 0; p < this._count; p++) {
+      const x = rng.range(-250, 250);
+      const y = rng.range(-250, 250);
+      const z = rng.range(0, 500);
+      vertices.push(x, y, z);
+    }
+    const geometry = new BufferGeometry();
+    geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+    const material = new PointsMaterial({ color: this._color });
+    const points = new Points(geometry, material);
+    return points;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/actor.js
+var Actor = class {
+  constructor({ id = null, mixins = [] } = {}) {
+    this._id = id;
+    this._opt = {};
+    for (let comp of mixins) {
+      console.log(comp);
+      const args = Array.isArray(comp) ? comp : [comp];
+      this.mixin(...args);
+    }
+  }
+  dispose() {
+  }
+  mixin(componentFunc, options = {}) {
+    const ctx = {
+      actor: this,
+      methods: {}
+    };
+    const component = componentFunc(ctx, options);
+    const { name, properties, events, methods, stateMachine, ...rest } = component;
+    if (this.opt[name]) {
+      console.warn(`Actor already has component`, name);
+      return;
+    }
+    this.opt[name] = {};
+    if (properties) {
+      Object.defineProperties(this, properties);
+    }
+    if (methods) {
+      for (let [methodName, func] of Object.entries(methods)) {
+        ctx.methods[methodName] = func;
+        this.opt[name][methodName] = func;
+      }
+    }
+    if (events) {
+      for (let [eventName, func] of Object.entries(events)) {
+        this.events.on(eventName, func);
+      }
+    }
+    if (stateMachine) {
+      const prior = this.stateMachine;
+      this.stateMachine = (...args) => {
+        const baseDesc = prior?.call(this, ...args) || {};
+        return Object.assign(baseDesc, stateMachine(...args));
+      };
+    }
+    if (Object.keys(rest).length > 0) {
+      console.error("Unexpected additional keys", Object.keys(rest));
+      throw new Error();
+    }
+  }
+  get id() {
+    return this._id;
+  }
+  get opt() {
+    return this._opt;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/terrain_morph.js
+var TerrainMorphBase = class extends Actor {
+  constructor({ heightMap, ...rest }) {
+    super(rest);
+    const S = heightMap.segments;
+    this.mixin(componentEvents);
+    this.mixin(componentPhysicsPVA, { update: true });
+    this.mixin(componentSelfColliderBox3, {
+      box: new Box3(new Vector3(0, 0, 0), new Vector3(S, S, S))
+    });
+    this._heightMap = heightMap;
+  }
+  update({ engine }) {
+    const rng = engine.rng;
+    const K = 0.25;
+    const MV = 2;
+    this.velocity.x += K * rng.range(-1, 1);
+    this.velocity.y += K * rng.range(-1, 1);
+    this.velocity.clampScalar(-MV, MV);
+  }
+  _resetPositionVelocity(rng) {
+    this.position.x = rng.range(0, this._heightMap.segments);
+    this.position.y = rng.range(0, this._heightMap.segments);
+    this.velocity.x = rng.sign() * rng.range(0.2, 2);
+    this.velocity.y = rng.sign() * rng.range(0.2, 2);
+  }
+};
+var TerrainMorphHeight = class extends TerrainMorphBase {
+  constructor({ heightMap, heightScale = 512, ...rest } = {}) {
+    super({ heightMap, ...rest });
+    this._heightFunc = null;
+    this._heightScale = heightScale;
+  }
+  stateMachine({ engine }) {
+    const rng = engine.rng;
+    const heightMap = this._heightMap;
+    const heightArray = heightMap.getLayerArray("height");
+    const malleabilityArray = heightMap.getLayerArray("malleability");
+    return {
+      _bind: this,
+      _start: function* () {
+        this._resetPositionVelocity(rng);
+        return "changeTerrain";
+      },
+      changeTerrain: function* () {
+        const simplex = makeSimplexNoise(4342);
+        const amplitude = 0.04 * rng.range(0.4, 5);
+        const ox = rng.range(-1e3, 1e3);
+        const oy = rng.range(-1e3, 1e3);
+        const s = 1 / (rng.range(0.5, 2) * this._heightMap.segments);
+        const base = rng.range(0, 0.02);
+        this._heightFunc = (x, y) => base + amplitude * (0.5 + 0.5 * simplex.noise2D(ox + x * s, oy + y * s));
+        return "update";
+      },
+      update: function* () {
+        const D = 32;
+        const MAX_DIST = Math.sqrt(2 * D * D);
+        const frames = rng.rangei(10, 100);
+        const pen = new Cursor2D(heightMap.segments, heightMap.segments);
+        for (let i = 0; i < frames; i++) {
+          const centerSX = Math.floor(this.position.x);
+          const centerSY = Math.floor(this.position.y);
+          pen.border(centerSX, centerSY, D, (sx, sy) => {
+            const si = sy * heightMap.segments + sx;
+            const lsx = sx - centerSX;
+            const lsy = sy - centerSY;
+            const [wx, wy] = heightMap.coordS2W(sx, sy);
+            const wz = heightArray[si];
+            const tz = this._heightScale * this._heightFunc(wx, wy);
+            let dz = tz - wz;
+            if (Math.abs(dz) < 1e-3) {
+              return;
+            }
+            dz /= 20;
+            const normalizedDist = Math.sqrt(lsx * lsx + lsy * lsy) / MAX_DIST;
+            const k = 0.01;
+            dz *= k + (1 - k) * (1 - normalizedDist);
+            const m = malleabilityArray[si];
+            dz *= m;
+            heightArray[si] = wz + dz;
+          });
+          pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
+            heightMap.updateSegmentHeight(sx, sy);
+          });
+          yield 2;
+        }
+        return "changeTerrain";
+      }
+    };
+  }
+};
+var TerrainMorphAverage = class extends TerrainMorphBase {
+  constructor({ ...rest }) {
+    super(rest);
+  }
+  stateMachine({ engine, actor }) {
+    const rng = engine.rng;
+    const heightMap = this._heightMap;
+    const heightArray = heightMap.getLayerArray("height");
+    const malleabilityArray = heightMap.getLayerArray("malleability");
+    return {
+      _bind: actor,
+      _start: function* () {
+        this._resetPositionVelocity(rng);
+        return "update";
+      },
+      update: function* () {
+        const D = 32;
+        const frames = rng.rangei(10, 100);
+        const pen = new Cursor2D(heightMap.segments, heightMap.segments);
+        for (let i = 0; i < frames; i++) {
+          const centerSX = Math.floor(this.position.x);
+          const centerSY = Math.floor(this.position.y);
+          const stats = new SimpleStats();
+          pen.border(centerSX, centerSY, D, (sx, sy) => {
+            const si = sy * heightMap.segments + sx;
+            const wz = heightArray[si];
+            stats.add(wz);
+          });
+          const avg = stats.average();
+          pen.border(centerSX, centerSY, D, (sx, sy, { index: si, distance }) => {
+            const wz = heightArray[si];
+            const m = malleabilityArray[si];
+            const a = m * 0.25 * (1 - clamp(distance / D, 0, 1));
+            heightArray[si] = wz * (1 - a) + avg * a;
+          });
+          pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
+            heightMap.updateSegmentHeight(sx, sy);
+          });
+          yield 2;
+        }
+        return "update";
+      }
+    };
   }
 };
 
@@ -63436,9 +63977,8 @@ function defaultPalette() {
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/voxel_sprite.js
-var VoxelSprite = class {
+var VoxelSprite = class extends Actor {
   constructor({
-    id,
     url = null,
     scale = 1,
     depth = 1,
@@ -63447,12 +63987,13 @@ var VoxelSprite = class {
     worldY = 0,
     position = null,
     stateMachine = null,
-    spriteScale = 1
+    spriteScale = 1,
+    ...rest
   } = {}) {
+    super(rest);
     if (!url) {
       throw new Error(`url must be defined`);
     }
-    this._id = id;
     this._url = url;
     this._position = position || new Vector3(worldX, worldY, 0);
     this._offset = new Vector3(0, 0, 0);
@@ -63462,9 +64003,6 @@ var VoxelSprite = class {
     this._flags = Object.assign({}, flags);
     this._mesh = null;
     this._stateMachine = stateMachine;
-  }
-  get id() {
-    return this._id;
   }
   get flags() {
     return this._flags;
@@ -63498,6 +64036,207 @@ var VoxelSprite = class {
     group.add(mesh);
     this._mesh = group;
     return this._mesh;
+  }
+};
+
+// relative:/workspaces/monorepo/source/lib/engine/src/actors/weather_system.js
+var WeatherSystem = class {
+  constructor({ startState = null, heightMap = null } = {}) {
+    this.id = "weather_system";
+    this.condition = null;
+    this._startState = startState;
+    this._heightMap = heightMap;
+  }
+  update({ engine, frameNumber }) {
+    const heightMap = this._heightMap;
+    if (!heightMap) {
+      return;
+    }
+    if (frameNumber % 4 !== 0) {
+      return;
+    }
+    const snowArray = heightMap.layers.snow?.array;
+    if (!snowArray) {
+      return;
+    }
+    const rng = engine.rng;
+    for (let i = 0; i < 2e3; i++) {
+      const sx = rng.rangei(0, 256);
+      const sy = rng.rangei(0, 256);
+      const si = sy * heightMap.segments + sx;
+      const v0 = snowArray[si];
+      let v1;
+      if (this.condition === "snow") {
+        v1 = Math.min(v0 + 0.2, 2);
+      } else {
+        v1 = Math.max(v0 - 0.2, 0);
+      }
+      if (v0 !== v1) {
+        snowArray[si] = v1;
+        heightMap.updateSegment(sx, sy);
+      }
+    }
+  }
+  stateMachine({ engine }) {
+    const rng = makeRNG();
+    const RAIN_LIGHT = 5e3;
+    const RAIN_NORMAL = 1e5;
+    const RAIN_HEAVY = 5e5;
+    const makeStates = (table) => {
+      const desc2 = {
+        _bind: this
+      };
+      const TIME_SCALE = 60;
+      let local2 = {
+        priorState: null
+      };
+      for (let [
+        key,
+        { condition = "clear", effect, duration, transitions, messages }
+      ] of Object.entries(table)) {
+        desc2[key] = function* () {
+          this.condition = condition;
+          let actor;
+          if (effect) {
+            const [Type, ...args] = effect;
+            actor = new Type(...args);
+            engine.actors.push(actor);
+          }
+          const waitTime = duration ? TIME_SCALE * rng.rangei(duration[0], duration[1]) : 0;
+          const wait0 = Math.min(waitTime, 5);
+          const wait1 = waitTime - wait0;
+          if (wait0) {
+            yield wait0;
+          }
+          const ctx = engine.context();
+          if (messages && ctx.frameNumber > 5 * 60) {
+            const key2 = local2.priorState;
+            const set = messages[key2] || messages["*"];
+            if (set) {
+              const value2 = rng.select(set, (e) => e[0])[1];
+              let msg = typeof value2 === "function" ? value2() : value2;
+              if (msg) {
+                engine.journal.message(msg);
+              }
+            }
+          }
+          if (wait1) {
+            yield wait1;
+          }
+          if (actor) {
+            engine.actors.remove(actor);
+          }
+          local2.priorState = key;
+          const nextState = rng.select(transitions, (e) => e[0])[1];
+          return nextState;
+        };
+      }
+      return desc2;
+    };
+    const desc = makeStates({
+      _start: {
+        transitions: [
+          [80, "clear"],
+          [30, "clearWindy"],
+          [15, "rainLight"],
+          [10, "rainNormal"],
+          [10, "rainHeavy"],
+          [30, "snow"]
+        ]
+      },
+      clear: {
+        duration: [10, 100],
+        transitions: [
+          [30, "clear"],
+          [30, "clearWindy"],
+          [30, "rainLight"],
+          [10, "rainNormal"],
+          [10, "rainHeavy"],
+          [10, "snow"]
+        ]
+      },
+      clearWindy: {
+        duration: [10, 100],
+        transitions: [
+          [30, "clear"],
+          [50, "rainLight"],
+          [50, "rainNormal"],
+          [20, "rainHeavy"]
+        ],
+        messages: {
+          "*": [[100, `The wind is howling.`]]
+        }
+      },
+      snow: {
+        condition: "snow",
+        effect: [Snow, { count: 35e4 }],
+        duration: [20, 200],
+        transitions: [[100, "snowLight"]],
+        messages: {
+          "*": [
+            [100, `It's beginning to snow.`],
+            [20, "The snow does not seem to accumulate."]
+          ]
+        }
+      },
+      snowLight: {
+        condition: "snow",
+        effect: [Snow, { count: 1e5 }],
+        duration: [3, 12],
+        transitions: [[100, "clear"]],
+        messages: {
+          "*": [
+            [100, `It's beginning to snow.`],
+            [20, "The snow does not seem to accumulate."]
+          ]
+        }
+      },
+      rainLight: {
+        effect: [Rain, { count: RAIN_LIGHT }],
+        duration: [5, 50],
+        transitions: [
+          [1, "clear"],
+          [2, "rainNormal"]
+        ],
+        messages: {
+          clear: [
+            [100, "It has begun to rain."],
+            [100, null]
+          ]
+        }
+      },
+      rainLightEnd: {
+        effect: [Rain, { count: RAIN_LIGHT }],
+        duration: [5, 50],
+        transitions: [[1, "clear"]],
+        messages: {
+          "*": [[100, () => "The weather Looks to be clearing up."]]
+        }
+      },
+      rainNormal: {
+        effect: [Rain, { count: RAIN_NORMAL }],
+        duration: [10, 200],
+        transitions: [
+          [1, "rainLightEnd"],
+          [1, "rainHeavy"]
+        ]
+      },
+      rainHeavy: {
+        effect: [Rain, { count: RAIN_HEAVY }],
+        duration: [10, 100],
+        transitions: [
+          [1, "rainLightEnd"],
+          [2, "rainNormal"]
+        ]
+      }
+    });
+    if (this._startState) {
+      const state = this._startState;
+      desc._start = function* () {
+        return state;
+      };
+    }
+    return desc;
   }
 };
 
@@ -63655,6 +64394,73 @@ function pathTo(node) {
   return path;
 }
 
+// relative:/workspaces/monorepo/source/lib/engine/src/components/component_events.js
+function componentEvents() {
+  return {
+    name: "events",
+    properties: {
+      events: {
+        value: new EventEmitter()
+      }
+    }
+  };
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/components/component_physics_pva.js
+function componentPhysicsPVA({ actor, methods }) {
+  return {
+    name: "physicsPVA",
+    properties: {
+      position: {
+        value: new Vector3(0, 0, 0)
+      },
+      velocity: {
+        value: new Vector3(0, 0, 0)
+      },
+      acceleration: {
+        value: new Vector3(0, 0, 0)
+      }
+    },
+    events: {
+      preupdate: function() {
+        methods.update(1);
+      }
+    },
+    methods: {
+      update(dt) {
+        actor.velocity.addScaledVector(actor.acceleration, dt);
+        actor.position.addScaledVector(actor.velocity, dt);
+      }
+    }
+  };
+}
+
+// relative:/workspaces/monorepo/source/lib/engine/src/components/component_self_collider_box3.js
+function componentSelfColliderBox3({ actor, methods }, { box }) {
+  return {
+    name: "selfColliderBox3",
+    events: {
+      preupdate: () => methods.update()
+    },
+    methods: {
+      update() {
+        const dimensions = ["x", "y", "z"];
+        const epsilon = 1e-6;
+        for (let dim of dimensions) {
+          if (actor.position[dim] <= box.min[dim]) {
+            actor.position[dim] = box.min[dim] + epsilon;
+            actor.velocity[dim] = Math.abs(actor.velocity[dim]);
+          }
+          if (actor.position[dim] >= box.max[dim]) {
+            actor.position[dim] = box.max[dim] - epsilon;
+            actor.velocity[dim] = -Math.abs(actor.velocity[dim]);
+          }
+        }
+      }
+    }
+  };
+}
+
 // relative:/workspaces/monorepo/source/lib/engine/src/image/get_image_pixel_data.js
 function getImagePixelData(img) {
   let canvas = document.createElement("canvas");
@@ -63681,28 +64487,6 @@ function loadImage(src) {
     };
     img.src = src;
   });
-}
-
-// relative:/workspaces/monorepo/source/lib/engine/src/physics/update_position.js
-function updatePosition(actor, dt) {
-  actor.velocity.addScaledVector(actor.acceleration, dt);
-  actor.position.addScaledVector(actor.velocity, dt);
-}
-
-// relative:/workspaces/monorepo/source/lib/engine/src/physics/update_box_collision.js
-function updateBoxCollision(actor, box) {
-  const dimensions = ["x", "y", "z"];
-  const epsilon = 1e-6;
-  for (let dim of dimensions) {
-    if (actor.position[dim] <= box.min[dim]) {
-      actor.position[dim] = box.min[dim] + epsilon;
-      actor.velocity[dim] = Math.abs(actor.velocity[dim]);
-    }
-    if (actor.position[dim] >= box.max[dim]) {
-      actor.position[dim] = box.max[dim] - epsilon;
-      actor.velocity[dim] = -Math.abs(actor.velocity[dim]);
-    }
-  }
 }
 
 // relative:/workspaces/monorepo/source/lib/engine/src/react/use_engine.js
@@ -64541,135 +65325,78 @@ var treeShader = {
 var matches = [{ url: "assets/ext-metrominis/voxmodels/alien_bot1.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_bot1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_bot1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_bot2.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_bot2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_bot2.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_bot3.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_bot3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_bot3.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_crawl1.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_crawl1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_crawl1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_crawl2.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_crawl2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_crawl2.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_egg1.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_egg1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_egg1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_egg2.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_egg2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_egg2.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_egg3.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_egg3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_egg3.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1a.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1a.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1b.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1b.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1c.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_engi1c.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2a.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2a.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2b.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2b.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2c.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2c.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2d.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_engi2d.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_engi3.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_engi3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_engi3.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/alien_eye1a.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_eye1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_eye1b.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_eye1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_eye1c.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_eye1c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_infected1.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_infected1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_infected2.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_infected2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_infected3.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_infected3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_lift.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_lift.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer1a.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer1b.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer1c.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer1c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer2a.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer2a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer2b.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer2b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer2c.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer2c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer3a.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer3a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer3b.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer3b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer3c.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_saucer3c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_tool1.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_tool1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_tool2.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_tool2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/alien_tool3.vox" }, { url: "assets/ext-metrominis/voxmodels/alien_tool3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army1a.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army1b.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army2a.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army2a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army2b.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army2b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_army4.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_army4a.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_army4a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_base.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_base.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_beardo1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_beardo1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_beardo2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_beardo2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_beardo3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_beardo3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_beardo4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_beardo4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_beau.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_beau.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_bedroll1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_bedroll1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_bedroll2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_bedroll2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_bridget.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_bridget.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_bro.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_bro.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_brookie.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_brookie.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_brookie.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_butcher.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_butcher.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_chef.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_chef.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_cop1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_cop1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_cop2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_cop2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_costume1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_costume1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_costume2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_costume2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_costume3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_costume3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_costume4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_costume4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_eskimo.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_eskimo.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_fatkid.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_fatkid.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_goth1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_goth1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_goth2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_goth2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_goth3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_goth3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_hazmat1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_hazmat1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_hazmat2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_hazmat2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_headphones.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_headphones.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_headphones.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_hobo1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_hobo1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_hunter1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_hunter1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_hunter1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_hunter2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_hunter2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_janitor.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_janitor.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_lady1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_lady1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_lady2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_lady2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_lady3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_lady3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_lady4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_lady4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_mailman.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_mailman.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_mayor.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_mayor.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_mayor.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_mechanic.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_mechanic.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_mechanic.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_mike.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_mike.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_mike.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_mission1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_mission1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_mission1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_mission2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_mission2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_mission2.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_naked1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_naked1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_naked1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_naked2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_naked2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_naked2.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_naked3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_naked3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_naked3.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_naked4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_naked4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_naked5.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_naked5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_naked6.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_naked6.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_nun.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_nun.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_nurse.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_nurse.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_paramedic1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_paramedic1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_paramedic2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_paramedic2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_ponytail1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_ponytail1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_ponytail2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_ponytail2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_ponytail3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_ponytail3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_priest.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_priest.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_punk.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_punk.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_raver1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_raver1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_raver2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_raver2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_raver3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_raver3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_riotcop.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_riotcop.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_robot.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_robot.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_scientist.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_scientist.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_scientist.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_sign1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_sign1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_sign2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_sign2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_sign2.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_sports1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_sports1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_sports2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_sports2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_sports3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_sports3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_sports4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_sports4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_suit1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_suit1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_suit2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_suit2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_suit3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_suit3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_suit3.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/chr_suit4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_suit4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_sumo1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_sumo1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_sumo2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_sumo2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_super1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_super1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_super2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_super2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_super3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_super3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_super4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_super4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_super5.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_super5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_thief.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_thief.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_worker1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_worker1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_worker2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_worker2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_worker3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_worker3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_zombie1.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_zombie1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_zombie2.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_zombie2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_zombie3.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_zombie3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/chr_zombie4.vox" }, { url: "assets/ext-metrominis/voxmodels/chr_zombie4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_crete1a.vox" }, { url: "assets/ext-metrominis/voxmodels/env_crete1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_crete1b.vox" }, { url: "assets/ext-metrominis/voxmodels/env_crete1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_crete1c.vox" }, { url: "assets/ext-metrominis/voxmodels/env_crete1c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_crete1d.vox" }, { url: "assets/ext-metrominis/voxmodels/env_crete1d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_crete2a.vox" }, { url: "assets/ext-metrominis/voxmodels/env_crete2a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_crete2b.vox" }, { url: "assets/ext-metrominis/voxmodels/env_crete2b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_crete2c.vox" }, { url: "assets/ext-metrominis/voxmodels/env_crete2c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_crete2d.vox" }, { url: "assets/ext-metrominis/voxmodels/env_crete2d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_grass1a.vox" }, { url: "assets/ext-metrominis/voxmodels/env_grass1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_grass1b.vox" }, { url: "assets/ext-metrominis/voxmodels/env_grass1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_grass1c.vox" }, { url: "assets/ext-metrominis/voxmodels/env_grass1c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/env_grass1d.vox" }, { url: "assets/ext-metrominis/voxmodels/env_grass1d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/mob_bear.vox" }, { url: "assets/ext-metrominis/voxmodels/mob_bear.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/mob_cat1.vox" }, { url: "assets/ext-metrominis/voxmodels/mob_cat1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/mob_cat2.vox" }, { url: "assets/ext-metrominis/voxmodels/mob_cat2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/mob_cat3.vox" }, { url: "assets/ext-metrominis/voxmodels/mob_cat3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/mob_cat4.vox" }, { url: "assets/ext-metrominis/voxmodels/mob_cat4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/mob_dog1.vox" }, { url: "assets/ext-metrominis/voxmodels/mob_dog1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/mob_dog2.vox" }, { url: "assets/ext-metrominis/voxmodels/mob_dog2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/mob_penguin.vox" }, { url: "assets/ext-metrominis/voxmodels/mob_penguin.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_arcade5.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_armgate1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_armgate1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_armgate2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_armgate2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_bench1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_bench1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_bench2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_bench2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_bench3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_bench3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_bench4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_bench4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_bench5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_bench5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_boxingring.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_boxingring.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_busstop.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_busstop.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_campfire.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_campfire.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_candle.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_candle.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_cart1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_cart1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_cart1a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_cart1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_cart1b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_cart1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_cart2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_cart2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_cart2a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_cart2a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_cart2b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_cart2b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_celltower.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_celltower.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_chair1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_chair1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_chair2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_chair2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_christmas1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_christmas1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_column1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_column1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_column2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_column2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_column3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_column3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_cone1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_cone1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_container1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_container1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_container2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_container2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_container3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_container3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_container4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_container4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_cross.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_cross.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_crosswalk.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_crosswalk.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb6.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb6.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb7.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb7.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb7a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb7a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_curb7a.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_curb8.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_curb8.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_dogstand.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_dogstand.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_door1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_door1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_door2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_door2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_door3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_door3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_door4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_door4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_driveway1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_driveway1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_driveway2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_driveway2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_driveway3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_driveway3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fence1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fence1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fence2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fence2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fence3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fence3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fence4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fence4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fence5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fence5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fence6.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fence6.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fence7.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fence7.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fire1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fire1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fire2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fire2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fire3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fire3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fire4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fire4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fire5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fire5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fountain.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_fountain.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_fountain.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_grave1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_grave1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_grave2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_grave2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_grave3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_grave3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_grave4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_grave4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_grill.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_grill.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_guitarcase.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_guitarcase.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_halo.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_halo.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house1a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house1b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house1c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house1c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house2a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house2a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house2b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house2b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house2b.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house2c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house2c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house2d.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house2d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house3.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house3a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house3a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house3a.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house3b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house3b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house3c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house3c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house3c.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house4.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house4a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house4a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house4a.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house4b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house4b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house4b.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house4c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house4c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house4c.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house4d.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house4d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house5.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house5a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house5a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house5b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house5b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house5c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house5c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house5c.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house6.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house6.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house6.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house6a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house6a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house6a.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house6b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house6b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house6c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house6c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house6d.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house6d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house7.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house7.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house7.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house7a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house7a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house7a.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_house7b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house7b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house7c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house7c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house8.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house8.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house8a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house8a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house8b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house8b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house8c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_house8c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_house8c.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_hydrant.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_hydrant.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_mailbox.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_mailbox.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_mailbox2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_mailbox2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_mailbox2a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_mailbox2a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_mailbox2b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_mailbox2b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_mushroom1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_mushroom1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_mushroom1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_mushroom2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_mushroom2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_mushroom3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_mushroom3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_newsbox1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_newsbox1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_newsbox2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_newsbox2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_newsbox3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_newsbox3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_newsbox4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_newsbox4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_park_block.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_park_block.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_path1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_path1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_path1.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_pentagram.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_pentagram.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_planter1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_planter1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_planter2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_planter2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_planter2.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_planter3a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_planter3a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_planter3b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_planter3b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_playgrnd5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_policetape.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_policetape.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_potty1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_potty1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_potty2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_potty2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_potty3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_potty3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_pumpkin.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_pumpkin.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish2.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_rubbish4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sidewalk5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign5.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign6.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign6.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign7.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign7.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign8.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign8.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_sign9.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_sign9.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_splatter1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_splatter1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_splatter2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_splatter2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_splatter3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_splatter3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_stage.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_stage.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_statue1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_statue1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_statue2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_statue2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_statue3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_statue3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_stlight1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_stlight1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_stlight2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_stlight2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_stlight3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_stlight3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store01.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store01.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store02.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store02.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store02.vox.screenshot.png" }, { url: "assets/ext-metrominis/voxmodels/obj_store03.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store03.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store03a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store03a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store04.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store04.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store05.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store05.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store06.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store06.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store07.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store07.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store08.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store08.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store09.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store09.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store10.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store10.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store11.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store11.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store12.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store12.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store13.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store13.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store14.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store14.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store15.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store15.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store16.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store16.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store16a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store16a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store16b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store16b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store17.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store17.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_store17a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_store17a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story01.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story01.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story01a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story01a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story01b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story01b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story02.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story02.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story03.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story03.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story03a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story03a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story03b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story03b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story03c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story03c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story03d.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story03d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story04.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story04.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story04a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story04a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story04b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story04b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story04c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story04c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story04d.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story04d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story05.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story05.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story05a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story05a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story06.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story06.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story06a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story06a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story06b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story06b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story06c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story06c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_story06d.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_story06d.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_street1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_street1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_street2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_street2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_stretcher.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_stretcher.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_table1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_table1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_table2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_table2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_table3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_table3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_table3a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_table3a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_table3b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_table3b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tracks1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tracks1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tracks2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tracks2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_trashcan1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_trashcan1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_trashcan2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_trashcan2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_trashcan3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_trashcan3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_trashcan4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_trashcan4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree1a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree1a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree1b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree1b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree1c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree1c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree2a.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree2a.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree2b.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree2b.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree2c.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree2c.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree3.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_tree4.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_tree4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_trellis.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_trellis.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_trlight1.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_trlight1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_trlight2.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_trlight2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/obj_wall.vox" }, { url: "assets/ext-metrominis/voxmodels/obj_wall.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/piano.vox" }, { url: "assets/ext-metrominis/voxmodels/piano.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_aliens.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_aliens.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_arcade.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_arcade.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_army.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_army.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_bus.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_bus.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_car.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_car.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_carflip.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_carflip.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_checkpoint.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_checkpoint.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_christmas.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_christmas.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_church1.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_church1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_coffee.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_coffee.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_corner.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_corner.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_crucifix.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_crucifix.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_depot.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_depot.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_depot2.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_depot2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_depot3.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_depot3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_fall.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_fall.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_grave.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_grave.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_hazmat.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_hazmat.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_hazmat2.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_hazmat2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_headache.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_headache.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_house.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_house.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_house2.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_house2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_house3.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_house3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_house4.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_house4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_house5.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_house5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_house6.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_house6.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_house7.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_house7.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_hunt.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_hunt.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_lunch.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_lunch.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_mechanic.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_mechanic.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_mechanic2.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_mechanic2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_mobile.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_mobile.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_orgy.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_orgy.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_parade.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_parade.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_park.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_park.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_park2.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_park2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_park3.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_park3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_park4.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_park4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_parked.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_parked.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_protest.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_protest.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_riot.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_riot.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_sacrifice.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_sacrifice.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_ships.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_ships.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_sidewalk.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_sidewalk.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store10.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store10.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store11.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store11.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store2.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store3.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store4.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store5.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store6.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store6.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store7.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store7.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store8.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store8.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_store9.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_store9.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_sumo.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_sumo.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_tentcity.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_tentcity.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_tentcity2.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_tentcity2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_theater.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_theater.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_train.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_train.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_vehicles1.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_vehicles1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_vehicles2.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_vehicles2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/scene_zombies.vox" }, { url: "assets/ext-metrominis/voxmodels/scene_zombies.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_ambulance.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_ambulance.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_bus.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_bus.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_cab1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_cab1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_car1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_car1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_car2.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_car2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_car3.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_car3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_car4.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_car4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_car5.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_car5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_fire.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_fire.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_lunch1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_lunch1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_lunch2.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_lunch2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_lunch3.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_lunch3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_lunch4.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_lunch4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_mini1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_mini1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_mini2.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_mini2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_mini3.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_mini3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_mini4.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_mini4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_mini5.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_mini5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_police1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_police1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_suv1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_suv1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_suv2.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_suv2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_suv3.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_suv3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_tank1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_tank1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_train.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_train.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_train2.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_train2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_train3.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_train3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_truck1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_truck1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_truck2.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_truck2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_truck3.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_truck3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_truck4.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_truck4.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_truck5.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_truck5.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_truck6.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_truck6.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_truck7.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_truck7.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_wagon1.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_wagon1.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_wagon2.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_wagon2.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_wagon3.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_wagon3.vox.asset.yaml" }, { url: "assets/ext-metrominis/voxmodels/veh_wagon4.vox" }, { url: "assets/ext-metrominis/voxmodels/veh_wagon4.vox.asset.yaml" }, { url: "assets/proto/sprites/corn-stalk.png" }, { url: "assets/proto/sprites/corn-stalk.png.asset.yaml" }, { url: "assets/proto/sprites/farmer.png" }, { url: "assets/proto/sprites/farmer.png.asset.yaml" }, { url: "assets/proto/sprites/farmer2.png" }, { url: "assets/proto/sprites/farmer2.png.asset.yaml" }, { url: "assets/proto/sprites/kestrel.png" }, { url: "assets/proto/sprites/kestrel.png.asset.yaml" }, { url: "assets/proto/sprites/king.png" }, { url: "assets/proto/sprites/king.png.asset.yaml" }, { url: "assets/proto/sprites/ranger.png" }, { url: "assets/proto/sprites/ranger.png.asset.yaml" }, { url: "assets/proto/sprites/ranger2.png" }, { url: "assets/proto/sprites/ranger2.png.asset.yaml" }, { url: "assets/proto/sprites/wizard.png" }, { url: "assets/proto/sprites/wizard.png.asset.yaml" }];
 var png_asset_yaml_default = { matches };
 
-// relative:/workspaces/monorepo/source/lib/engine/examples/16-interaction/lookup_table.js
-var import_lodash2 = __toESM(require_lodash());
-var LookupTable = class {
-  constructor({ normalize = (obj) => obj, table = null } = {}) {
-    this._list = [];
-    this._free = [];
-    this._normalize = normalize;
-    this._set = {};
-    if (table) {
-      this.addSet(table);
-    }
-  }
-  add(obj) {
-    let i;
-    if (this._free.length) {
-      i = this._free.shift();
-    } else {
-      i = this._list.length;
-    }
-    this._normalize(obj, i);
-    this._list.push(obj);
-    return i;
-  }
-  get(index4) {
-    return this._list[index4];
-  }
-  getDerived(baseIndex, props) {
-    const base = this._list[baseIndex];
-    const derived = { ...base, ...props };
-    for (let index4 = 0; index4 < this._list.length; index4++) {
-      const value2 = this._list[index4];
-      if ((0, import_lodash2.isEqual)(derived, value2)) {
-        return index4;
-      }
-    }
-    console.log(derived);
-    return this.addSet({ derived });
-  }
-  remove(obj) {
-    for (let i = 0; i < this._list.length; i++) {
-      if (this._list[i] === obj) {
-        this._list[i] = null;
-        this._free.push(i);
-        for (let [key, value2] of Object.entries(this._set)) {
-          if (value2 === i) {
-            delete this._set[key];
+// relative:/workspaces/monorepo/source/lib/engine/examples/16-interaction/component_pathfinder.js
+function componentPathfinder({ actor }, {
+  pathfinder,
+  positionFunc,
+  onMove,
+  prefix: prefix2 = "pathfind.",
+  MAX_SEARCH_DISTANCE = 100,
+  rng = makeRNG(),
+  moveDelay = 0,
+  interruptFunc
+}) {
+  const prefixName = (s) => `${prefix2}${s}`;
+  const STATE_TARGET = prefixName("target");
+  const STATE_MOVE = prefixName("move");
+  const STATE_MOVELOOP = prefixName("moveLoop");
+  return {
+    stateMachine: () => ({
+      [STATE_TARGET]: function* () {
+        yield rng.rangei(5, 10);
+        const ex = rng.rangei(0, pathfinder.width);
+        const ey = rng.rangei(0, pathfinder.height);
+        if (!pathfinder.walkable(ex, ey)) {
+          return STATE_TARGET;
+        }
+        return [STATE_MOVELOOP, ex, ey];
+      },
+      [STATE_MOVELOOP]: function* (ex, ey, doneState = STATE_TARGET) {
+        const [sx, sy] = positionFunc({ actor });
+        if (!pathfinder.walkable(sx, sy)) {
+          console.error("starting on an unwalkable tile");
+          debugger;
+        }
+        if (sx === ex && sy === ey) {
+          return doneState;
+        }
+        const dx = ex - sx;
+        const dy = ey - sy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const m = dist / MAX_SEARCH_DISTANCE;
+        let result2;
+        if (m <= 1) {
+          result2 = yield pathfinder.pathfind(sx, sy, ex, ey);
+        } else {
+          const xi = Math.ceil(sx + dx / m);
+          const yi = Math.ceil(sy + dy / m);
+          let xg = xi;
+          let yg = yi;
+          let jitter = 1;
+          while (!pathfinder.walkable(xg, yg)) {
+            xg = xi + Math.floor(rng.sign() + rng.range(1, jitter));
+            yg = yi + Math.floor(rng.sign() + rng.range(1, jitter));
+            jitter += 0.25;
           }
+          result2 = yield pathfinder.pathfind(sx, sy, xg, yg);
         }
-        break;
-      }
-    }
-  }
-  keys() {
-    return this._set;
-  }
-  addSet(m) {
-    for (let [key, value2] of Object.entries(m)) {
-      const index4 = this.add(value2);
-      this._set[key] = index4;
-    }
-    return this._set;
-  }
-};
-
-// relative:/workspaces/monorepo/source/lib/engine/examples/16-interaction/tiles.js
-function mix3(c0, c1, a) {
-  const b = 1 - a;
-  return [c0[0] * b + c1[0] * a, c0[1] * b + c1[1] * a, c0[2] * b + c1[2] * a];
-}
-function initTileLookupTable() {
-  const grassColorFunc = makeGrassColorFunc(256);
-  const table = new LookupTable({
-    normalize: (obj) => {
-      return {
-        walkCost: obj.walkable ? 0 : 1e10,
-        tillable: true,
-        ...obj
-      };
-    },
-    table: {
-      GRASS: {
-        walkable: true,
-        colorFunc: grassColorFunc
+        const path = result2.map((g) => ({ x: g[0], y: g[1] }));
+        return [STATE_MOVE, path, ex, ey, doneState];
       },
-      GRASS_UNWALKABLE: {
-        walkable: false,
-        colorFunc: grassColorFunc
-      },
-      FOUNDATION: {
-        walkable: false,
-        colorFunc: (sx, sy) => mix3([1, 0, 0], grassColorFunc(sx, sy), 0.85)
-      },
-      BOUNDARY: {
-        walkable: true,
-        colorFunc: (sx, sy) => mix3([1, 1, 0], grassColorFunc(sx, sy), 0.85)
-      },
-      GRASS_UNTILLABLE: {
-        walkable: true,
-        walkCost: 20,
-        tillable: false,
-        colorFunc: grassColorFunc
-      },
-      DIRT_WALKABLE: {
-        walkable: true,
-        walkCost: 10,
-        colorFunc: (sx, sy) => {
-          const base = grassColorFunc(sx, sy);
-          const a = sy % 2 ? 0.75 : 1;
-          base[0] *= 1.25 * a;
-          base[1] *= 0.5 * a;
-          base[2] *= 0.5 * a;
-          return base;
+      [STATE_MOVE]: function* (path, ex, ey, doneState) {
+        let x, y;
+        while (path.length) {
+          ({ x, y } = path.shift());
+          onMove(x, y);
+          const interruptState = interruptFunc?.(x, y);
+          if (interruptState) {
+            return interruptState;
+          }
+          yield moveDelay;
         }
+        return [STATE_MOVELOOP, ex, ey, doneState];
       }
-    }
-  });
-  return table;
-}
-function makeGrassColorFunc(segments) {
-  const scale = 1 / (segments * 100 / 256);
-  const simplex2 = makeSimplexNoise();
-  const simplex3 = makeSimplexNoise();
-  return function(sx, sy) {
-    const rgb = [146 / 255, 201 / 255, 117 / 255];
-    const a = (1 + simplex3.noise2D(sx, sy)) / 2;
-    const b = (1 + simplex2.noise2D(sx * scale, sy * scale)) / 2;
-    const t = 0.5 * b + 0.5;
-    const s = t + a * (1 - t);
-    return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
+    })
   };
 }
 
@@ -64678,23 +65405,87 @@ var assetURL = Object.fromEntries(png_asset_yaml_default.matches.map(({ url }) =
 function app_default() {
   return /* @__PURE__ */ import_react20.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react20.default.createElement("h1", null, "Interaction"), /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement(EngineView, null)));
 }
-var db = {
-  tiles: initTileLookupTable()
-};
-var TILE = db.tiles.keys();
+var TILE = {};
 function makeHeightMap(rng) {
   const S = 192;
   const simplex1 = makeSimplexNoise(rng.uint31());
   const simplex2 = makeSimplexNoise(rng.uint31());
   const simplex3 = makeSimplexNoise(rng.uint31());
+  function mix3(c0, c1, a) {
+    const b = 1 - a;
+    return [c0[0] * b + c1[0] * a, c0[1] * b + c1[1] * a, c0[2] * b + c1[2] * a];
+  }
+  function makeGrassColorFunc(segments) {
+    const scale = 1 / (segments * 100 / 256);
+    const simplex22 = makeSimplexNoise();
+    const simplex32 = makeSimplexNoise();
+    return function(sx, sy) {
+      const rgb = [146 / 255, 201 / 255, 117 / 255];
+      const a = (1 + simplex32.noise2D(sx, sy)) / 2;
+      const b = (1 + simplex22.noise2D(sx * scale, sy * scale)) / 2;
+      const t = 0.5 * b + 0.5;
+      const s = t + a * (1 - t);
+      return [rgb[0] * s, rgb[1] * s, rgb[2] * s];
+    };
+  }
+  const grassColorFunc = makeGrassColorFunc(256);
   const heightMap = new HeightMap({
     offset: [-256 / 2, -256 / 2, 0],
     scale: 256,
     segments: 256,
     layers: {
-      tile: Int8Array,
-      object: Int16Array,
-      malleability: Float32Array
+      tile: {
+        type: Int8Array,
+        defaultValue: "GRASS",
+        lookup: {
+          normalize: (obj) => {
+            return {
+              walkCost: obj.walkable ? 0 : 1e10,
+              tillable: true,
+              ...obj
+            };
+          },
+          table: {
+            GRASS: {
+              walkable: true,
+              colorFunc: grassColorFunc
+            },
+            GRASS_UNWALKABLE: {
+              walkable: false,
+              colorFunc: grassColorFunc
+            },
+            FOUNDATION: {
+              walkable: false,
+              colorFunc: (sx, sy) => mix3([1, 0, 0], grassColorFunc(sx, sy), 0.85)
+            },
+            BOUNDARY: {
+              walkable: true,
+              colorFunc: (sx, sy) => mix3([1, 1, 0], grassColorFunc(sx, sy), 0.85)
+            },
+            GRASS_UNTILLABLE: {
+              walkable: true,
+              walkCost: 20,
+              tillable: false,
+              colorFunc: grassColorFunc
+            },
+            DIRT_WALKABLE: {
+              walkable: true,
+              walkCost: 10,
+              colorFunc: (sx, sy) => {
+                const base = grassColorFunc(sx, sy);
+                const a = sy % 2 ? 0.75 : 1;
+                base[0] *= 1.25 * a;
+                base[1] *= 0.5 * a;
+                base[2] *= 0.5 * a;
+                return base;
+              }
+            }
+          }
+        }
+      },
+      object: { type: Int16Array },
+      malleability: { type: Float32Array, defaultValue: 1 },
+      snow: { type: Float32Array }
     },
     heightFunc: (sx, sy) => {
       const nx = sx + 5 * simplex1.noise2D(4 * sx / S, 4 * sy / S);
@@ -64703,15 +65494,15 @@ function makeHeightMap(rng) {
       return 0.1 * Math.pow(1.1 * a, 1.5);
     }
   });
-  const tileArray = heightMap.getLayerArray("tile");
-  const objectArray = heightMap.getLayerArray("object");
-  const malleabilityArray = heightMap.getLayerArray("malleability");
-  tileArray.fill(TILE.GRASS);
-  objectArray.fill(0);
-  malleabilityArray.fill(1);
-  heightMap.colorFunc = function(sx, sy, wz, si) {
-    const tile = db.tiles.get(tileArray[si]);
+  Object.assign(TILE, heightMap.layers.tile.table.keys());
+  const snowArray = heightMap.layers.snow.array;
+  heightMap.colorFunc = function(sx, sy, _wz, si) {
+    const tile = heightMap.layers.tile.lookup(sx, sy);
     const rgb = tile.colorFunc(sx, sy);
+    const s = clamp(snowArray[si], 0, 1);
+    rgb[0] = rgb[0] * (1 - s) + s * 1;
+    rgb[1] = rgb[1] * (1 - s) + s * 1;
+    rgb[2] = rgb[2] * (1 - s) + s * 1;
     return rgb;
   };
   heightMap.updateMesh();
@@ -64743,8 +65534,9 @@ function EngineView() {
     });
     engine.actors.push(new Grid(), new OrbitCamera({ radius: 72, periodMS: 2e4, offsetZ: 48 }), new DayNightLighting({ speed: 1, nightSpeed: 16 }), new GroundPlane(), heightMap);
     engine.addSequence(function* () {
-      engine.actors.push(new Updater(heightMap));
-      engine.actors.push(new Updater2(heightMap));
+      engine.actors.push(new WeatherSystem({ startState: "snow", heightMap }));
+      engine.actors.push(new TerrainMorphHeight({ heightMap }));
+      engine.actors.push(new TerrainMorphAverage({ heightMap }));
       for (let i = 0; i < 3; i++) {
         const actor = new VOXActor({
           url: assetURL[rng.select([
@@ -64757,11 +65549,10 @@ function EngineView() {
             pinToGroundHeight: true,
             castShadow: true
           },
-          position: new Vector3(rng.rangei(-76, 76), rng.range(-76, 76), 0),
           rotation: Math.PI / 2 * rng.rangei(0, 4)
         });
         yield placeActor({ engine, actor, heightMap });
-        yield 10;
+        yield;
       }
       for (let clusters = 0; clusters < 24; clusters++) {
         const cx = rng.rangei(0, heightMap.segments);
@@ -64783,8 +65574,8 @@ function EngineView() {
       }
       engine.actors.push(generateKestrel({ engine, heightMap }));
       yield 30;
-      engine.actors.push(new Updater(heightMap));
-      engine.actors.push(new Updater2(heightMap));
+      engine.actors.push(new TerrainMorphHeight({ heightMap }));
+      engine.actors.push(new TerrainMorphAverage({ heightMap }));
     });
     engine.opt.generateRandomWalkablePosition = function() {
       const walkable = (wx, wy) => {
@@ -64816,7 +65607,7 @@ function EngineView() {
 }
 function generateKestrel({ engine, heightMap }) {
   let [worldX, worldY] = engine.opt.generateRandomWalkablePosition();
-  return new VoxelSprite({
+  const actor = new VoxelSprite({
     id: "kestrel",
     url: assetURL["kestrel.png"],
     flags: {
@@ -64825,19 +65616,17 @@ function generateKestrel({ engine, heightMap }) {
     },
     worldX,
     worldY,
-    stateMachine: function({ engine: engine2, actor }) {
-      actor._goal = null;
-      let pathfind = makePathfindBehaviorForHeightmap(heightMap, actor);
+    stateMachine: function({ engine: engine2, actor: actor2 }) {
+      actor2._goal = null;
       return {
         _start: function* () {
           return "idle";
         },
-        ...pathfind,
         idle: function* () {
           yield 30;
-          if (actor._goal?.[0] === "move") {
-            let [cmd, x, y] = actor._goal;
-            actor._goal = null;
+          if (actor2._goal?.[0] === "move") {
+            let [cmd, x, y] = actor2._goal;
+            actor2._goal = null;
             x = Math.floor(x);
             y = Math.floor(y);
             engine2.journal.message(`Kestrel decides to move to ${x},${y}`);
@@ -64847,24 +65636,54 @@ function generateKestrel({ engine, heightMap }) {
         },
         move: function* (wx, wy) {
           const [sx, sy] = heightMap.coordW2S(wx, wy);
-          return [
-            "pathfind.moveLoop",
-            sx,
-            sy,
-            "idle",
-            {
-              interruptCb: () => {
-                if (actor._goal && (actor._goal[0] !== "move" || actor._goal[1] !== wx || actor._goal[2] !== wy)) {
-                  return "idle";
-                }
-                return null;
-              }
-            }
-          ];
+          return ["pathfind.moveLoop", sx, sy, "idle"];
         }
       };
     }
   });
+  const heightArray = heightMap.getLayerArray("height");
+  const SEGMENTS = heightMap.segments;
+  const tileAt = (sx, sy) => {
+    if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
+      return null;
+    }
+    return heightMap.layers.tile.lookup(sx, sy);
+  };
+  const walkable = (sx, sy) => {
+    const tile = tileAt(sx, sy);
+    return tile ? tile.walkable : false;
+  };
+  const pathfinder = new PathfinderGraph({
+    width: SEGMENTS,
+    height: SEGMENTS,
+    walkable,
+    baseCost: (a) => tileAt(a.x, a.y)?.walkCost ?? 0,
+    edgeCost: (a, b) => {
+      const hb = heightArray[b.y * SEGMENTS + b.x];
+      const ha = heightArray[a.y * SEGMENTS + a.x];
+      return Math.max(0, 10 * (hb - ha));
+    }
+  });
+  actor.mixin(componentPathfinder, {
+    pathfinder,
+    moveDelay: 4,
+    positionFunc: ({ actor: actor2 }) => {
+      return heightMap.coordW2S(actor2.position.x, actor2.position.y);
+    },
+    onMove: (sx, sy) => {
+      const [wx, wy] = heightMap.coordS2W(sx, sy);
+      actor.position.x = wx;
+      actor.position.y = wy;
+    },
+    interruptFunc: (sx, sy) => {
+      const [wx, wy] = heightMap.coordS2W(sx, sy);
+      if (actor._goal && (actor._goal[0] !== "move" || actor._goal[1] !== wx || actor._goal[2] !== wy)) {
+        return "idle";
+      }
+      return null;
+    }
+  });
+  return actor;
 }
 async function placeActor({
   engine,
@@ -64910,7 +65729,7 @@ async function placeActor({
     let valid = true;
     const stats = new SimpleStats();
     cursor.box(modelBox, { inflate: walkableBoundary }, ({ index: index4 }) => {
-      const tile = db.tiles.get(tileArray[index4]);
+      const tile = heightMap.layers.tile.lookupIndex(index4);
       if (!tile.walkable) {
         valid = false;
       }
@@ -64930,7 +65749,7 @@ async function placeActor({
     }
     const baseHeight = stats.average() * 2 / 3 + stats.max() / 3;
     cursor.box(modelBox, ({ index: index4 }) => {
-      tileArray[index4] = db.tiles.getDerived(tileArray[index4], { walkable: false });
+      heightMap.layers.tile.mutateAtIndex(index4, { walkable: false });
       heightArray[index4] = baseHeight;
       malleabilityArray[index4] = malleabilityBase;
     });
@@ -64963,289 +65782,6 @@ async function placeActor({
   engine.actors.push(actor);
   return true;
 }
-function makePathfindBehavior({
-  pathfinder,
-  positionFunc,
-  prefix: prefix2 = "pathfind.",
-  MAX_SEARCH_DISTANCE = 100,
-  rng = makeRNG(),
-  onMove,
-  moveDelay = 0
-}) {
-  const prefixName = (s) => `${prefix2}${s}`;
-  const STATE_TARGET = prefixName("target");
-  const STATE_MOVE = prefixName("move");
-  const STATE_MOVELOOP = prefixName("moveLoop");
-  return {
-    [STATE_TARGET]: function* () {
-      yield rng.rangei(5, 10);
-      const ex = rng.rangei(0, pathfinder.width);
-      const ey = rng.rangei(0, pathfinder.height);
-      if (!pathfinder.walkable(ex, ey)) {
-        return STATE_TARGET;
-      }
-      return [STATE_MOVELOOP, ex, ey];
-    },
-    [STATE_MOVELOOP]: function* (ex, ey, doneState = STATE_TARGET, options) {
-      const [sx, sy] = positionFunc();
-      if (!pathfinder.walkable(sx, sy)) {
-        console.error("starting on an unwalkable tile");
-        debugger;
-      }
-      if (sx === ex && sy === ey) {
-        return doneState;
-      }
-      const dx = ex - sx;
-      const dy = ey - sy;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const m = dist / MAX_SEARCH_DISTANCE;
-      let result2;
-      if (m <= 1) {
-        result2 = yield pathfinder.pathfind(sx, sy, ex, ey);
-      } else {
-        const xi = Math.ceil(sx + dx / m);
-        const yi = Math.ceil(sy + dy / m);
-        let xg = xi;
-        let yg = yi;
-        let jitter = 1;
-        while (!pathfinder.walkable(xg, yg)) {
-          xg = xi + Math.floor(rng.sign() + rng.range(1, jitter));
-          yg = yi + Math.floor(rng.sign() + rng.range(1, jitter));
-          jitter += 0.25;
-        }
-        result2 = yield pathfinder.pathfind(sx, sy, xg, yg);
-      }
-      const path = result2.map((g) => ({ x: g[0], y: g[1] }));
-      return [STATE_MOVE, path, ex, ey, doneState, options];
-    },
-    [STATE_MOVE]: function* (path, ex, ey, doneState, options = {}) {
-      const { interruptCb } = options;
-      let x, y;
-      while (path.length) {
-        ({ x, y } = path.shift());
-        onMove(x, y);
-        const interruptState = interruptCb?.();
-        if (interruptState) {
-          return interruptState;
-        }
-        yield moveDelay;
-      }
-      return [STATE_MOVELOOP, ex, ey, doneState, options];
-    }
-  };
-}
-function makePathfindBehaviorForHeightmap(heightMap, actor) {
-  const rng = makeRNG();
-  const heightArray = heightMap.getLayerArray("height");
-  const tileArray = heightMap.getLayerArray("tile");
-  const SEGMENTS = heightMap.segments;
-  const tileAt = (sx, sy) => {
-    if (!(sx >= 0 && sx < SEGMENTS && sy >= 0 && sy < SEGMENTS)) {
-      return null;
-    }
-    return db.tiles.get(tileArray[sy * SEGMENTS + sx]);
-  };
-  const walkable = (sx, sy) => {
-    const tile = tileAt(sx, sy);
-    return tile ? tile.walkable : false;
-  };
-  const pathfinder = new PathfinderGraph({
-    width: SEGMENTS,
-    height: SEGMENTS,
-    walkable,
-    baseCost: (a) => tileAt(a.x, a.y)?.walkCost ?? 0,
-    edgeCost: (a, b) => {
-      const hb = heightArray[b.y * SEGMENTS + b.x];
-      const ha = heightArray[a.y * SEGMENTS + a.x];
-      return Math.max(0, 10 * (hb - ha));
-    }
-  });
-  return makePathfindBehavior({
-    pathfinder,
-    moveDelay: 4,
-    positionFunc: () => {
-      return heightMap.coordW2S(actor.position.x, actor.position.y);
-    },
-    onMove: (sx, sy) => {
-      const [wx, wy] = heightMap.coordS2W(sx, sy);
-      actor.position.x = wx;
-      actor.position.y = wy;
-    }
-  });
-}
-var Updater = class {
-  constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
-    this._heightMap = heightMap;
-    this._rng = makeRNG();
-    this._heightFunc = null;
-    this._makeHeightFunc = makeHeightFunc;
-    this._heightScale = heightScale;
-    this._position = new Vector3(0, 0, 0);
-    this._velocity = new Vector3(0, 0, 0);
-    this._acceleration = new Vector3(0, 0, 0);
-    const S = this._heightMap.segments;
-    this._collider = new Box3(new Vector3(0, 0, 0), new Vector3(S, S, S));
-  }
-  get position() {
-    return this._position;
-  }
-  get velocity() {
-    return this._velocity;
-  }
-  get acceleration() {
-    return this._acceleration;
-  }
-  update() {
-    const rng = this._rng;
-    updatePosition(this, 1);
-    updateBoxCollision(this, this._collider);
-    const K = 0.25;
-    const MV = 2;
-    this._velocity.x += K * rng.range(-1, 1);
-    this._velocity.y += K * rng.range(-1, 1);
-    this._velocity.clampScalar(-MV, MV);
-  }
-  stateMachine() {
-    const rng = this._rng;
-    return {
-      _bind: this,
-      _start: function* () {
-        this._position.x = rng.range(0, this._heightMap.segments);
-        this._position.y = rng.range(0, this._heightMap.segments);
-        this._velocity.x = rng.sign() * rng.range(0.2, 2);
-        this._velocity.y = rng.sign() * rng.range(0.2, 2);
-        return "changeTerrain";
-      },
-      changeTerrain: function* () {
-        if (this._makeHeightFunc) {
-          this._heightFunc = this._makeHeightFunc({ heightMap: this._heightMap });
-        } else {
-          const simplex = makeSimplexNoise(4342);
-          const amplitude = 0.04 * rng.range(0.4, 5);
-          const ox = rng.range(-1e3, 1e3);
-          const oy = rng.range(-1e3, 1e3);
-          const s = 1 / (rng.range(0.5, 2) * this._heightMap.segments);
-          const base = rng.range(0, 0.02);
-          this._heightFunc = (x, y) => base + amplitude * (0.5 + 0.5 * simplex.noise2D(ox + x * s, oy + y * s));
-        }
-        return "update";
-      },
-      update: function* () {
-        const D = 32;
-        const MAX_DIST = Math.sqrt(2 * D * D);
-        const heightMap = this._heightMap;
-        const heightArray = heightMap.getLayerArray("height");
-        const malleabilityArray = heightMap.getLayerArray("malleability");
-        const frames = rng.rangei(10, 100);
-        const pen = new Cursor2D(heightMap.segments, heightMap.segments);
-        for (let i = 0; i < frames; i++) {
-          const centerSX = Math.floor(this._position.x);
-          const centerSY = Math.floor(this._position.y);
-          pen.border(centerSX, centerSY, D, (sx, sy) => {
-            const si = sy * heightMap.segments + sx;
-            const lsx = sx - centerSX;
-            const lsy = sy - centerSY;
-            const [wx, wy] = heightMap.coordS2W(sx, sy);
-            const wz = heightArray[si];
-            const tz = this._heightScale * this._heightFunc(wx, wy);
-            let dz = tz - wz;
-            if (Math.abs(dz) < 1e-3) {
-              return;
-            }
-            dz /= 20;
-            const normalizedDist = Math.sqrt(lsx * lsx + lsy * lsy) / MAX_DIST;
-            const k = 0.01;
-            dz *= k + (1 - k) * (1 - normalizedDist);
-            const m = malleabilityArray[si];
-            dz *= m;
-            heightArray[si] = wz + dz;
-          });
-          pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
-            heightMap.updateSegmentHeight(sx, sy);
-          });
-          yield 2;
-        }
-        return "changeTerrain";
-      }
-    };
-  }
-};
-var Updater2 = class {
-  constructor(heightMap, { heightScale = 512, makeHeightFunc = null } = {}) {
-    this._heightMap = heightMap;
-    this._rng = makeRNG();
-    this._heightFunc = null;
-    this._makeHeightFunc = makeHeightFunc;
-    this._heightScale = heightScale;
-    this._position = new Vector3(0, 0, 0);
-    this._velocity = new Vector3(0, 0, 0);
-    this._acceleration = new Vector3(0, 0, 0);
-    const S = this._heightMap.segments;
-    this._collider = new Box3(new Vector3(0, 0, 0), new Vector3(S, S, S));
-  }
-  get position() {
-    return this._position;
-  }
-  get velocity() {
-    return this._velocity;
-  }
-  get acceleration() {
-    return this._acceleration;
-  }
-  update() {
-    const rng = this._rng;
-    updatePosition(this, 1);
-    updateBoxCollision(this, this._collider);
-    const K = 0.25;
-    const MV = 2;
-    this._velocity.x += K * rng.range(-1, 1);
-    this._velocity.y += K * rng.range(-1, 1);
-    this._velocity.clampScalar(-MV, MV);
-  }
-  stateMachine() {
-    const rng = this._rng;
-    return {
-      _bind: this,
-      _start: function* () {
-        this._position.x = rng.range(0, this._heightMap.segments);
-        this._position.y = rng.range(0, this._heightMap.segments);
-        this._velocity.x = rng.sign() * rng.range(0.2, 2);
-        this._velocity.y = rng.sign() * rng.range(0.2, 2);
-        return "update";
-      },
-      update: function* () {
-        const D = 32;
-        const heightMap = this._heightMap;
-        const heightArray = heightMap.getLayerArray("height");
-        const malleabilityArray = heightMap.getLayerArray("malleability");
-        const frames = rng.rangei(10, 100);
-        const pen = new Cursor2D(heightMap.segments, heightMap.segments);
-        for (let i = 0; i < frames; i++) {
-          const centerSX = Math.floor(this._position.x);
-          const centerSY = Math.floor(this._position.y);
-          const stats = new SimpleStats();
-          pen.border(centerSX, centerSY, D, (sx, sy) => {
-            const si = sy * heightMap.segments + sx;
-            const wz = heightArray[si];
-            stats.add(wz);
-          });
-          const avg = stats.average();
-          pen.border(centerSX, centerSY, D, (sx, sy, { index: si, distance }) => {
-            const wz = heightArray[si];
-            const m = malleabilityArray[si];
-            const a = m * 0.25 * (1 - clamp(distance / D, 0, 1));
-            heightArray[si] = wz * (1 - a) + avg * a;
-          });
-          pen.border(centerSX, centerSY, D + 1, (sx, sy) => {
-            heightMap.updateSegmentHeight(sx, sy);
-          });
-          yield 2;
-        }
-        return "update";
-      }
-    };
-  }
-};
 
 // builtin:./__bootstrap.js
 var container = document.getElementById("client");

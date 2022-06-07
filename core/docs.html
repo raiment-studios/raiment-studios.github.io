@@ -33020,11 +33020,14 @@ var import_react7 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
 var import_react8 = __toESM(require_react());
-function ReadingFrame({ children }) {
+function ReadingFrame({
+  width = "62rem",
+  children
+}) {
   useCommonStyles();
   return /* @__PURE__ */ import_react8.default.createElement("div", {
     style: {
-      width: "62rem",
+      width,
       margin: "1rem auto 2rem"
     }
   }, children);

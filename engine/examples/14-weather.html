@@ -33261,7 +33261,7 @@ var require_lodash = __commonJS({
           }
           return true;
         }
-        function isEqual(value2, other) {
+        function isEqual2(value2, other) {
           return baseIsEqual(value2, other);
         }
         function isEqualWith(value2, other, customizer) {
@@ -34371,7 +34371,7 @@ var require_lodash = __commonJS({
         lodash.isDate = isDate;
         lodash.isElement = isElement;
         lodash.isEmpty = isEmpty;
-        lodash.isEqual = isEqual;
+        lodash.isEqual = isEqual2;
         lodash.isEqualWith = isEqualWith;
         lodash.isError = isError;
         lodash.isFinite = isFinite2;
@@ -41755,11 +41755,14 @@ var import_react7 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/reading_frame.js
 var import_react8 = __toESM(require_react());
-function ReadingFrame({ children }) {
+function ReadingFrame({
+  width = "62rem",
+  children
+}) {
   useCommonStyles();
   return /* @__PURE__ */ import_react8.default.createElement("div", {
     style: {
-      width: "62rem",
+      width,
       margin: "1rem auto 2rem"
     }
   }, children);
@@ -58729,8 +58732,8 @@ function WebGLRenderer(parameters = {}) {
       _gl.framebufferTexture2D(36160, 36064, 34069 + activeCubeFace, textureProperties.__webglTexture, activeMipmapLevel);
     } else if (isRenderTarget3D) {
       const textureProperties = properties.get(renderTarget.texture);
-      const layer = activeCubeFace || 0;
-      _gl.framebufferTextureLayer(36160, 36064, textureProperties.__webglTexture, activeMipmapLevel || 0, layer);
+      const layer2 = activeCubeFace || 0;
+      _gl.framebufferTextureLayer(36160, 36064, textureProperties.__webglTexture, activeMipmapLevel || 0, layer2);
     }
     _currentMaterialId = -1;
   };
@@ -61547,6 +61550,9 @@ var StateMachine = class {
     if (result2.done) {
       let [nextState, nextStateArgs] = Array.isArray(result2.value) ? [result2.value[0], result2.value.slice(1)] : [result2.value, []];
       const generator = this._states[nextState];
+      if (nextState && !generator) {
+        console.warn(`Transition to unrecognized state '${nextState}'. StateMachine halting.`);
+      }
       this._priorStateName = this._activeStateName;
       this._activeStateName = nextState;
       this._activeState = generator ? generator.call(this._self, ...nextStateArgs) : null;
@@ -61716,11 +61722,9 @@ var Engine = class {
         this.events.fire("actor.preinit", ctx);
         actor.init?.(ctx);
         this.events.fire("actor.postinit", ctx);
-        if (actor.stateMachine) {
-          const desc = actor.stateMachine(ctx);
-          if (desc) {
-            actor.__stateMachine = new StateMachine(desc);
-          }
+        const desc = actor.stateMachine?.(ctx);
+        if (desc) {
+          actor.__stateMachine = new StateMachine(desc);
         }
         for (let renderer of Object.values(this._renderers)) {
           renderer.addActor?.(ctx, actor);
@@ -61743,13 +61747,12 @@ var Engine = class {
         continue;
       }
       ctx.actor = actor;
-      this.events.fire("actor.preupdate", ctx);
-      actor.__stateMachine?.update(ctx);
-    }
-    for (let actor of this._actors) {
-      ctx.actor = actor;
       ctx.mesh = actor.__mesh;
+      this.events.fire("actor.preupdate", ctx);
+      actor.events?.fire("preupdate", ctx);
+      actor.__stateMachine?.update(ctx);
       actor.update?.(ctx);
+      actor.events?.fire("postupdate", ctx);
       this.events.fire("actor.postupdate", ctx);
     }
     this.events.fire("engine.preupdate", ctx);
@@ -62047,6 +62050,7 @@ var GroundPlane = class {
 };
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/height_map.js
+var import_lodash2 = __toESM(require_lodash());
 var HeightMap = class {
   constructor({
     offset = [0, 0, 0],
@@ -62061,29 +62065,22 @@ var HeightMap = class {
     this._scale = scale;
     this._segments = segments;
     this._opacity = opacity;
-    this._layers = {
-      height: new Float32Array(segments * segments)
-    };
-    for (let [layerName, Type] of Object.entries(layers)) {
-      if (layerName === "height") {
-        console.warn(`height layer is implicitly defined`);
-        continue;
-      }
-      this.addLayer(layerName, Type);
-    }
-    this._layers.height.fill(0);
+    this._layers = {};
     this._colorFunc = colorFunc;
     this._heightFunc = heightFunc;
     this._mesh = null;
+    this.addLayer("height", { type: Float32Array });
+    for (let [layerName, options] of Object.entries(layers)) {
+      this.addLayer(layerName, options);
+    }
     for (let y = 0; y < segments; y++) {
       for (let x = 0; x < segments; x++) {
         const u = (x + 0.5) / (segments - 1);
         const v = (y + 0.5) / (segments - 1);
         const i = y * segments + x;
-        this._layers.height[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
+        this._layers.height.array[i] = this._heightFunc(scale * u, scale * v, u, v) * this._scale;
       }
     }
-    assert2(this._layers.height.length === this._segments * this._segments);
   }
   get offset() {
     return this._offset;
@@ -62093,6 +62090,9 @@ var HeightMap = class {
   }
   get segments() {
     return this._segments;
+  }
+  get layers() {
+    return this._layers;
   }
   get colorFunc() {
     return this._colorFunc;
@@ -62140,14 +62140,17 @@ var HeightMap = class {
   coordValidS(sx, sy) {
     return sx >= 0 && sx < this._segments && sy >= 0 && sy < this._segments;
   }
-  addLayer(layerName, Type) {
-    const n = this.segments;
-    const layer = new Type(n * n);
-    layer.fill(0);
-    this._layers[layerName] = layer;
+  addLayer(layerName, { type, ...rest }) {
+    const N = this.segments;
+    const layer2 = new Layer(layerName, N, N, type, rest);
+    this._layers[layerName] = layer2;
   }
   getLayerArray(layerName) {
-    return this._layers[layerName];
+    const arr = this._layers[layerName]?.array;
+    if (!arr) {
+      throw new Error(`Unknown layer '${layer}'`);
+    }
+    return arr;
   }
   getLayerWC(layerName, wx, wy) {
     const [sx, sy] = this.coordW2S(wx, wy);
@@ -62159,14 +62162,14 @@ var HeightMap = class {
   }
   getLayerSC(layerName, sx, sy) {
     const i = sy * this._segments + sx;
-    return this._layers[layerName][i];
+    return this._layers[layerName].array[i];
   }
   setLayerSC(layerName, sx, sy, value2, updateMesh = true) {
     const index4 = sy * this._segments + sx;
     if (index4 === -1) {
       return;
     }
-    this._layers[layerName][index4] = value2;
+    this._layers[layerName].array[index4] = value2;
     if (updateMesh) {
       for (let y = sy - 1; y <= sy + 1; y++) {
         for (let x = sx - 1; x <= sx + 1; x++) {
@@ -62240,7 +62243,7 @@ var HeightMap = class {
     }
     const i = sy * segments + sx;
     console.assert(i >= 0 && i < segments * segments, "Index out of range");
-    const heights = this._layers.height;
+    const heights = this._layers.height.array;
     const indexAttr = this._mesh.geometry.index;
     const indexArr = indexAttr.array;
     const positionAttr = this._mesh.geometry.attributes.position;
@@ -62332,7 +62335,7 @@ var HeightMap = class {
     }
     const i = sy * segments + sx;
     console.assert(i >= 0 && i < segments * segments, "Index out of range");
-    const heights = this._layers.height;
+    const heights = this._layers.height.array;
     const positionAttr = this._mesh.geometry.attributes.position;
     const positionArr = positionAttr.array;
     assert2(positionArr.length === 5 * 4 * 3 * segments * segments);
@@ -62357,6 +62360,119 @@ var HeightMap = class {
     [z0, z1] = sort2(sy + 1 < segments ? heights[i + segments] : 0, heights[i]);
     quad(vi + 4 * 12, z0, z1, z1, z0);
     positionAttr.needsUpdate = true;
+  }
+};
+var Layer = class {
+  constructor(name, width, height, Type, { defaultValue = 0, lookup = null }) {
+    this._name = name;
+    this._width = width;
+    this._height = height;
+    this._array = new Type(width * height);
+    this._table = lookup ? new LookupTable(lookup) : null;
+    if (typeof defaultValue === "string") {
+      defaultValue = this._table.indexForName(defaultValue);
+    }
+    this._array.fill(defaultValue);
+  }
+  get array() {
+    return this._array;
+  }
+  get table() {
+    return this._table;
+  }
+  get(x, y) {
+    const i = y * this._width + x;
+    return this._array[i];
+  }
+  lookup(x, y) {
+    const i = y * this._width + x;
+    const value2 = this._array[i];
+    return this._table.get(value2);
+  }
+  lookupIndex(i) {
+    const value2 = this._array[i];
+    return this._table.get(value2);
+  }
+  mutateAtIndex(index4, props) {
+    const value2 = this._array[index4];
+    this._array[index4] = this._table.getDerived(value2, props);
+  }
+};
+var LookupTable = class {
+  constructor({ normalize = (obj) => obj, table = null } = {}) {
+    this._list = [];
+    this._free = [];
+    this._normalize = normalize;
+    this._set = {};
+    if (table) {
+      this.addSet(table);
+    }
+    this._uidCount = 0;
+    this._uidMap = /* @__PURE__ */ new Map();
+  }
+  get(index4) {
+    return this._list[index4];
+  }
+  indexForName(name) {
+    return this._set[name];
+  }
+  getDerived(baseIndex, props) {
+    const baseObject = this._list[baseIndex];
+    const deltas = [];
+    for (let [key, value2] of Object.entries(props)) {
+      if (baseObject[key] === value2) {
+        continue;
+      }
+      let id = this._uidMap.get(value2);
+      if (id === void 0) {
+        id = this._uidCount++;
+        this._uidMap.set(value2, id);
+      }
+      deltas.push(id);
+    }
+    const derivedName = `${baseObject.name}-d${deltas.join("-")}`;
+    let derivedObject = this._set[derivedName];
+    if (!derivedObject) {
+      this.addSet({ [derivedName]: { ...baseObject, ...props, name: derivedName } });
+    }
+    return derivedObject;
+  }
+  remove(obj) {
+    for (let i = 0; i < this._list.length; i++) {
+      if (this._list[i] === obj) {
+        this._list[i] = null;
+        this._free.push(i);
+        for (let [key, value2] of Object.entries(this._set)) {
+          if (value2 === i) {
+            delete this._set[key];
+          }
+        }
+        break;
+      }
+    }
+  }
+  keys() {
+    return this._set;
+  }
+  addSet(m) {
+    for (let [key, value2] of Object.entries(m)) {
+      const index4 = this._addObject(key, value2);
+      this._set[key] = index4;
+    }
+    return this._set;
+  }
+  _addObject(name, obj) {
+    let i;
+    if (this._free.length) {
+      i = this._free.shift();
+    } else {
+      i = this._list.length;
+    }
+    this._normalize(obj, i);
+    obj.name = name;
+    obj.index = i;
+    this._list.push(obj);
+    return i;
   }
 };
 
@@ -62599,6 +62715,65 @@ var SnowEffect = class {
   }
 };
 
+// relative:/workspaces/monorepo/source/lib/engine/src/engine/actor.js
+var Actor = class {
+  constructor({ id = null, mixins = [] } = {}) {
+    this._id = id;
+    this._opt = {};
+    for (let comp of mixins) {
+      console.log(comp);
+      const args = Array.isArray(comp) ? comp : [comp];
+      this.mixin(...args);
+    }
+  }
+  dispose() {
+  }
+  mixin(componentFunc, options = {}) {
+    const ctx = {
+      actor: this,
+      methods: {}
+    };
+    const component = componentFunc(ctx, options);
+    const { name, properties, events, methods, stateMachine, ...rest } = component;
+    if (this.opt[name]) {
+      console.warn(`Actor already has component`, name);
+      return;
+    }
+    this.opt[name] = {};
+    if (properties) {
+      Object.defineProperties(this, properties);
+    }
+    if (methods) {
+      for (let [methodName, func] of Object.entries(methods)) {
+        ctx.methods[methodName] = func;
+        this.opt[name][methodName] = func;
+      }
+    }
+    if (events) {
+      for (let [eventName, func] of Object.entries(events)) {
+        this.events.on(eventName, func);
+      }
+    }
+    if (stateMachine) {
+      const prior = this.stateMachine;
+      this.stateMachine = (...args) => {
+        const baseDesc = prior?.call(this, ...args) || {};
+        return Object.assign(baseDesc, stateMachine(...args));
+      };
+    }
+    if (Object.keys(rest).length > 0) {
+      console.error("Unexpected additional keys", Object.keys(rest));
+      throw new Error();
+    }
+  }
+  get id() {
+    return this._id;
+  }
+  get opt() {
+    return this._opt;
+  }
+};
+
 // relative:/workspaces/monorepo/source/lib/engine/src/models/voxel_model_sg.js
 var MaterialCache = class {
   constructor() {
@@ -62618,9 +62793,8 @@ var MaterialCache = class {
 var materialCache = new MaterialCache();
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/voxel_sprite.js
-var VoxelSprite = class {
+var VoxelSprite = class extends Actor {
   constructor({
-    id,
     url = null,
     scale = 1,
     depth = 1,
@@ -62629,12 +62803,13 @@ var VoxelSprite = class {
     worldY = 0,
     position = null,
     stateMachine = null,
-    spriteScale = 1
+    spriteScale = 1,
+    ...rest
   } = {}) {
+    super(rest);
     if (!url) {
       throw new Error(`url must be defined`);
     }
-    this._id = id;
     this._url = url;
     this._position = position || new Vector3(worldX, worldY, 0);
     this._offset = new Vector3(0, 0, 0);
@@ -62644,9 +62819,6 @@ var VoxelSprite = class {
     this._flags = Object.assign({}, flags);
     this._mesh = null;
     this._stateMachine = stateMachine;
-  }
-  get id() {
-    return this._id;
   }
   get flags() {
     return this._flags;
@@ -62685,9 +62857,41 @@ var VoxelSprite = class {
 
 // relative:/workspaces/monorepo/source/lib/engine/src/actors/weather_system.js
 var WeatherSystem = class {
-  constructor() {
+  constructor({ startState = null, heightMap = null } = {}) {
     this.id = "weather_system";
     this.condition = null;
+    this._startState = startState;
+    this._heightMap = heightMap;
+  }
+  update({ engine, frameNumber }) {
+    const heightMap = this._heightMap;
+    if (!heightMap) {
+      return;
+    }
+    if (frameNumber % 4 !== 0) {
+      return;
+    }
+    const snowArray = heightMap.layers.snow?.array;
+    if (!snowArray) {
+      return;
+    }
+    const rng = engine.rng;
+    for (let i = 0; i < 2e3; i++) {
+      const sx = rng.rangei(0, 256);
+      const sy = rng.rangei(0, 256);
+      const si = sy * heightMap.segments + sx;
+      const v0 = snowArray[si];
+      let v1;
+      if (this.condition === "snow") {
+        v1 = Math.min(v0 + 0.2, 2);
+      } else {
+        v1 = Math.max(v0 - 0.2, 0);
+      }
+      if (v0 !== v1) {
+        snowArray[si] = v1;
+        heightMap.updateSegment(sx, sy);
+      }
+    }
   }
   stateMachine({ engine }) {
     const rng = makeRNG();
@@ -62695,7 +62899,7 @@ var WeatherSystem = class {
     const RAIN_NORMAL = 1e5;
     const RAIN_HEAVY = 5e5;
     const makeStates = (table) => {
-      const desc = {
+      const desc2 = {
         _bind: this
       };
       const TIME_SCALE = 60;
@@ -62706,7 +62910,7 @@ var WeatherSystem = class {
         key,
         { condition = "clear", effect, duration, transitions, messages }
       ] of Object.entries(table)) {
-        desc[key] = function* () {
+        desc2[key] = function* () {
           this.condition = condition;
           let actor;
           if (effect) {
@@ -62743,9 +62947,9 @@ var WeatherSystem = class {
           return nextState;
         };
       }
-      return desc;
+      return desc2;
     };
-    return makeStates({
+    const desc = makeStates({
       _start: {
         transitions: [
           [80, "clear"],
@@ -62781,7 +62985,7 @@ var WeatherSystem = class {
       },
       snow: {
         condition: "snow",
-        effect: [Snow, { count: 5e5 }],
+        effect: [Snow, { count: 35e4 }],
         duration: [20, 200],
         transitions: [[100, "snowLight"]],
         messages: {
@@ -62842,6 +63046,13 @@ var WeatherSystem = class {
         ]
       }
     });
+    if (this._startState) {
+      const state = this._startState;
+      desc._start = function* () {
+        return state;
+      };
+    }
+    return desc;
   }
 };
 
@@ -64272,7 +64483,7 @@ var matches = [{ url: "assets/proto/sprites/corn-stalk.png" }, { url: "assets/pr
 var png_asset_default = { matches };
 
 // relative:/workspaces/monorepo/source/lib/engine/examples/14-weather/lookup_table.js
-var LookupTable = class {
+var LookupTable2 = class {
   constructor({ normalize = (obj) => obj, table = null } = {}) {
     this._list = [];
     this._free = [];
@@ -64325,7 +64536,7 @@ var LookupTable = class {
 // relative:/workspaces/monorepo/source/lib/engine/examples/14-weather/tiles.js
 function initTileLookupTable() {
   const grassColorFunc = makeGrassColorFunc(256);
-  const table = new LookupTable({
+  const table = new LookupTable2({
     normalize: (obj) => {
       return {
         walkCost: obj.walkable ? 0 : 1e10,
@@ -64384,11 +64595,11 @@ function app_default() {
   return /* @__PURE__ */ import_react20.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react20.default.createElement("h1", null, "Weather"), /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement(EngineView, null)));
 }
 var db = {
-  colors: new LookupTable(),
+  colors: new LookupTable2(),
   tiles: initTileLookupTable()
 };
 var TILE = db.tiles.keys();
-var objectList = new LookupTable();
+var objectList = new LookupTable2();
 objectList.add({});
 function makeHeightMap(rng) {
   const S = 192;
