@@ -21600,8 +21600,8 @@ var require_react_dom_development = __commonJS({
           fiber.stateNode = primaryChildInstance;
           return fiber;
         }
-        function createFiberFromText(content, mode, lanes) {
-          var fiber = createFiber(HostText, content, null, mode);
+        function createFiberFromText(content2, mode, lanes) {
+          var fiber = createFiber(HostText, content2, null, mode);
           fiber.lanes = lanes;
           return fiber;
         }
@@ -27475,6 +27475,52 @@ var import_react10 = __toESM(require_react());
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/text_down.js
 var import_react11 = __toESM(require_react());
+function TextBlock({ style = {}, text }) {
+  if (!text) {
+    return null;
+  }
+  const parts = text.split("\n\n");
+  return /* @__PURE__ */ import_react11.default.createElement("div", {
+    style
+  }, parts.map((p, i) => /* @__PURE__ */ import_react11.default.createElement(TextChunk, {
+    key: i,
+    style: { margin: "0.25rem 0 0.5rem" },
+    text: p
+  })));
+}
+function TextChunk({ style, text }) {
+  const expression = /(https?:\/\/)[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)?/i;
+  const re = new RegExp(expression);
+  const parts = [];
+  let t = text;
+  let id = 1;
+  while (t.length > 0) {
+    const m = re.exec(t);
+    if (!m || !(m.index >= 0)) {
+      break;
+    }
+    const pre = t.substring(0, m.index);
+    const match = m[0];
+    const post = t.substring(m.index + match.length);
+    const url = match.match(/^[a-z]+:\/\//) ? match : `https://${match}`;
+    parts.push(/* @__PURE__ */ import_react11.default.createElement("span", {
+      key: id++
+    }, pre), /* @__PURE__ */ import_react11.default.createElement("a", {
+      key: id++,
+      href: url,
+      target: "_blank"
+    }, match));
+    t = post;
+  }
+  if (t.length > 0) {
+    parts.push(/* @__PURE__ */ import_react11.default.createElement("span", {
+      key: id++
+    }, t));
+  }
+  return /* @__PURE__ */ import_react11.default.createElement("div", {
+    style
+  }, parts);
+}
 
 // relative:/workspaces/monorepo/source/lib/react-ex/src/components/type.js
 var import_react12 = __toESM(require_react());
@@ -27855,19 +27901,72 @@ var Router = class extends import_react14.default.Component {
   }
 };
 
-// yaml:yaml:./index.yaml
-var packs = [{ path: "packs/engine-docs" }];
-var yaml_default = { packs };
+// yaml:yaml:./user_guide.yaml
+var content = [{ type: "section", name: "Core functionality", blocks: [{ type: "section", name: "engine.actors" }, { type: "section", name: "engine.world", blocks: [{ type: "text", value: "A facade for getting information about the world without having\nto directly access objects such as height maps or static meshes.\n\nThe Engine assumes a 2.5D world built on a regular grid.\n" }] }, { type: "section", name: "engine.journal" }] }, { type: "section", name: "Design principles", blocks: [{ type: "section", name: "Procedural and deterministically random" }, { type: "section", name: "2.5D with easy to create content" }, { type: "section", name: "Conceptually playable without a computer", blocks: [{ type: "text", value: "The engine logic should be straightforward enough that, at least in theory,\nthe game could be played without a computer.  \n\nThis principle helps ensure the architecture and game logic stays simple\nenough at a high-level that new contributors do not have a long ramp\ntime on understanding the game logic.\n\nThis is part of the motivation for the Rulebook project: the game logic\nshould be simple enough to translate into a table-top game.  This Rulebook\nshould greatly inform how the code architecture executes.\n" }] }, { type: "section", name: "60 frames per section", blocks: [{ type: "text", value: "The engine assumes the game will run at, and be capped to 60\nframes per second at all times.\n\nThis is a *simplifying assumption* designed to make writing code\neasier. Frames and game time can be converted because the FPS is\nconsidered to be a constant.\n\nThis also suggests that if a feature causes the frame rate to \ndip below 60fps, it is not yet ready for production release.\n\nIn a future revision of the engine this principle may be relaxed,\nbut for the early revisions it is in place.\n" }] }, { type: "section", name: "The player is simply another actor in the world", blocks: [{ type: "text", value: "Whenever possible, NPCs should interact with the player as they would\nwith any other actors. New functionality should strive to acheive this\neven though in many (if not the majority) of cases this cannot be\nimplemented.\n\nThere are *many* cases where this will not be possible. Performance requirements will \noften dictate that a behavior must be special-cased to the player.\n" }] }] }, { type: "section", name: "Architecture patterns", blocks: [{ type: "section", name: "Engine code", blocks: [{ type: "text", value: 'General code that is more of the "data processor" variety.\nOften does not understand specific details.\n\nMakes it easy for users to handle a certain subset of use cases\nwell.  Is flexible but only for those use cases.\n\nThe Engine uses a "data-driven" architecture, even where some that\ndata may be callbacks and small scripts.\n' }] }, { type: "section", name: "Leaf code", blocks: [{ type: "text", value: "Edge code that is very specific but only has dependencies on general\nlibrary and engine code.  Not code specifically depends on it.\nIf the Engine is at the trunk of the tree, the leaf code is at the\nedge.\n" }] }, { type: "section", name: "Glue code", blocks: [{ type: "text", value: 'Small amounts of "lightweight" code, sometimes with many dependencies\nthat "strings together" different parts of more generalized code.\n' }] }, { type: "section", name: "Scaffolding code", blocks: [{ type: "text", value: 'Temporary code that allows a change to be made incrementally before\nthe ideal end state is reached.\n\nScaffolding code often looks like large chunks of glue code as it \nties to generalized code with special-cases to bootstrap the \nimplementation of a new code path or functionality.\n\nAs scaffolding code is, by definition, intended to be temporary, \neventually it should be removed.  In practice in large code bases,\nreminents of scafollding code often are part of the code base.\nIt is good to try to generalize these into patterns that match\nthe working of the code engine or "push out" the scaffolding to\nleaf code.\n' }] }] }];
+var user_guide_default = { content };
 
 // builtin:./__app.js
+var SectionContext = import_react15.default.createContext({
+  depth: 0
+});
 function app_default() {
-  return /* @__PURE__ */ import_react15.default.createElement(ReadingFrame, null, /* @__PURE__ */ import_react15.default.createElement("h1", null, "Raiment Studios"), /* @__PURE__ */ import_react15.default.createElement("h3", null, "Experiments"), /* @__PURE__ */ import_react15.default.createElement("ol", null, yaml_default.packs.map(({ path }) => /* @__PURE__ */ import_react15.default.createElement("li", {
-    key: path
-  }, /* @__PURE__ */ import_react15.default.createElement("a", {
-    href: path
-  }, /* @__PURE__ */ import_react15.default.createElement(Type, null, path))))), /* @__PURE__ */ import_react15.default.createElement("h3", null, "Backlog"), /* @__PURE__ */ import_react15.default.createElement("ul", null, ["ReactEx docs", "Zelda clone", "Doom clone"].map((item) => /* @__PURE__ */ import_react15.default.createElement("li", {
-    key: item
-  }, item))));
+  useCommonStyles();
+  return /* @__PURE__ */ import_react15.default.createElement(ReadingFrame, {
+    className: "mono",
+    width: "42rem"
+  }, /* @__PURE__ */ import_react15.default.createElement("h1", {
+    className: "mt-64px mb-16px",
+    style: {
+      borderBottom: "solid 1px #DDD"
+    }
+  }, "Raiment Engine: User Guide"), /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement("strong", null, "Table of contents")), /* @__PURE__ */ import_react15.default.createElement("ol", null, user_guide_default.content.map((section) => /* @__PURE__ */ import_react15.default.createElement(TableOfContentsEntry, {
+    key: `toc-${section.name}`,
+    section
+  })))), user_guide_default.content.map((section) => /* @__PURE__ */ import_react15.default.createElement(Section, {
+    key: section.name,
+    section,
+    depth: 1
+  })));
+}
+function TableOfContentsEntry({ section }) {
+  const genKey = (section2) => `#section-${encodeURIComponent(section2.name)}`;
+  const subSections = section.blocks?.filter((b) => b.type === "section") || [];
+  return /* @__PURE__ */ import_react15.default.createElement("li", null, /* @__PURE__ */ import_react15.default.createElement("a", {
+    href: genKey(section)
+  }, section.name), !!subSections.length && /* @__PURE__ */ import_react15.default.createElement("ol", null, subSections.map((section2) => /* @__PURE__ */ import_react15.default.createElement(TableOfContentsEntry, {
+    key: genKey(section2),
+    section: section2
+  }))));
+}
+function Section({ section }) {
+  const sectionContext = import_react15.default.useContext(SectionContext);
+  return /* @__PURE__ */ import_react15.default.createElement(SectionContext.Provider, {
+    value: { ...sectionContext, depth: sectionContext.depth + 1 }
+  }, /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement("a", {
+    name: `section-${encodeURIComponent(section.name)}`
+  }), /* @__PURE__ */ import_react15.default.createElement("h2", {
+    style: {
+      marginTop: `${48 * 2 / (sectionContext.depth + 2)}px`,
+      fontSize: `${24 * 4 / (sectionContext.depth + 4)}px`
+    }
+  }, section.name), /* @__PURE__ */ import_react15.default.createElement("div", null, section.blocks?.map((block, index4) => /* @__PURE__ */ import_react15.default.createElement(Block, {
+    key: index4,
+    block
+  })))));
+}
+function Block({ block }) {
+  switch (block.type) {
+    case "text":
+      return /* @__PURE__ */ import_react15.default.createElement(TextBlock, {
+        text: block.value
+      });
+    case "section":
+      return /* @__PURE__ */ import_react15.default.createElement(Section, {
+        section: block
+      });
+    default:
+      return /* @__PURE__ */ import_react15.default.createElement("div", null, "UNKNOWN BLOCK: ", block.type);
+  }
 }
 
 // builtin:./__bootstrap.js
