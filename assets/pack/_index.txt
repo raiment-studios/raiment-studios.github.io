@@ -1,3 +1,17 @@
+collections:
+  base/sprite/matthewsmith:
+    license:
+      &a1
+      name: Public Domain 1.0
+      url: https://creativecommons.org/publicdomain/zero/1.0/
+      description: >
+        Licensed as public domain:
+        https://creativecommons.org/publicdomain/zero/1.0/.
+
+
+        Original artwork by Matthew Smith (https://kilowattgames.com/).  Modified 
+
+        by Raiment Studios (https://github.com/raiment-studios/) and associated contributors.
 assets:
   - pack: base
     type: encounter
@@ -97,28 +111,28 @@ assets:
     name: commoner-02
     files:
       - base/sprite/matthewsmith/commoner-02.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: commoner-03
     files:
       - base/sprite/matthewsmith/commoner-03.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: commoner-04
     files:
       - base/sprite/matthewsmith/commoner-04.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: commoner-05
     files:
       - base/sprite/matthewsmith/commoner-05.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
@@ -155,28 +169,28 @@ assets:
     name: commoner-08
     files:
       - base/sprite/matthewsmith/commoner-08.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: commoner-09
     files:
       - base/sprite/matthewsmith/commoner-09.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: commoner-10
     files:
       - base/sprite/matthewsmith/commoner-10.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: commoner-11
     files:
       - base/sprite/matthewsmith/commoner-11.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
@@ -213,7 +227,7 @@ assets:
     name: rabbit
     files:
       - base/sprite/matthewsmith/rabbit.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
@@ -235,378 +249,378 @@ assets:
     name: tile000
     files:
       - base/sprite/matthewsmith/tile000.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile001
     files:
       - base/sprite/matthewsmith/tile001.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile002
     files:
       - base/sprite/matthewsmith/tile002.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile003
     files:
       - base/sprite/matthewsmith/tile003.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile009
     files:
       - base/sprite/matthewsmith/tile009.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile010
     files:
       - base/sprite/matthewsmith/tile010.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile011
     files:
       - base/sprite/matthewsmith/tile011.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile012
     files:
       - base/sprite/matthewsmith/tile012.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile013
     files:
       - base/sprite/matthewsmith/tile013.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile014
     files:
       - base/sprite/matthewsmith/tile014.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile015
     files:
       - base/sprite/matthewsmith/tile015.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile016
     files:
       - base/sprite/matthewsmith/tile016.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile017
     files:
       - base/sprite/matthewsmith/tile017.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile018
     files:
       - base/sprite/matthewsmith/tile018.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile019
     files:
       - base/sprite/matthewsmith/tile019.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile020
     files:
       - base/sprite/matthewsmith/tile020.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile021
     files:
       - base/sprite/matthewsmith/tile021.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile022
     files:
       - base/sprite/matthewsmith/tile022.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile023
     files:
       - base/sprite/matthewsmith/tile023.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile024
     files:
       - base/sprite/matthewsmith/tile024.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile025
     files:
       - base/sprite/matthewsmith/tile025.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile026
     files:
       - base/sprite/matthewsmith/tile026.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile027
     files:
       - base/sprite/matthewsmith/tile027.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile028
     files:
       - base/sprite/matthewsmith/tile028.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile029
     files:
       - base/sprite/matthewsmith/tile029.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile030
     files:
       - base/sprite/matthewsmith/tile030.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile031
     files:
       - base/sprite/matthewsmith/tile031.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile032
     files:
       - base/sprite/matthewsmith/tile032.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile034
     files:
       - base/sprite/matthewsmith/tile034.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile035
     files:
       - base/sprite/matthewsmith/tile035.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile036
     files:
       - base/sprite/matthewsmith/tile036.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile037
     files:
       - base/sprite/matthewsmith/tile037.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile038
     files:
       - base/sprite/matthewsmith/tile038.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile039
     files:
       - base/sprite/matthewsmith/tile039.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile040
     files:
       - base/sprite/matthewsmith/tile040.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile041
     files:
       - base/sprite/matthewsmith/tile041.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile043
     files:
       - base/sprite/matthewsmith/tile043.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile044
     files:
       - base/sprite/matthewsmith/tile044.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile045
     files:
       - base/sprite/matthewsmith/tile045.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile046
     files:
       - base/sprite/matthewsmith/tile046.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile047
     files:
       - base/sprite/matthewsmith/tile047.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile048
     files:
       - base/sprite/matthewsmith/tile048.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile049
     files:
       - base/sprite/matthewsmith/tile049.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile050
     files:
       - base/sprite/matthewsmith/tile050.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile051
     files:
       - base/sprite/matthewsmith/tile051.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile052
     files:
       - base/sprite/matthewsmith/tile052.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile053
     files:
       - base/sprite/matthewsmith/tile053.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile055
     files:
       - base/sprite/matthewsmith/tile055.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile056
     files:
       - base/sprite/matthewsmith/tile056.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile057
     files:
       - base/sprite/matthewsmith/tile057.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile058
     files:
       - base/sprite/matthewsmith/tile058.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile059
     files:
       - base/sprite/matthewsmith/tile059.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile060
     files:
       - base/sprite/matthewsmith/tile060.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
     name: tile061
     files:
       - base/sprite/matthewsmith/tile061.png
-    license: null
+    license: *a1
   - pack: base
     type: sprite
     group: matthewsmith
