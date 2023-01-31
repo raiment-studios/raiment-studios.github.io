@@ -1,0 +1,61 @@
+version: 1.0.0
+table:
+  - id: quest-2605
+    value: "The forest outside the town of Belark is turning rapidly from forest
+      into desert. Graham is helping to organize and guard the caravans of
+      people relocating. The maelstrom is active in the area. Failure: attacks
+      to the caravan, lost in a sandstorm, rebelious townsfolk. Success: gaining
+      favor of townsfolk, of the leaders, discovering artefacts in the
+      sandstorms, looting left behind goods."
+  - id: quest-500
+    value: "Kestrel wakes in another time, aboard an abandoned starship. The
+      starship was an AI that over eons now has dementia. Kestrel makes
+      frustrating attempts to gain information from the starship about what
+      happened to Galthea, Tristan, and the world. Success: she gets rumors. She
+      must find a portal back. Failure: the ship pulls her into its insanity."
+  - id: quest-3939
+    value: "Cedric finds a oversized key in the graveyard outside his church in the
+      evening. A mist envelopes the night and forest becomes a portal to another
+      dimension. Success: Cedric finds an intelligent race that knows about the
+      maelstrom and its effects. Failure: Cedric wanders into the mist and
+      encourages monsters that attack and kill him."
+  - id: quest-7340
+    value: "A small Wayland artifact has been stolen from Logan while they are
+      camping on the way to the city-state of Alebane. They saw and heard
+      nothing that evening. The maelstrom was calm. Logan finds a woman who has
+      the artifact. Kestrel finds a young man who has the artefact. Cedric finds
+      a young girl who has the artefact. All of them convince that they need it
+      more than Logan. Success: gets artefact back, but the stranger shares
+      little information. Success: the stranger keeps the artefact but will may
+      return at some future date to help them."
+  - id: quest-7193
+    value: "A shadow dragon has been sighted at a tall peak outside of the
+      city-state of Melenscane. It's a maelstrom manifestation unlike any that
+      has been seen in the area: persistent and large. A band of adventurers is
+      gathering in the town to scale the mountain-side and investigate. They
+      seem fools for none of them are among the immune. Logan, Kestrel, and
+      Isabel must decide whether to accompany the group - perhaps to learn
+      something themselves or perhaps to lessen the chance of the group all
+      dying out there."
+  - id: quest-5561
+    value: Morgan comes across an old woman who claims to be cursed queen who is
+      hundreds of years old. She tells a story of who her husband was murdered
+      by bandits when the maelstrom swept through and ravaged their castle and
+      kingdom. Morgan is anxious to catch up with Graham and does not want the
+      distraction, but sees an eerie parallel between the queen and her story
+      and her goal of finding Graham at the castle. She does not know how to
+      help this woman, who does not seem to know she is now in a different
+      reality.
+  - id: quest-7530
+    value: The leader of Groveback, a woman named Alli, is seeking adventurers to go
+      into the forests of Groveback to retrieve Wayland artifacts to bring back
+      to the city-state to reenforce it against the rising maelstrom.
+  - id: quest-3933
+    value: Brecha, an old adventurer and part immue, has been hired to rescue a
+      kidnapped young man who is being held hostage by a group in a
+      well-fortified outpost outside of Antoria. The group who took him hostage
+      seem to be some sort of cultists believing in the coming war with some
+      beast of the maelstrom.
+  - id: quest-6000
+    value: A bard is murdered in Udacbend. Logan is asked to investigate in exchange
+      for payment.
