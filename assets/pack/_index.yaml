@@ -79,13 +79,6 @@ assets:
   - pack: base
     type: sprite
     group: matthewsmith
-    name: _metadata
-    files:
-      - base/sprite/matthewsmith/_metadata.yaml
-    license: null
-  - pack: base
-    type: sprite
-    group: matthewsmith
     name: cat-00
     files:
       - base/sprite/matthewsmith/cat-00.png
@@ -644,13 +637,6 @@ assets:
       Original artwork by Matthew Smith (https://kilowattgames.com/).  Modified 
 
       by Raiment Studios (https://github.com/raiment-studios/) and associated contributors.
-  - pack: ext-metrominis
-    type: README.md
-    group: null
-    name: null
-    files:
-      - ext-metrominis/README.md
-    license: null
   - pack: ext-metrominis
     type: voxmodels
     group: null
