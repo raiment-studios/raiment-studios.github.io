@@ -8,13 +8,15 @@
     <subtitle>Raiment Studios Blog</subtitle>
     <icon>https://ridleywinters.github.io/img/favicon.ico</icon>
     <entry>
-        <title type="html"><![CDATA[Interesting reads]]></title>
+        <title type="html"><![CDATA[Worth reading]]></title>
         <id>https://ridleywinters.github.io/blog/2024/08/11/index</id>
         <link href="https://ridleywinters.github.io/blog/2024/08/11/index"/>
         <updated>2024-08-11T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[* Arc and Mutex in Rust - useful examples and explanation about thes Rust types]]></summary>
+        <summary type="html"><![CDATA[-   Arc and Mutex in Rust - useful examples and explanation about thes Rust types]]></summary>
         <content type="html"><![CDATA[<ul>
 <li><a href="https://itsallaboutthebit.com/arc-mutex/" target="_blank" rel="noopener noreferrer">Arc and Mutex in Rust</a> - useful examples and explanation about thes Rust types</li>
+<li><a href="https://www.reddit.com/r/rust/comments/141ll5b/wgpu_questions_vertex_buffers/" target="_blank" rel="noopener noreferrer">Reddit thread about wgpu buffers</a></li>
+<li><a href="https://toji.dev/webgpu-best-practices/buffer-uploads.html" target="_blank" rel="noopener noreferrer">WebGPU Buffer Uploads</a></li>
 </ul>]]></content>
     </entry>
     <entry>
