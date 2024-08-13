@@ -4,10 +4,20 @@
         <title>Raiment Studios Blog</title>
         <link>https://raiment-studios.com/blog</link>
         <description>Raiment Studios Blog</description>
-        <lastBuildDate>Sun, 11 Aug 2024 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 12 Aug 2024 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[WGPU progress]]></title>
+            <link>https://raiment-studios.com/blog/2024/08/12/index</link>
+            <guid>https://raiment-studios.com/blog/2024/08/12/index</guid>
+            <pubDate>Mon, 12 Aug 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Progress update: have some vertices making it from disk to the screen. That's a cube sitting behind of a "2D" pentagon (not necessarily obvious without lights or shading yet).]]></description>
+            <content:encoded><![CDATA[<p>Progress update: have some vertices making it from disk to the screen. That's a cube sitting behind of a "2D" pentagon (not necessarily obvious without lights or shading yet).</p>
+<p>The general task I've been working on is taking the "catch-all" <code>State</code> object from the <a href="https://sotrh.github.io/learn-wgpu/" target="_blank" rel="noopener noreferrer">Learn Wgpu tutorial</a> and refactoring into a rendering architecture. This requires wrangling with lifetimes and data sharing, both in my learning how Rust works as well as how objects work in wgpu.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-1eb40d212c07243966a0d680e442c690.png" width="912" height="740" class="img_ev3q"></p>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Worth reading]]></title>
             <link>https://raiment-studios.com/blog/2024/08/11/index</link>
