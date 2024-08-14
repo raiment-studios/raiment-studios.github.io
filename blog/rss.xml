@@ -16,7 +16,11 @@
             <description><![CDATA[Progress update: have some vertices making it from disk to the screen. That's a cube sitting behind of a "2D" pentagon (not necessarily obvious without lights or shading yet).]]></description>
             <content:encoded><![CDATA[<p>Progress update: have some vertices making it from disk to the screen. That's a cube sitting behind of a "2D" pentagon (not necessarily obvious without lights or shading yet).</p>
 <p>The general task I've been working on is taking the "catch-all" <code>State</code> object from the <a href="https://sotrh.github.io/learn-wgpu/" target="_blank" rel="noopener noreferrer">Learn Wgpu tutorial</a> and refactoring into a rendering architecture. This requires wrangling with lifetimes and data sharing, both in my learning how Rust works as well as how objects work in wgpu.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-1eb40d212c07243966a0d680e442c690.png" width="912" height="740" class="img_ev3q"></p>]]></content:encoded>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-1eb40d212c07243966a0d680e442c690.png" width="912" height="740" class="img_ev3q"></p>
+<p>A bit more progress, getting basic semi-harcoded face shading working.  Also changed the camera axes to a <code>Z+ =&gt; UP</code> system.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-b9d6eb27ed14cb48d2bcdebedcca0991.png" width="912" height="740" class="img_ev3q"></p>
+<p>A bit more progress: depth buffering finally enabled and rendering multiple objects.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-2-71bd199888c8e864ae0473b26023046d.png" width="912" height="740" class="img_ev3q"></p>]]></content:encoded>
         </item>
         <item>
             <title><![CDATA[Worth reading]]></title>
