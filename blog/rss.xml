@@ -4,10 +4,30 @@
         <title>Raiment Studios Blog</title>
         <link>https://raiment-studios.com/blog</link>
         <description>Raiment Studios Blog</description>
-        <lastBuildDate>Thu, 15 Aug 2024 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 16 Aug 2024 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Incremental progress]]></title>
+            <link>https://raiment-studios.com/blog/2024/08/16/index</link>
+            <guid>https://raiment-studios.com/blog/2024/08/16/index</guid>
+            <pubDate>Fri, 16 Aug 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Not much visually different, but improved the code base a bit. Most notably having the engine automtically run model generation scripts (rather than manually running scripts to create static assets) and improved logging.]]></description>
+            <content:encoded><![CDATA[<p>Not much visually different, but improved the code base a bit. Most notably having the engine automtically run model generation scripts (rather than manually running scripts to create static assets) and improved logging.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="changes">Changes<a href="https://raiment-studios.com/blog/2024/08/16/index#changes" class="hash-link" aria-label="Direct link to Changes" title="Direct link to Changes">​</a></h3>
+<p>➕ Split model definition YAML from generator script JS<br>
+➕ Landscape generator takes grid size as an optional parameter<br>
+➕ Improved logging output<br>
+➕ Default camera now set based on scene bounds<br>
+➕ Added <code>id</code> and <code>generation</code> to models to detect cache staleness<br>
+➕ Added <code>BoundingBox</code><br>
+🗄️ Split files for better organization<br>
+➕ git status alias not provides links to diffs on GitHub so summary changelogs like this are easier to create<br></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="potential-next-steps">Potential next steps<a href="https://raiment-studios.com/blog/2024/08/16/index#potential-next-steps" class="hash-link" aria-label="Direct link to Potential next steps" title="Direct link to Potential next steps">​</a></h3>
+<p><strong>🔮 Hot reloading of the module when the script or model file changes</strong></p>
+<p>The above is a bit tricky as it creates a dependency between the loading code, an async file watcher, and the main render loop. I don't yet have a clear vision for how to connect those in a non-intrusive manner, but otherwise would like to add "hot reloading" as a core piece of functionality to make development easier and faster.</p>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Progress]]></title>
             <link>https://raiment-studios.com/blog/2024/08/15/index</link>
