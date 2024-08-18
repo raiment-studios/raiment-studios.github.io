@@ -110,8 +110,8 @@
         <id>https://raiment-studios.com/blog/2024/08/16/index</id>
         <link href="https://raiment-studios.com/blog/2024/08/16/index"/>
         <updated>2024-08-16T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Not much visually different, but improved the code base a bit. Most notably having the engine automtically run model generation scripts (rather than manually running scripts to create static assets) and improved logging.]]></summary>
-        <content type="html"><![CDATA[<p>Not much visually different, but improved the code base a bit. Most notably having the engine automtically run model generation scripts (rather than manually running scripts to create static assets) and improved logging.</p>
+        <summary type="html"><![CDATA[Not much visually different, but improved the code base a bit. Most notably having the engine automatically run model generation scripts (rather than manually running scripts to create static assets) and improved logging.]]></summary>
+        <content type="html"><![CDATA[<p>Not much visually different, but improved the code base a bit. Most notably having the engine automatically run model generation scripts (rather than manually running scripts to create static assets) and improved logging.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="changes">Changes<a href="https://raiment-studios.com/blog/2024/08/16/index#changes" class="hash-link" aria-label="Direct link to Changes" title="Direct link to Changes">​</a></h3>
 <p>➕ Split model definition YAML from generator script JS<br>
 ➕ Landscape generator takes grid size as an optional parameter<br>
