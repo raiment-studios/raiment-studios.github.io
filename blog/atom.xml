@@ -2,11 +2,32 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://raiment-studios.com/blog</id>
     <title>Raiment Studios Blog</title>
-    <updated>2024-08-18T00:00:00.000Z</updated>
+    <updated>2024-08-19T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://raiment-studios.com/blog"/>
     <subtitle>Raiment Studios Blog</subtitle>
     <icon>https://raiment-studios.com/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Terrain generator]]></title>
+        <id>https://raiment-studios.com/blog/2024/08/19/index</id>
+        <link href="https://raiment-studios.com/blog/2024/08/19/index"/>
+        <updated>2024-08-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Added the ability to write Rust "scripts" (basically crates that the engine will run to get model output from) and added a voxel terrain with some basic procedural noise.]]></summary>
+        <content type="html"><![CDATA[<p>Added the ability to write Rust "scripts" (basically crates that the engine will run to get model output from) and added a voxel terrain with some basic procedural noise.</p>
+<p>Also switched the WGPU to prefer linear RGB color until I progress a bit further and want to handle sRGB correctly.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-d176f8571a55a25535876cf7e23a200e.png" width="912" height="740" class="img_ev3q"></p>]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Rust generator "scripts"]]></title>
+        <id>https://raiment-studios.com/blog/2024/08/18/p2</id>
+        <link href="https://raiment-studios.com/blog/2024/08/18/p2"/>
+        <updated>2024-08-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.]]></summary>
+        <content type="html"><![CDATA[<p>Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-fcfe664f1be733bcd03217361f4c0311.png" width="868" height="696" class="img_ev3q"></p>]]></content>
+        <category label="scripting" term="scripting"/>
+        <category label="Rust" term="Rust"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hot reloading architecture]]></title>
         <id>https://raiment-studios.com/blog/2024/08/18/p1</id>
@@ -79,17 +100,6 @@
 <p>It then loops over all active entities in the engine and checks if they are in the dirty list. If they are, it copies in the relevant data from the freshly loaded scene over the current data -- thus refreshing the asset.</p>]]></content>
         <category label="hot_reloading" term="hot_reloading"/>
         <category label="architecture" term="architecture"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Rust generator "scripts"]]></title>
-        <id>https://raiment-studios.com/blog/2024/08/18/p2</id>
-        <link href="https://raiment-studios.com/blog/2024/08/18/p2"/>
-        <updated>2024-08-18T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.]]></summary>
-        <content type="html"><![CDATA[<p>Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-fcfe664f1be733bcd03217361f4c0311.png" width="868" height="696" class="img_ev3q"></p>]]></content>
-        <category label="scripting" term="scripting"/>
-        <category label="Rust" term="Rust"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[MagicaVoxel VOX loading]]></title>
