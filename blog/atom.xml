@@ -2,11 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://raiment-studios.com/blog</id>
     <title>Raiment Studios Blog</title>
-    <updated>2024-08-19T00:00:00.000Z</updated>
+    <updated>2024-08-20T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://raiment-studios.com/blog"/>
     <subtitle>Raiment Studios Blog</subtitle>
     <icon>https://raiment-studios.com/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Plugins as dylibs]]></title>
+        <id>https://raiment-studios.com/blog/2024/08/20/index</id>
+        <link href="https://raiment-studios.com/blog/2024/08/20/index"/>
+        <updated>2024-08-20T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Nothing new in the image below! Under the hood though, the code changed...]]></summary>
+        <content type="html"><![CDATA[<p>Nothing new in the image below! Under the hood though, the code changed...</p>
+<div style="display:flex;flex-direction:row;gap:16px"><div style="flex:1 0 0;border-radius:4px;border:1px solid #CCC;padding:16px"><p><strong>From</strong></p><p>Build and run Rust plugins as processes.</p><p>Pass parameters in as a JSON string to the command-line.
+Receive output as YAML on stdout.</p><p>Simple but not the most efficient encoding and limited to one fixed output on stdout.</p></div><div style="font-size:200%;align-self:center">⟶</div><div style="flex:1 0 0;border-radius:4px;border:1px solid #CCC;padding:16px"><p><strong>To</strong></p><p>Build and run Rust plugins as dynamic libraries.</p><p>Pass parameters via JSON still, but plugin functions return structs as <code>bitcode</code>-encoded byte arrays.</p><p>Still fairly simple, bitcode seems (not that surprisingly) more efficient. The dynamic library can have multiple entry points for more flexibility.</p></div></div>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-74b590ef891a14b0fadf64ade23806cc.png" width="912" height="740" class="img_ev3q"></p>]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Terrain generator]]></title>
         <id>https://raiment-studios.com/blog/2024/08/19/index</id>
@@ -16,6 +27,9 @@
         <content type="html"><![CDATA[<p>Added the ability to write Rust "scripts" (basically crates that the engine will run to get model output from) and added a voxel terrain with some basic procedural noise. I think of it as a "script" since it uses a blanket important <code>use scriptlib::*;</code> which brings in a lot of utilities to keep the code itself concise.</p>
 <p>Also switched the WGPU to prefer linear RGB color until I progress a bit further and want to handle sRGB correctly.</p>
 <p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-d176f8571a55a25535876cf7e23a200e.png" width="912" height="740" class="img_ev3q"></p>]]></content>
+        <category label="terrain" term="terrain"/>
+        <category label="scripting" term="scripting"/>
+        <category label="rust" term="rust"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[Hot reloading architecture]]></title>
