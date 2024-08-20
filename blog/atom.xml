@@ -16,7 +16,11 @@
         <content type="html"><![CDATA[<p>Nothing new in the image below! Under the hood though, the code changed...</p>
 <div style="display:flex;flex-direction:row;gap:16px"><div style="flex:1 0 0;border-radius:4px;border:1px solid #CCC;padding:16px"><p><strong>From</strong></p><p>Build and run Rust plugins as processes.</p><p>Pass parameters in as a JSON string to the command-line.
 Receive output as YAML on stdout.</p><p>Simple but not the most efficient encoding and limited to one fixed output on stdout.</p></div><div style="font-size:200%;align-self:center">⟶</div><div style="flex:1 0 0;border-radius:4px;border:1px solid #CCC;padding:16px"><p><strong>To</strong></p><p>Build and run Rust plugins as dynamic libraries.</p><p>Pass parameters via JSON still, but plugin functions return structs as <code>bitcode</code>-encoded byte arrays.</p><p>Still fairly simple, bitcode seems (not that surprisingly) more efficient. The dynamic library can have multiple entry points for more flexibility.</p></div></div>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-74b590ef891a14b0fadf64ade23806cc.png" width="912" height="740" class="img_ev3q"></p>]]></content>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-74b590ef891a14b0fadf64ade23806cc.png" width="912" height="740" class="img_ev3q"></p>
+<p>It's somewhat interesting to note this is my third "try" at plugins already. Maybe I should plan more in advance? Maybe this is part of the learning experience?</p>
+<p><strong>#3 Rust dynamic libraries:</strong> once I had a better understanding of what I wanted to do, this seems like a more natural fit. Leaves room for more generic plugins, including ones that stay in memory. May want a process/"service"-based mode for added decoupling in the future, but for now, this is a very easy approach for single-file, run-once plugins.</p>
+<p><strong>#2 Rust processes</strong>: moved to this to get the type checking. As I'm still learning Rust, more or less dove straight into hacking this together just to get something to work. Stuck with the JSON/YAML exchange formats since it let me postpone worrying about them.</p>
+<p><strong>#1 Deno-based node plug-ins</strong>: had some old JS code for generating terrains. Thought it might be nice to allow the imprecision of JS and just rely on JSON/YAML formats for data exchange. Moved on what I quickly realized I wanted the type-checking of Rust, including on the interchange formats.</p>]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[Terrain generator]]></title>
@@ -30,6 +34,17 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
         <category label="terrain" term="terrain"/>
         <category label="scripting" term="scripting"/>
         <category label="rust" term="rust"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Rust generator "scripts"]]></title>
+        <id>https://raiment-studios.com/blog/2024/08/18/p2</id>
+        <link href="https://raiment-studios.com/blog/2024/08/18/p2"/>
+        <updated>2024-08-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.]]></summary>
+        <content type="html"><![CDATA[<p>Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-fcfe664f1be733bcd03217361f4c0311.png" width="868" height="696" class="img_ev3q"></p>]]></content>
+        <category label="scripting" term="scripting"/>
+        <category label="Rust" term="Rust"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[Hot reloading architecture]]></title>
@@ -103,17 +118,6 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p>It then loops over all active entities in the engine and checks if they are in the dirty list. If they are, it copies in the relevant data from the freshly loaded scene over the current data -- thus refreshing the asset.</p>]]></content>
         <category label="hot_reloading" term="hot_reloading"/>
         <category label="architecture" term="architecture"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Rust generator "scripts"]]></title>
-        <id>https://raiment-studios.com/blog/2024/08/18/p2</id>
-        <link href="https://raiment-studios.com/blog/2024/08/18/p2"/>
-        <updated>2024-08-18T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.]]></summary>
-        <content type="html"><![CDATA[<p>Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-fcfe664f1be733bcd03217361f4c0311.png" width="868" height="696" class="img_ev3q"></p>]]></content>
-        <category label="scripting" term="scripting"/>
-        <category label="Rust" term="Rust"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[MagicaVoxel VOX loading]]></title>
