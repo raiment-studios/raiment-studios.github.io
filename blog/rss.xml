@@ -326,17 +326,5 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p>In the context of a single program, wgpu strikes me simply as a very low-level library with detailed, highly structured configuration.</p>]]></content:encoded>
             <category>wgpu</category>
         </item>
-        <item>
-            <title><![CDATA[Rust challenges]]></title>
-            <link>https://raiment-studios.com/blog/1999/01/01/rust-challenges</link>
-            <guid>https://raiment-studios.com/blog/1999/01/01/rust-challenges</guid>
-            <pubDate>Fri, 01 Jan 1999 00:00:00 GMT</pubDate>
-            <description><![CDATA[For beginners]]></description>
-            <content:encoded><![CDATA[<h2 class="anchor anchorWithStickyNavbar_LWe7" id="for-beginners">For beginners<a href="https://raiment-studios.com/blog/1999/01/01/rust-challenges#for-beginners" class="hash-link" aria-label="Direct link to For beginners" title="Direct link to For beginners">​</a></h2>
-<p><strong>Strings are confusing</strong>. Unclear when to use <code>&amp;str</code> versus <code>String</code>, when you need to convert, when you can use <code>+</code>, etc. String manipulation (for better or worse) is a fundamnetal for getting started making the language harder to adopt.</p>
-<p><strong>Lifetimes</strong>. Might be nice to use ref-counting in more tutorials to punt the static analysis issues out for later.</p>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="for-intermediate">For intermediate<a href="https://raiment-studios.com/blog/1999/01/01/rust-challenges#for-intermediate" class="hash-link" aria-label="Direct link to For intermediate" title="Direct link to For intermediate">​</a></h2>
-<p><strong>Modules and crate</strong>. Great flexible system, but a bit confusing given the flexibility. Contrast to Go which has conventions which are simple.</p>]]></content:encoded>
-        </item>
     </channel>
 </rss>
