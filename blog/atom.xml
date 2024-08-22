@@ -2,11 +2,33 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://raiment-studios.com/blog</id>
     <title>Raiment Studios Blog</title>
-    <updated>2024-08-21T00:00:00.000Z</updated>
+    <updated>2024-08-22T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://raiment-studios.com/blog"/>
     <subtitle>Raiment Studios Blog</subtitle>
     <icon>https://raiment-studios.com/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Render passes]]></title>
+        <id>https://raiment-studios.com/blog/2024/08/22/index</id>
+        <link href="https://raiment-studios.com/blog/2024/08/22/index"/>
+        <updated>2024-08-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[What's exciting about the below image?]]></summary>
+        <content type="html"><![CDATA[<p>What's exciting about the below image?</p>
+<p>It is rendering <strong>lines</strong>.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-8f9e1041ab2c3aaf45d4effad34053d3.png" width="868" height="696" class="img_ev3q"></p>
+<p>Mostly internal work to refactor code and conceptual work to understand the various components of the WGPU architecture, but the engine code now supports rendering lines. This involved setting up a set shader, render pass, line geometry buffer, and a few other things.</p>
+<p>Not too exciting, but progress!</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="debug-view">Debug view<a href="https://raiment-studios.com/blog/2024/08/22/index#debug-view" class="hash-link" aria-label="Direct link to Debug view" title="Direct link to Debug view">​</a></h4>
+<p>Also in the not-that-exciting category, I added a debug web view. The engine starts a small HTTP server that serves up basic data about the engine state. There's not much there yet!</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-0a48db87f37fd262f737e46352018609.png" width="580" height="515" class="img_ev3q"></p>]]></content>
+        <category label="wgpu" term="wgpu"/>
+        <category label="render passes" term="render passes"/>
+        <category label="debug" term="debug"/>
+        <category label="lines" term="lines"/>
+        <category label="shaders" term="shaders"/>
+        <category label="wgsl" term="wgsl"/>
+        <category label="http" term="http"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[WIP: voxel chunking]]></title>
         <id>https://raiment-studios.com/blog/2024/08/21/index</id>
@@ -14,6 +36,9 @@
         <updated>2024-08-21T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[A very work-in-progress implementation of voxel chunking and generation.]]></summary>
         <content type="html"><![CDATA[<p>A very work-in-progress implementation of voxel chunking and generation.</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="update-3-optimizations">Update 3: "Optimizations"<a href="https://raiment-studios.com/blog/2024/08/21/index#update-3-optimizations" class="hash-link" aria-label="Direct link to Update 3: &quot;Optimizations&quot;" title="Direct link to Update 3: &quot;Optimizations&quot;">​</a></h4>
+<p>After thinking about what I need to optimzie for a bit, I realized I was still running everything as debug build! <!-- -->🤦‍♂️</p>
+<video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-08-21+14-58-34.mp4"></video>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="update-2-slow-but-headed-in-the-right-direction">Update 2: slow, but headed in the right direction<a href="https://raiment-studios.com/blog/2024/08/21/index#update-2-slow-but-headed-in-the-right-direction" class="hash-link" aria-label="Direct link to Update 2: slow, but headed in the right direction" title="Direct link to Update 2: slow, but headed in the right direction">​</a></h4>
 <video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-08-21+13-19-32.mp4"></video>
 <h4 class="anchor anchorWithStickyNavbar_LWe7" id="update-with-more-progress">Update with more progress<a href="https://raiment-studios.com/blog/2024/08/21/index#update-with-more-progress" class="hash-link" aria-label="Direct link to Update with more progress" title="Direct link to Update with more progress">​</a></h4>
@@ -299,5 +324,17 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p>In the context of creating <em>many different wgpu programs</em>, I can see how repeating the exact same configuration would constitue a good deal of "boilerplate code." However, that commonality could be easily wrapped into a reusable library, which -- if we're willing to run with my definition of boilerplate code! -- means it is not boilerplate code as the code does not have the quality that it "must be" repeated.</p>
 <p>In the context of a single program, wgpu strikes me simply as a very low-level library with detailed, highly structured configuration.</p>]]></content>
         <category label="wgpu" term="wgpu"/>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Rust challenges]]></title>
+        <id>https://raiment-studios.com/blog/1999/01/01/rust-challenges</id>
+        <link href="https://raiment-studios.com/blog/1999/01/01/rust-challenges"/>
+        <updated>1999-01-01T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[For beginners]]></summary>
+        <content type="html"><![CDATA[<h2 class="anchor anchorWithStickyNavbar_LWe7" id="for-beginners">For beginners<a href="https://raiment-studios.com/blog/1999/01/01/rust-challenges#for-beginners" class="hash-link" aria-label="Direct link to For beginners" title="Direct link to For beginners">​</a></h2>
+<p><strong>Strings are confusing</strong>. Unclear when to use <code>&amp;str</code> versus <code>String</code>, when you need to convert, when you can use <code>+</code>, etc. String manipulation (for better or worse) is a fundamnetal for getting started making the language harder to adopt.</p>
+<p><strong>Lifetimes</strong>. Might be nice to use ref-counting in more tutorials to punt the static analysis issues out for later.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="for-intermediate">For intermediate<a href="https://raiment-studios.com/blog/1999/01/01/rust-challenges#for-intermediate" class="hash-link" aria-label="Direct link to For intermediate" title="Direct link to For intermediate">​</a></h2>
+<p><strong>Modules and crate</strong>. Great flexible system, but a bit confusing given the flexibility. Contrast to Go which has conventions which are simple.</p>]]></content>
     </entry>
 </feed>
