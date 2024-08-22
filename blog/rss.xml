@@ -17,9 +17,9 @@
             <content:encoded><![CDATA[<p>What's exciting about the below image?</p>
 <p>It is rendering <strong>lines</strong>.</p>
 <p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-8f9e1041ab2c3aaf45d4effad34053d3.png" width="868" height="696" class="img_ev3q"></p>
-<p>Mostly internal work to refactor code and conceptual work to understand the various components of the WGPU architecture, but the engine code now supports rendering lines. This involved setting up a set shader, render pass, line geometry buffer, and a few other things.</p>
+<p>Mostly internal work to refactor code and conceptual work to understand the various components of the WGPU architecture, but the engine code now supports rendering lines. This involved setting up a separate shader, render pass, line geometry buffer, and a few other things.</p>
 <p>Not too exciting, but progress!</p>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="debug-view">Debug view<a href="https://raiment-studios.com/blog/2024/08/22/index#debug-view" class="hash-link" aria-label="Direct link to Debug view" title="Direct link to Debug view">​</a></h4>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="also-an-engine-debug-view">Also: an engine debug view<a href="https://raiment-studios.com/blog/2024/08/22/index#also-an-engine-debug-view" class="hash-link" aria-label="Direct link to Also: an engine debug view" title="Direct link to Also: an engine debug view">​</a></h4>
 <p>Also in the not-that-exciting category, I added a debug web view. The engine starts a small HTTP server that serves up basic data about the engine state. There's not much there yet!</p>
 <p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-0a48db87f37fd262f737e46352018609.png" width="580" height="515" class="img_ev3q"></p>]]></content:encoded>
             <category>wgpu</category>
