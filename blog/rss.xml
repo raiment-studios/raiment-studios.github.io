@@ -4,10 +4,24 @@
         <title>Raiment Studios Blog</title>
         <link>https://raiment-studios.com/blog</link>
         <description>Raiment Studios Blog</description>
-        <lastBuildDate>Thu, 22 Aug 2024 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 23 Aug 2024 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Render pipeline improvements]]></title>
+            <link>https://raiment-studios.com/blog/2024/08/23/index</link>
+            <guid>https://raiment-studios.com/blog/2024/08/23/index</guid>
+            <pubDate>Fri, 23 Aug 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[-   Cleaned up the line rendering a bit]]></description>
+            <content:encoded><![CDATA[<ul>
+<li>Cleaned up the line rendering a bit</li>
+<li>Added a "built-in" primitve for an XY-grid</li>
+<li>Modified the instance to allow it to stay locked to the camera position</li>
+<li>Allow for pass filters so instances go to the right pass / shader</li>
+</ul>
+<video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-08-23+10-27-26.mp4"></video>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Render passes]]></title>
             <link>https://raiment-studios.com/blog/2024/08/22/index</link>

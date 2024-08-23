@@ -2,11 +2,25 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://raiment-studios.com/blog</id>
     <title>Raiment Studios Blog</title>
-    <updated>2024-08-22T00:00:00.000Z</updated>
+    <updated>2024-08-23T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://raiment-studios.com/blog"/>
     <subtitle>Raiment Studios Blog</subtitle>
     <icon>https://raiment-studios.com/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Render pipeline improvements]]></title>
+        <id>https://raiment-studios.com/blog/2024/08/23/index</id>
+        <link href="https://raiment-studios.com/blog/2024/08/23/index"/>
+        <updated>2024-08-23T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[-   Cleaned up the line rendering a bit]]></summary>
+        <content type="html"><![CDATA[<ul>
+<li>Cleaned up the line rendering a bit</li>
+<li>Added a "built-in" primitve for an XY-grid</li>
+<li>Modified the instance to allow it to stay locked to the camera position</li>
+<li>Allow for pass filters so instances go to the right pass / shader</li>
+</ul>
+<video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-08-23+10-27-26.mp4"></video>]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Render passes]]></title>
         <id>https://raiment-studios.com/blog/2024/08/22/index</id>
