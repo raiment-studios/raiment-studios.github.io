@@ -126,6 +126,17 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
             <category>rust</category>
         </item>
         <item>
+            <title><![CDATA[Rust generator "scripts"]]></title>
+            <link>https://raiment-studios.com/blog/2024/08/18/p2</link>
+            <guid>https://raiment-studios.com/blog/2024/08/18/p2</guid>
+            <pubDate>Sun, 18 Aug 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.]]></description>
+            <content:encoded><![CDATA[<p>Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-fcfe664f1be733bcd03217361f4c0311.png" width="868" height="696" class="img_ev3q"></p>]]></content:encoded>
+            <category>scripting</category>
+            <category>Rust</category>
+        </item>
+        <item>
             <title><![CDATA[Hot reloading architecture]]></title>
             <link>https://raiment-studios.com/blog/2024/08/18/p1</link>
             <guid>https://raiment-studios.com/blog/2024/08/18/p1</guid>
@@ -197,17 +208,6 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p>It then loops over all active entities in the engine and checks if they are in the dirty list. If they are, it copies in the relevant data from the freshly loaded scene over the current data -- thus refreshing the asset.</p>]]></content:encoded>
             <category>hot_reloading</category>
             <category>architecture</category>
-        </item>
-        <item>
-            <title><![CDATA[Rust generator "scripts"]]></title>
-            <link>https://raiment-studios.com/blog/2024/08/18/p2</link>
-            <guid>https://raiment-studios.com/blog/2024/08/18/p2</guid>
-            <pubDate>Sun, 18 Aug 2024 00:00:00 GMT</pubDate>
-            <description><![CDATA[Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.]]></description>
-            <content:encoded><![CDATA[<p>Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-fcfe664f1be733bcd03217361f4c0311.png" width="868" height="696" class="img_ev3q"></p>]]></content:encoded>
-            <category>scripting</category>
-            <category>Rust</category>
         </item>
         <item>
             <title><![CDATA[MagicaVoxel VOX loading]]></title>
