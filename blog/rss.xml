@@ -384,7 +384,7 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <li><a href="https://www.reddit.com/r/rust/comments/141ll5b/wgpu_questions_vertex_buffers/" target="_blank" rel="noopener noreferrer">Reddit thread about wgpu buffers</a></li>
 <li><a href="https://toji.dev/webgpu-best-practices/buffer-uploads.html" target="_blank" rel="noopener noreferrer">WebGPU Buffer Uploads</a></li>
 </ul>]]></content:encoded>
-            <category>worth_reading</category>
+            <category>worthreading</category>
         </item>
         <item>
             <title><![CDATA[Following the wgpu tutorial]]></title>
