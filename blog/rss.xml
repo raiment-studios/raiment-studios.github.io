@@ -4,10 +4,25 @@
         <title>Raiment Studios Blog</title>
         <link>https://raiment-studios.com/blog</link>
         <description>Raiment Studios Blog</description>
-        <lastBuildDate>Sun, 01 Sep 2024 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 02 Sep 2024 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Particles]]></title>
+            <link>https://raiment-studios.com/blog/2024/09/02/index</link>
+            <guid>https://raiment-studios.com/blog/2024/09/02/index</guid>
+            <pubDate>Mon, 02 Sep 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Got a "particle system" working. This is a simple point grid being mapped to a sine wave.]]></description>
+            <content:encoded><![CDATA[<p>Got a "particle system" working. This is a simple point grid being mapped to a sine wave.</p>
+<p>The core of the work was figuring out dynamic WGPU vertex updates and reworking some of the overly simple parts of the Snowfall architecture to account for changing geometry.</p>
+<video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-09-02+17-16-36.mp4"></video>]]></content:encoded>
+            <category>particles</category>
+            <category>wgpu</category>
+            <category>particlesystems</category>
+            <category>actors</category>
+            <category>snowfall</category>
+        </item>
         <item>
             <title><![CDATA[Point rendering]]></title>
             <link>https://raiment-studios.com/blog/2024/09/01/index</link>

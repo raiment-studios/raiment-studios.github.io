@@ -2,11 +2,26 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://raiment-studios.com/blog</id>
     <title>Raiment Studios Blog</title>
-    <updated>2024-09-01T00:00:00.000Z</updated>
+    <updated>2024-09-02T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://raiment-studios.com/blog"/>
     <subtitle>Raiment Studios Blog</subtitle>
     <icon>https://raiment-studios.com/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Particles]]></title>
+        <id>https://raiment-studios.com/blog/2024/09/02/index</id>
+        <link href="https://raiment-studios.com/blog/2024/09/02/index"/>
+        <updated>2024-09-02T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Got a "particle system" working. This is a simple point grid being mapped to a sine wave.]]></summary>
+        <content type="html"><![CDATA[<p>Got a "particle system" working. This is a simple point grid being mapped to a sine wave.</p>
+<p>The core of the work was figuring out dynamic WGPU vertex updates and reworking some of the overly simple parts of the Snowfall architecture to account for changing geometry.</p>
+<video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-09-02+17-16-36.mp4"></video>]]></content>
+        <category label="particles" term="particles"/>
+        <category label="wgpu" term="wgpu"/>
+        <category label="particlesystems" term="particlesystems"/>
+        <category label="actors" term="actors"/>
+        <category label="snowfall" term="snowfall"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Point rendering]]></title>
         <id>https://raiment-studios.com/blog/2024/09/01/index</id>
