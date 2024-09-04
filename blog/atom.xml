@@ -14,10 +14,13 @@
         <updated>2024-09-03T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Updated the particle system to look more like rain (which was the original goal):]]></summary>
         <content type="html"><![CDATA[<p>Updated the particle system to look more like rain (which was the original goal):</p>
-<p>Prototype scene:</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="prototype-scene">Prototype scene<a href="https://raiment-studios.com/blog/2024/09/03/index#prototype-scene" class="hash-link" aria-label="Direct link to Prototype scene" title="Direct link to Prototype scene">​</a></h4>
 <video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-09-03+10-34-59.mp4"></video>
-<p>With terrain:</p>
-<video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-09-03+10-47-50.mp4"></video>]]></content>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="with-terrain">With terrain<a href="https://raiment-studios.com/blog/2024/09/03/index#with-terrain" class="hash-link" aria-label="Direct link to With terrain" title="Direct link to With terrain">​</a></h4>
+<video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-09-03+10-47-50.mp4"></video>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="client-cards">Client "cards"<a href="https://raiment-studios.com/blog/2024/09/03/index#client-cards" class="hash-link" aria-label="Direct link to Client &quot;cards&quot;" title="Direct link to Client &quot;cards&quot;">​</a></h4>
+<p>The rain is added by "playing" a card for rain.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-e488b474390c2db564ee81b3e0810e8a.png" width="600" height="537" class="img_ev3q"></p>]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[Particles]]></title>
