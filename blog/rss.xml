@@ -17,6 +17,7 @@
             <content:encoded><![CDATA[<p>Rewrote the WGPU render pass for rendering the voxels to use an instance buffer than generates 36 vertices per instance (i.e. vertices for the 6 * 2 = 12 triangles of a voxel).</p>
 <video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024-09-04+18-02-37.mp4"></video>
 <p>I'm not sure if this is going to be the right approach, but I wanted to at least experiment with it.</p>
+<div class="theme-admonition theme-admonition-warning admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>Not so fast!</div><div class="admonitionContent_BuS1"><p><strong>Update:</strong> naively swapping the instance-based rendering in for the more traditional triangle renderer was MUCH slower. I'm not confident this is going to be a better rendering method.</p></div></div>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="rambling-a-bit-on-ways-to-render-the-voxels">Rambling a bit on ways to render the voxels<a href="https://raiment-studios.com/blog/2024/09/04/index#rambling-a-bit-on-ways-to-render-the-voxels" class="hash-link" aria-label="Direct link to Rambling a bit on ways to render the voxels" title="Direct link to Rambling a bit on ways to render the voxels">​</a></h3>
 <p>The approach used in the above video is fairly naive. Each voxel is given a <code>vec3&lt;f32&gt;</code> position and <code>vec3&lt;f32&gt;</code> color. The buffer itself has one entry for each filled voxel. It is instanced 36 times to generate the full cube for each voxel. So 36 instances and and 6 x 32 = 192 bits = 24 bytes per instance.</p>
 <p>Given that each voxel is a cube, this could be optimized to figure out the view direction and draw only the 3 faces that are oriented towards the camera. Thus we could reduce the instancing down to 3 quads = 12 vertices. It should be easy to do this as the shader can read the left or right face, top or bottom, and front or back: it can know which for each of those three by simply looking if the x, y, z of the view direction is positive or negative.</p>
@@ -271,17 +272,6 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
             <category>rust</category>
         </item>
         <item>
-            <title><![CDATA[Rust generator "scripts"]]></title>
-            <link>https://raiment-studios.com/blog/2024/08/18/p2</link>
-            <guid>https://raiment-studios.com/blog/2024/08/18/p2</guid>
-            <pubDate>Sun, 18 Aug 2024 00:00:00 GMT</pubDate>
-            <description><![CDATA[Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.]]></description>
-            <content:encoded><![CDATA[<p>Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-fcfe664f1be733bcd03217361f4c0311.png" width="868" height="696" class="img_ev3q"></p>]]></content:encoded>
-            <category>scripting</category>
-            <category>Rust</category>
-        </item>
-        <item>
             <title><![CDATA[Hot reloading architecture]]></title>
             <link>https://raiment-studios.com/blog/2024/08/18/p1</link>
             <guid>https://raiment-studios.com/blog/2024/08/18/p1</guid>
@@ -353,6 +343,17 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p>It then loops over all active entities in the engine and checks if they are in the dirty list. If they are, it copies in the relevant data from the freshly loaded scene over the current data -- thus refreshing the asset.</p>]]></content:encoded>
             <category>hot-reloading</category>
             <category>architecture</category>
+        </item>
+        <item>
+            <title><![CDATA[Rust generator "scripts"]]></title>
+            <link>https://raiment-studios.com/blog/2024/08/18/p2</link>
+            <guid>https://raiment-studios.com/blog/2024/08/18/p2</guid>
+            <pubDate>Sun, 18 Aug 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.]]></description>
+            <content:encoded><![CDATA[<p>Updated the code base to run Rust code to generate models. The below heightmap is a combination of sin functions and noise functions, generated in Rust code.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-fcfe664f1be733bcd03217361f4c0311.png" width="868" height="696" class="img_ev3q"></p>]]></content:encoded>
+            <category>scripting</category>
+            <category>Rust</category>
         </item>
         <item>
             <title><![CDATA[MagicaVoxel VOX loading]]></title>
