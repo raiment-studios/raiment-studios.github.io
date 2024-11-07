@@ -4,10 +4,27 @@
         <title>Raiment Studios Blog</title>
         <link>https://raiment-studios.com/blog</link>
         <description>Raiment Studios Blog</description>
-        <lastBuildDate>Tue, 29 Oct 2024 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 07 Nov 2024 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Voxelizer]]></title>
+            <link>https://raiment-studios.com/blog/2024/11/07/2024-11-07/</link>
+            <guid>https://raiment-studios.com/blog/2024/11/07/2024-11-07/</guid>
+            <pubDate>Thu, 07 Nov 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Been working on a lot of different experiments lately. Merging my recent interest in learning Bevy, Rust, and WASM with my long-time interest in voxel rendering, I've been working on an experimental program to convert a Quake 2 BSP38 map file into voxelized representation.]]></description>
+            <content:encoded><![CDATA[<p>Been working on a lot of different experiments lately. Merging my recent interest in learning Bevy, Rust, and WASM with my long-time interest in voxel rendering, I've been working on an experimental program to convert a Quake 2 BSP38 map file into voxelized representation.</p>
+<video loop="" controls="" muted="" autoplay="true" src="https://f004.backblazeb2.com/file/raiment-studios-media/2024/2024_11_07.mp4"></video>
+<p>The above is slow and inefficient, but it's an interesting starting point as it's all running in WASM using Bevy.</p>]]></content:encoded>
+            <category>voxels</category>
+            <category>wasm</category>
+            <category>bevy</category>
+            <category>rust</category>
+            <category>snowfall</category>
+            <category>quake2</category>
+            <category>bsp38</category>
+        </item>
         <item>
             <title><![CDATA[guidebook-outline prototype]]></title>
             <link>https://raiment-studios.com/blog/2024/10/29/2024-10-29/</link>
@@ -539,21 +556,6 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-b9d6eb27ed14cb48d2bcdebedcca0991.png" width="912" height="740" class="img_ev3q"></p>
 <p>A bit more progress: depth buffering finally enabled and rendering multiple objects.</p>
 <p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-2-71bd199888c8e864ae0473b26023046d.png" width="912" height="740" class="img_ev3q"></p>]]></content:encoded>
-            <category>wgpu</category>
-        </item>
-        <item>
-            <title><![CDATA[Worth reading]]></title>
-            <link>https://raiment-studios.com/blog/2024/08/11/index</link>
-            <guid>https://raiment-studios.com/blog/2024/08/11/index</guid>
-            <pubDate>Sun, 11 Aug 2024 00:00:00 GMT</pubDate>
-            <description><![CDATA[-   Arc and Mutex in Rust - useful examples and explanation about thes Rust types]]></description>
-            <content:encoded><![CDATA[<ul>
-<li><a href="https://itsallaboutthebit.com/arc-mutex/" target="_blank" rel="noopener noreferrer">Arc and Mutex in Rust</a> - useful examples and explanation about thes Rust types</li>
-<li><a href="https://www.reddit.com/r/rust/comments/141ll5b/wgpu_questions_vertex_buffers/" target="_blank" rel="noopener noreferrer">Reddit thread about wgpu buffers</a></li>
-<li><a href="https://toji.dev/webgpu-best-practices/buffer-uploads.html" target="_blank" rel="noopener noreferrer">WebGPU Buffer Uploads</a></li>
-</ul>]]></content:encoded>
-            <category>worth-reading</category>
-            <category>rust</category>
             <category>wgpu</category>
         </item>
     </channel>
