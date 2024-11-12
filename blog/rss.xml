@@ -4,10 +4,22 @@
         <title>Raiment Studios Blog</title>
         <link>https://raiment-studios.com/blog</link>
         <description>Raiment Studios Blog</description>
-        <lastBuildDate>Thu, 07 Nov 2024 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 12 Nov 2024 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Bevy voxels]]></title>
+            <link>https://raiment-studios.com/blog/2024/11/12/2024-11-12/</link>
+            <guid>https://raiment-studios.com/blog/2024/11/12/2024-11-12/</guid>
+            <pubDate>Tue, 12 Nov 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Still working on voxel rendering in Bevy. Restarted from fresh as I've learned a bit more since last time...]]></description>
+            <content:encoded><![CDATA[<p>Still working on voxel rendering in Bevy. Restarted from fresh as I've learned a bit more since last time...</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-6d2bfcc7fc5d0fa4dd89af43239882d4.png" width="2032" height="1220" class="img_ev3q"></p>]]></content:encoded>
+            <category>voxels</category>
+            <category>bevy</category>
+            <category>rust</category>
+        </item>
         <item>
             <title><![CDATA[Voxelizer]]></title>
             <link>https://raiment-studios.com/blog/2024/11/07/2024-11-07/</link>
@@ -541,21 +553,6 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p>With the bug fixed, here's a sine + cosine generated voxel heightmap of <code>128x128x32</code> resolution.</p>
 <p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-6-c86cd101968dff730d604af6a62f54cf.png" width="912" height="740" class="img_ev3q"></p>]]></content:encoded>
             <category>wgsl</category>
-            <category>wgpu</category>
-        </item>
-        <item>
-            <title><![CDATA[WGPU progress]]></title>
-            <link>https://raiment-studios.com/blog/2024/08/12/index</link>
-            <guid>https://raiment-studios.com/blog/2024/08/12/index</guid>
-            <pubDate>Mon, 12 Aug 2024 00:00:00 GMT</pubDate>
-            <description><![CDATA[Progress update: have some vertices making it from disk to the screen. That's a cube sitting behind of a "2D" pentagon (not necessarily obvious without lights or shading yet).]]></description>
-            <content:encoded><![CDATA[<p>Progress update: have some vertices making it from disk to the screen. That's a cube sitting behind of a "2D" pentagon (not necessarily obvious without lights or shading yet).</p>
-<p>The general task I've been working on is taking the "catch-all" <code>State</code> object from the <a href="https://sotrh.github.io/learn-wgpu/" target="_blank" rel="noopener noreferrer">Learn Wgpu tutorial</a> and refactoring into a rendering architecture. This requires wrangling with lifetimes and data sharing, both in my learning how Rust works as well as how objects work in wgpu.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-1eb40d212c07243966a0d680e442c690.png" width="912" height="740" class="img_ev3q"></p>
-<p>A bit more progress, getting basic semi-harcoded face shading working. Also changed the camera axes to a <code>Z+ =&gt; UP</code> system.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-b9d6eb27ed14cb48d2bcdebedcca0991.png" width="912" height="740" class="img_ev3q"></p>
-<p>A bit more progress: depth buffering finally enabled and rendering multiple objects.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-2-71bd199888c8e864ae0473b26023046d.png" width="912" height="740" class="img_ev3q"></p>]]></content:encoded>
             <category>wgpu</category>
         </item>
     </channel>

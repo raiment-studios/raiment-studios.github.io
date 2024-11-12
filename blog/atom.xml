@@ -2,11 +2,23 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://raiment-studios.com/blog</id>
     <title>Raiment Studios Blog</title>
-    <updated>2024-11-07T00:00:00.000Z</updated>
+    <updated>2024-11-12T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://raiment-studios.com/blog"/>
     <subtitle>Raiment Studios Blog</subtitle>
     <icon>https://raiment-studios.com/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Bevy voxels]]></title>
+        <id>https://raiment-studios.com/blog/2024/11/12/2024-11-12/</id>
+        <link href="https://raiment-studios.com/blog/2024/11/12/2024-11-12/"/>
+        <updated>2024-11-12T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Still working on voxel rendering in Bevy. Restarted from fresh as I've learned a bit more since last time...]]></summary>
+        <content type="html"><![CDATA[<p>Still working on voxel rendering in Bevy. Restarted from fresh as I've learned a bit more since last time...</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-6d2bfcc7fc5d0fa4dd89af43239882d4.png" width="2032" height="1220" class="img_ev3q"></p>]]></content>
+        <category label="voxels" term="voxels"/>
+        <category label="bevy" term="bevy"/>
+        <category label="rust" term="rust"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Voxelizer]]></title>
         <id>https://raiment-studios.com/blog/2024/11/07/2024-11-07/</id>
@@ -540,21 +552,6 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p>With the bug fixed, here's a sine + cosine generated voxel heightmap of <code>128x128x32</code> resolution.</p>
 <p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-6-c86cd101968dff730d604af6a62f54cf.png" width="912" height="740" class="img_ev3q"></p>]]></content>
         <category label="wgsl" term="wgsl"/>
-        <category label="wgpu" term="wgpu"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[WGPU progress]]></title>
-        <id>https://raiment-studios.com/blog/2024/08/12/index</id>
-        <link href="https://raiment-studios.com/blog/2024/08/12/index"/>
-        <updated>2024-08-12T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Progress update: have some vertices making it from disk to the screen. That's a cube sitting behind of a "2D" pentagon (not necessarily obvious without lights or shading yet).]]></summary>
-        <content type="html"><![CDATA[<p>Progress update: have some vertices making it from disk to the screen. That's a cube sitting behind of a "2D" pentagon (not necessarily obvious without lights or shading yet).</p>
-<p>The general task I've been working on is taking the "catch-all" <code>State</code> object from the <a href="https://sotrh.github.io/learn-wgpu/" target="_blank" rel="noopener noreferrer">Learn Wgpu tutorial</a> and refactoring into a rendering architecture. This requires wrangling with lifetimes and data sharing, both in my learning how Rust works as well as how objects work in wgpu.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-1eb40d212c07243966a0d680e442c690.png" width="912" height="740" class="img_ev3q"></p>
-<p>A bit more progress, getting basic semi-harcoded face shading working. Also changed the camera axes to a <code>Z+ =&gt; UP</code> system.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-b9d6eb27ed14cb48d2bcdebedcca0991.png" width="912" height="740" class="img_ev3q"></p>
-<p>A bit more progress: depth buffering finally enabled and rendering multiple objects.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-2-71bd199888c8e864ae0473b26023046d.png" width="912" height="740" class="img_ev3q"></p>]]></content>
         <category label="wgpu" term="wgpu"/>
     </entry>
 </feed>
