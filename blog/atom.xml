@@ -14,7 +14,9 @@
         <updated>2024-11-12T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Still working on voxel rendering in Bevy. Restarted from fresh as I've learned a bit more since last time...]]></summary>
         <content type="html"><![CDATA[<p>Still working on voxel rendering in Bevy. Restarted from fresh as I've learned a bit more since last time...</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-6d2bfcc7fc5d0fa4dd89af43239882d4.png" width="2032" height="1220" class="img_ev3q"></p>]]></content>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-6d2bfcc7fc5d0fa4dd89af43239882d4.png" width="2032" height="1220" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-ee40fe7a9dd383a951ee8ab388e89e6c.png" width="2032" height="1220" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-2-e8bb04862cc252d87ac08aa3f96e21aa.png" width="2032" height="1220" class="img_ev3q"></p>]]></content>
         <category label="voxels" term="voxels"/>
         <category label="bevy" term="bevy"/>
         <category label="rust" term="rust"/>
