@@ -2,11 +2,24 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://raiment-studios.com/blog</id>
     <title>Raiment Studios Blog</title>
-    <updated>2024-11-12T00:00:00.000Z</updated>
+    <updated>2024-11-13T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://raiment-studios.com/blog"/>
     <subtitle>Raiment Studios Blog</subtitle>
     <icon>https://raiment-studios.com/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[More voxels]]></title>
+        <id>https://raiment-studios.com/blog/2024/11/13/2024-11-13/</id>
+        <link href="https://raiment-studios.com/blog/2024/11/13/2024-11-13/"/>
+        <updated>2024-11-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Working a bit on terrain generation. Turns out it can be a lot more fun working on this in native desktop with Rust rather than WebGL given the runtime limitations of the latter.]]></summary>
+        <content type="html"><![CDATA[<p>Working a bit on terrain generation. Turns out it can be a lot more fun working on this in native desktop with Rust rather than WebGL given the runtime limitations of the latter.</p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-88f469cd4a3fa27b3e96567119d10c89.png" width="2032" height="1220" class="img_ev3q"></p>]]></content>
+        <category label="voxels" term="voxels"/>
+        <category label="terrain" term="terrain"/>
+        <category label="bevy" term="bevy"/>
+        <category label="rust" term="rust"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Bevy voxels]]></title>
         <id>https://raiment-studios.com/blog/2024/11/12/2024-11-12/</id>
@@ -512,48 +525,5 @@ Receive output as YAML on stdout.</p><p>Simple but not the most efficient encodi
 <p><strong>🔮 Hot reloading of the module when the script or model file changes</strong></p>
 <p>The above is a bit tricky as it creates a dependency between the loading code, an async file watcher, and the main render loop. I don't yet have a clear vision for how to connect those in a non-intrusive manner, but otherwise would like to add "hot reloading" as a core piece of functionality to make development easier and faster.</p>]]></content>
         <category label="generation_id" term="generation_id"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Progress]]></title>
-        <id>https://raiment-studios.com/blog/2024/08/15/index</id>
-        <link href="https://raiment-studios.com/blog/2024/08/15/index"/>
-        <updated>2024-08-15T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Shading placeholder]]></summary>
-        <content type="html"><![CDATA[<h4 class="anchor anchorWithStickyNavbar_LWe7" id="shading-placeholder">Shading placeholder<a href="https://raiment-studios.com/blog/2024/08/15/index#shading-placeholder" class="hash-link" aria-label="Direct link to Shading placeholder" title="Direct link to Shading placeholder">​</a></h4>
-<p>Added shading based on world coordinate positions. This was mostly a test of adding new uniforms and vertex shader outputs to the shader program.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-a2021abeb66f43d42d42079ad1385771.png" width="912" height="740" class="img_ev3q"></p>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="voxels">Voxels<a href="https://raiment-studios.com/blog/2024/08/15/index#voxels" class="hash-link" aria-label="Direct link to Voxels" title="Direct link to Voxels">​</a></h4>
-<p>Added a voxel model. Very inefficient at this point, but "correct."</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-b54b4c4c2bddf863a6a6bf4fa4742d08.png" width="912" height="740" class="img_ev3q"></p>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="bug-">Bug! 🐛<a href="https://raiment-studios.com/blog/2024/08/15/index#bug-" class="hash-link" aria-label="Direct link to Bug! 🐛" title="Direct link to Bug! 🐛">​</a></h4>
-<p>Tried increasing the resolution and found bugs :)</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-2-68211a8923c91a217601ead4b72db9c4.png" width="912" height="740" class="img_ev3q"></p>
-<p><strong>Guess: missing array data?</strong></p>
-<p>Manually counting the input data matches the generated positions array and checking against the runtime data...</p>
-<ul>
-<li><code>4416 voxels * 6 faces/voxel * 8 positions/face =&gt; 105984 positiions</code></li>
-<li><code>4416 voxels * 6 faces/voxel * 6 indices/face =&gt; 158976 indices</code></li>
-</ul>
-<p>...seems correct.</p>
-<p><strong>Guess: too many draw calls?</strong></p>
-<p>Seems impossible as this is a single mesh.</p>
-<p><strong>Investigation: is it always the same voxels that are missing?</strong></p>
-<p>Flipping the order of the voxels during generation changes the missing voxels. Not sure what to conclude from this yet.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-3-94fa10ce7967f770d39bc35a2b0db19b.png" width="912" height="740" class="img_ev3q"></p>
-<p>Drawing just the Z+ face on the voxels seems to work correctly. The same seems to be true when rendering any one of the six faces.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-4-3340f0f0e4d6aeb1d53e80c014d1e2a6.png" width="912" height="740" class="img_ev3q"></p>
-<p>...but if as soon as 3 faces are rendered together, voxels seem to be lost.</p>
-<p><strong>Guess: too many indicies</strong></p>
-<p>Yup. The code is using <code>u16</code> which has a max representable value of <code>256*256 = 65,536</code>. There are <code>158,976</code> indices.</p>
-<p>Changing to a <code>u32</code> index buffer addresses the problem.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-5-50384b0c6cd604dc27521df09b01552b.png" width="912" height="740" class="img_ev3q"></p>
-<p><strong>Resolution</strong></p>
-<p>Bumping the render code to always use <code>u32</code> seems fine for this stage of development. Using the larger buffer size affords more flexibility, which is a higher priority right now than optimization for memory or performance.</p>
-<p>Voxel chunking and optimizing away invisible faces need to be done regardless. After that is done, it should be easier to move back to a <code>u16</code> index buffer.</p>
-<h4 class="anchor anchorWithStickyNavbar_LWe7" id="a-larger-model">A larger model<a href="https://raiment-studios.com/blog/2024/08/15/index#a-larger-model" class="hash-link" aria-label="Direct link to A larger model" title="Direct link to A larger model">​</a></h4>
-<p>With the bug fixed, here's a sine + cosine generated voxel heightmap of <code>128x128x32</code> resolution.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-6-c86cd101968dff730d604af6a62f54cf.png" width="912" height="740" class="img_ev3q"></p>]]></content>
-        <category label="wgsl" term="wgsl"/>
-        <category label="wgpu" term="wgpu"/>
     </entry>
 </feed>
