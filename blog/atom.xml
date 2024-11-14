@@ -14,7 +14,8 @@
         <updated>2024-11-13T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Working a bit on terrain generation. Turns out it can be a lot more fun working on this in native desktop with Rust rather than WebGL given the runtime limitations of the latter.]]></summary>
         <content type="html"><![CDATA[<p>Working a bit on terrain generation. Turns out it can be a lot more fun working on this in native desktop with Rust rather than WebGL given the runtime limitations of the latter.</p>
-<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-88f469cd4a3fa27b3e96567119d10c89.png" width="2032" height="1220" class="img_ev3q"></p>]]></content>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-88f469cd4a3fa27b3e96567119d10c89.png" width="2032" height="1220" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" alt="alt text" src="https://raiment-studios.com/assets/images/image-1-55449caab3f67c4372ce5f07e41b9530.png" width="2032" height="1220" class="img_ev3q"></p>]]></content>
         <category label="voxels" term="voxels"/>
         <category label="terrain" term="terrain"/>
         <category label="bevy" term="bevy"/>
@@ -214,6 +215,26 @@
 <div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">primitive</span><span class="token punctuation" style="color:#393A34">:</span><span class="token plain"> </span><span class="token namespace" style="opacity:0.7">wgpu</span><span class="token namespace punctuation" style="opacity:0.7;color:#393A34">::</span><span class="token class-name">PrimitiveState</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    cull_mode</span><span class="token punctuation" style="color:#393A34">:</span><span class="token plain"> </span><span class="token class-name">None</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    topology</span><span class="token punctuation" style="color:#393A34">:</span><span class="token plain"> </span><span class="token namespace" style="opacity:0.7">wgpu</span><span class="token namespace punctuation" style="opacity:0.7;color:#393A34">::</span><span class="token class-name">PrimitiveTopology</span><span class="token punctuation" style="color:#393A34">::</span><span class="token class-name">TriangleList</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain">  </span><span class="token comment" style="color:#999988;font-style:italic">// &lt;-- THIS</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    strip_index_format</span><span class="token punctuation" style="color:#393A34">:</span><span class="token plain"> </span><span class="token class-name">None</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    front_face</span><span class="token punctuation" style="color:#393A34">:</span><span class="token plain"> </span><span class="token namespace" style="opacity:0.7">wgpu</span><span class="token namespace punctuation" style="opacity:0.7;color:#393A34">::</span><span class="token class-name">FrontFace</span><span class="token punctuation" style="color:#393A34">::</span><span class="token class-name">Ccw</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    polygon_mode</span><span class="token punctuation" style="color:#393A34">:</span><span class="token plain"> </span><span class="token namespace" style="opacity:0.7">wgpu</span><span class="token namespace punctuation" style="opacity:0.7;color:#393A34">::</span><span class="token class-name">PolygonMode</span><span class="token punctuation" style="color:#393A34">::</span><span class="token class-name">Fill</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    unclipped_depth</span><span class="token punctuation" style="color:#393A34">:</span><span class="token plain"> </span><span class="token boolean" style="color:#36acaa">false</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">    conservative</span><span class="token punctuation" style="color:#393A34">:</span><span class="token plain"> </span><span class="token boolean" style="color:#36acaa">false</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><span class="token punctuation" style="color:#393A34">,</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>]]></content>
     </entry>
     <entry>
+        <title type="html"><![CDATA[Worth reading]]></title>
+        <id>https://raiment-studios.com/blog/2024/08/31/p2</id>
+        <link href="https://raiment-studios.com/blog/2024/08/31/p2"/>
+        <updated>2024-08-31T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Mostly about physics simulation in games...]]></summary>
+        <content type="html"><![CDATA[<p>Mostly about physics simulation in games...</p>
+<ul>
+<li><a href="https://www.cs.cmu.edu/~baraff/sigcourse/index.html" target="_blank" rel="noopener noreferrer">https://www.cs.cmu.edu/~baraff/sigcourse/index.html</a></li>
+<li><a href="https://gafferongames.com/post/integration_basics/" target="_blank" rel="noopener noreferrer">https://gafferongames.com/post/integration_basics/</a></li>
+<li><a href="https://www.toptal.com/game/video-game-physics-part-i-an-introduction-to-rigid-body-dynamics" target="_blank" rel="noopener noreferrer">https://www.toptal.com/game/video-game-physics-part-i-an-introduction-to-rigid-body-dynamics</a> - good article in itself, but also has some very useful links</li>
+</ul>
+<p>Point rendering in WGPU...</p>
+<ul>
+<li><a href="https://webgpufundamentals.org/webgpu/lessons/webgpu-points.html" target="_blank" rel="noopener noreferrer">https://webgpufundamentals.org/webgpu/lessons/webgpu-points.html</a></li>
+</ul>]]></content>
+        <category label="worth-reading" term="worth-reading"/>
+        <category label="physics" term="physics"/>
+        <category label="points" term="points"/>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[Minimal React Frontend]]></title>
         <id>https://raiment-studios.com/blog/2024/08/31/p1</id>
         <link href="https://raiment-studios.com/blog/2024/08/31/p1"/>
@@ -258,26 +279,6 @@
         <category label="typescript" term="typescript"/>
         <category label="make" term="make"/>
         <category label="makefile" term="makefile"/>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Worth reading]]></title>
-        <id>https://raiment-studios.com/blog/2024/08/31/p2</id>
-        <link href="https://raiment-studios.com/blog/2024/08/31/p2"/>
-        <updated>2024-08-31T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Mostly about physics simulation in games...]]></summary>
-        <content type="html"><![CDATA[<p>Mostly about physics simulation in games...</p>
-<ul>
-<li><a href="https://www.cs.cmu.edu/~baraff/sigcourse/index.html" target="_blank" rel="noopener noreferrer">https://www.cs.cmu.edu/~baraff/sigcourse/index.html</a></li>
-<li><a href="https://gafferongames.com/post/integration_basics/" target="_blank" rel="noopener noreferrer">https://gafferongames.com/post/integration_basics/</a></li>
-<li><a href="https://www.toptal.com/game/video-game-physics-part-i-an-introduction-to-rigid-body-dynamics" target="_blank" rel="noopener noreferrer">https://www.toptal.com/game/video-game-physics-part-i-an-introduction-to-rigid-body-dynamics</a> - good article in itself, but also has some very useful links</li>
-</ul>
-<p>Point rendering in WGPU...</p>
-<ul>
-<li><a href="https://webgpufundamentals.org/webgpu/lessons/webgpu-points.html" target="_blank" rel="noopener noreferrer">https://webgpufundamentals.org/webgpu/lessons/webgpu-points.html</a></li>
-</ul>]]></content>
-        <category label="worth-reading" term="worth-reading"/>
-        <category label="physics" term="physics"/>
-        <category label="points" term="points"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[Render pipeline improvements]]></title>
